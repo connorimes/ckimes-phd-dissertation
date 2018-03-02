@@ -1,0 +1,190 @@
+\documentclass{ucetd}
+\usepackage{subfigure,epsfig,amsfonts}
+\usepackage{amsthm}
+\usepackage{natbib}
+\bibliographystyle{plain}
+
+\usepackage[normalem]{ulem}
+\usepackage{float}
+\usepackage{url}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{multicol}
+\usepackage{xspace}
+\usepackage{chngpage}
+%\usepackage{narrow}
+%\usepackage{fullpage}
+%\usepackage{subfigure}
+\usepackage{subfig}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{color}
+%\usepackage{algorithmic2e}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{savesym}
+\usepackage{amsmath}
+\usepackage{amssymb,latexsym}
+\everymath{\displaystyle}
+\savesymbol{iint} 
+\usepackage{txfonts} 
+\restoresymbol{TXF}{iint}
+%\usepackage{mathptmx} % amsmath makes the paper longer
+\usepackage{mathrsfs}
+\usepackage{leading}
+%\usepackage{algorithmic}
+%\usepackage{algorithm}
+%\usepackage{fullpage}
+%\usepackage[font={small,bf},nooneline]{caption}
+\usepackage{hyphenat}
+\usepackage{leading}
+\let\labelindent\relax
+\usepackage{enumitem}
+%\usepackage[natbib=true,backend=bibtex,firstinits=true,style=numeric-comp,sorting=nyt,defernumbers,maxnames=10,maxcitenames=2,doi=false,isbn=false,url=false]{biblatex}
+\usepackage{balance}
+\usepackage{pbox}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\usepackage{listings}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\scriptsize\ttfamily, % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=leftline,                  % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{black},     % string literal style
+  tabsize=1,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\usepackage{pgfplots}
+% options for pgfplots
+\pgfplotsset{compat=1.8,compat/show suggested version=false}
+\usetikzlibrary{calc,trees,arrows,patterns,plotmarks,shapes,snakes,er,3d,automata,backgrounds,topaths,decorations.pathmorphing,decorations.markings}
+%\pgfplotsset{compat=newest}
+\pgfplotsset{
+   /pgfplots/bar  cycle  list/.style={/pgfplots/cycle  list={%
+        {black,fill=black!30!white,mark=none},%
+        {black,fill=red!30!white,mark=none},%
+        {black,fill=green!30!white,mark=none},%
+        {black,fill=yellow!30!white,mark=none},%
+        {black,fill=brown!30!white,mark=none},%
+     }
+   },
+}
+% begin of externalization
+\usetikzlibrary{external}
+\tikzexternalize[prefix=out/]
+\tikzexternalize
+% don't externalize todonotes
+%\makeatletter
+%\renewcommand{\todo}[2][]{\tikzexternaldisable\@todo[#1]{#2}\tikzexternalenable}
+%\makeatother
+% end of externalization
+\usetikzlibrary{patterns}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{
+every axis label/.append style={font=\footnotesize},
+tick label style={font=\footnotesize},
+}
+%\usepackage[normalem]{ulem}
+%\setlength{\abovecaptionskip}{2pt plus 2pt minus 2pt}
+\setlist{noitemsep,topsep=0pt}
+
+% some useful shortcuts
+\newcommand{\ie}{\textit{i.e., }}
+\newcommand{\eg}{\textit{e.g., }}
+\newcommand{\etal}{et al.\ }
+% units for results
+\newcommand{\us}{\,$\mu$s}
+\newcommand{\ms}{\,ms}
+\newcommand{\KB}{\,KB}
+\newcommand{\MB}{\,MB}
+\newcommand{\GB}{\,GB}
+\newcommand{\MHz}{\,MHz}
+\newcommand{\GHz}{\,GHz}
+
+\newcommand{\TODO}[1]{\textcolor{gray}{\textbf{\ [TODO:\ #1]\ }}}
+
+% Referencing various pieces of the document:
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\figsref}[2]{Figures~\ref{fig:#1} and~\ref{fig:#2}}
+\newcommand{\figrref}[2]{Figures~\ref{fig:#1}--\ref{fig:#2}}
+\newcommand{\secref}[1]{Chapter~\ref{sec:#1}}
+\newcommand{\secsref}[2]{Sections~\ref{sec:#1} and~\ref{sec:#2}}
+\newcommand{\eqnref}[1]{Eqn.~\ref{eqn:#1}}
+\newcommand{\eqnsref}[2]{Eqns.~\ref{eqn:#1} and~\ref{eqn:#2}}
+\newcommand{\eqnrref}[2]{Eqns.~\ref{eqn:#1}--\ref{eqn:#2}}
+\newcommand{\insref}[1]{Instruction~\ref{ins:#1}}
+\newcommand{\tblref}[1]{Table~\ref{tbl:#1}}
+\newcommand{\appref}[1]{Appendix~\ref{app:#1}}
+\newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
+
+% Custom hyphenation rules
+\hyphenation{Ang-strom}
+
+
+%% Use these commands to set biographic information for the title page:
+\title{Balancing Performance and Energy on Server-class Systems}
+\author{Connor Kelly Imes}
+\department{Computer Science}
+\division{Physical Sciences}
+\degree{Doctor of Philosophy}
+\date{June 2018}
+
+%% Use these commands to set a dedication and epigraph text
+\dedication{Dedication Text}
+\epigraph{Epigraph Text}
+
+
+\begin{document}
+%% Basic setup commands
+% If you don't want a title page comment out the next line and uncomment the line after it:
+\maketitle
+%\omittitle
+
+% These lines can be commented out to disable the copyright/dedication/epigraph pages
+\makecopyright
+\makededication
+% \makeepigraph
+
+
+%% Make the various tables of contents
+\tableofcontents
+\listoffigures
+\listoftables
+
+% \acknowledgments
+% Enter Acknowledgements here
+
+\input{abstract}
+\mainmatter
+\input{intro}
+\input{controllers}
+\input{classifiers}
+\input{conclusion}
+
+% Format a LaTeX bibliography
+\bibliography{seec}
+%\makebibliography
+
+\end{document}

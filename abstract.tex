@@ -1,3 +1,27 @@
 \begin{abstract}
 
+This thesis addresses challenges in balancing performance and power/energy consumption in computing systems.
+In many cases, applications do not require all of a system's resources in order to achieve desired behavior, \eg performance goals or reasonable energy consumption.
+Modern systems expose knobs for tuning resources like processor frequency and core allocation that have a quantifiable impact on application performance and power consumption behavior.
+The result is a tradeoff space that can be navigated by resource schedulers to achieve desired behavior, sacrificing one dimension in favor of another, \eg increased performance at the cost of increased power or energy consumption.
+Optimal knob settings required to achieve desired behavior vary depending on the application and system, even changing during the course of execution as applications move through different processing phases.
+Designing general and portable solutions to these problems is challenging due to the diversity in both hardware and software systems, exacerbated by complexity in resource knob availability and their interdependencies.
+
+We first address the problem of meeting application performance goals while minimizing energy consumption with two projects.
+Both projects are based in control theory, which provides strong guarantees about convergence to the goal and stability in the face of dynamic behavior.
+Heuristic techniques, which are commonly used, cannot provide these guarantees, and simultaneously are not always portable.
+The first project is POET, a general solution that is portable between applications and systems, as well as independent of different knob types and their allowable settings.
+POET produces resource schedules to exactly meet performance goals while achieving optimal energy consumption.
+The second project is CoPPer, which leverages recent power capping technology in place of software-managed dynamic voltage and frequency scaling, which is being deprecated by hardware vendors.
+CoPPer meets performance goals while leaving the energy optimization to hardware, which can respond more rapidly to changes in application resource requirements than software.
+
+Finally, we then address the problem of maximizing energy efficiency, thus optimizing the cost of running applications.
+Our solution uses machine learning classification, driven by low-level hardware performance counters, to predict the most energy-efficient knob settings based on current application resource utilization.
+Importantly, no application modifications are necessary.
+We evaluate this approach in the High Performance Computing (HPC) domain, more aggressively trading performance for energy savings than has historically been done.
+Beside reducing the cost of per-application scientific insight, scaling the solution to hardware over-provisioned, power-constrained clusters would actually increase total cluster throughput.
+
+Unlike static resource scheduling solutions that are commonly used at all computing scales, all three of these projects dynamically adapt to changing application and system behavior at runtime.
+Their designs are independent of particular applications and systems, making them portable to a wide range of computing platforms.
+
 \end{abstract}

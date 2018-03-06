@@ -1,0 +1,71 @@
+\begin{tikzpicture}
+\definecolor{s1}{RGB}{228, 26, 28}
+\definecolor{s2}{RGB}{55, 126, 184}
+\definecolor{s3}{RGB}{77, 175, 74}
+\definecolor{s4}{RGB}{152, 78, 163}
+\definecolor{s5}{RGB}{255, 127, 0}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 1,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+% axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0.5,
+xmax=5.5,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ylabel style={align=center},
+ytick=\empty,
+ymin=0.6,
+ymax=1.1,
+ytick={0,0.2,0.4,0.6,0.8,1.0,1.2},
+yticklabels={0.0,0.2,0.4,0.6,0.8,1.0,1.2},
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+]
+
+\nextgroupplot[ylabel={Energy \\ (Normalized)},
+ybar=\pgflinewidth,
+legend entries = {{Single},{Separate}},
+legend style={draw=none,legend columns=5,at={(.5,1.4)},anchor=north},
+bar width=8pt,
+ylabel shift={0mm},
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7},
+xticklabels={
+{ET},
+{GB},
+{KNN},
+{MLP},
+{SVM},
+},
+execute at end plot={
+% "Race":
+\draw[thin, dashed] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},1) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},1);
+% "Best static DVFS":
+\draw[thick, dotted] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},0.765646972) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},0.765646972);
+% "ET_SVM"
+\draw[thin, solid] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},0.8288250669) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},0.8288250669);
+% hack to reset column line style (ghostscript seems to use last formatting as line style, e.g. dashed or dotted instead of solid)
+\draw[thin, solid] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},\pgfkeysvalueof{/pgfplots/ymin});
+},
+]
+\addplot table[x index=0,y index=7, col sep=tab] {img/classifiers/compare_interval/compare_5s.txt};
+\addplot table[x index=0,y index=7, col sep=tab] {img/classifiers/compare_pca/sep_clfs.txt};
+
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,63 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 1,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+% axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0.5,
+% xmax=16.5,
+xmax=10.5,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ytick=\empty,
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},
+xticklabels={{POWER\_DRAM},
+{EXEC},
+{L3HIT},
+{AFREQ},
+{FREQ},
+{L3MPI},
+{L2HIT},
+{L3HIT},
+{FREQ},
+{POWER\_Proc},
+% {WRITE\_Rate},
+% {L2MPI},
+% {L3MISS\_Rate},
+% {POWER\_DRAM},
+% {EXEC},
+% {POWER\_Total}
+},
+ymin=0,
+ymax=.5,
+ytick={0,0.1,0.2,0.3,0.4,0.5},
+yticklabels={0,0.1,0.2,0.3,0.4,0.5},
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+ylabel={\footnotesize PCA Variance},
+ylabel shift={0mm},
+]
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=8pt,
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/classifiers/pca_evr.txt};
+
+
+\end{groupplot}
+
+\end{tikzpicture}

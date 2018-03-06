@@ -1,0 +1,101 @@
+\section{Experimental Design}
+\label{sec:classifiers-usage}
+
+This section describes our experimental setup, including the evaluation system, applications used for training and evaluation, and the classification algorithms tested.
+We perform our evaluation on a quad-socket, 80-physical core system with 512 GB DRAM running Ubuntu Linux 14.04 LTS.
+With HyperThreads, there are 160 compute threads available, \ie 20 physical and 20 virtual on each socket.
+% Kernel is 4.4.0-93-generic (does not include patches for “Spectre” (CVE-2017-5753 and CVE-2017-5715) and “Meltdown” (CVE-2017-5754). which impact performance)
+We use Linux kernel 4.4.0 with the intel\_pstate driver disabled so that we can use the userspace DVFS governor.
+
+
+\subsection{Training Applications}
+\label{sec:setup-training}
+
+
+For classifier training, we characterize and label executions for a variety of parallel applications that exhibit a range of different behaviors.
+Each application is configured to run with 160 threads to match the number of compute cores on the
+evaluation system and to use NUMA memory interleaving.
+Training applications are selected from the NAS Parallel Benchmarks \cite{NPB}, Lawrence Livermore Lab's Co-design benchmarks (AMG \cite{BoomerAMG}, Kripke \cite{Kripke}, LULESH \cite{LULESH2}, Quicksilver \cite{Quicksilver}), and Argonne's CESAR Proxy-apps (XSBench \cite{XSBench}, RSBench \cite{RSBench}).
+Other applications include CoMD \cite{CoMDGit}, Berkeley's HPGMG-FV \cite{hpgmg}, a partial differential equation solver (jacobi), and STREAM \cite{stream}.
+Additionally, we include a characterization of system idling behavior.
+In total, there are 21 unique applications/characterizations used for training.
+
+Each performance counter is used as a \emph{feature} for classification.
+Performance counter values are converted to rates, normalized, then PCA is applied.
+\figref{pca-evr} quantifies the percentage of variance contributed by the top 10 performance counters in the feature space for our system and training applications, accounting for 99\% of the total variance.
+% When PCA is configured to use all the counters listed, these values sum to 1.
+% \TODO{Why do POWER\_DRAM and EXEC appear twice in \figref{pca-evr}? If this is just a quirk, perhaps just show the top 10 features?}
+
+\begin{figure}[t]
+  \begin{centering}
+    \input{img/classifiers/pca_evr.tex}
+    \caption{PCA Explained Variance Ratio for the top 10 performance counters, accounting for 99\% of variance.}
+    \label{fig:pca-evr}
+  \end{centering}
+% \vskip -1.0em
+\end{figure}
+
+
+\subsection{Evaluation Applications}
+\label{sec:setup-evaluation}
+
+We evaluate classifier performance on four complex bioinformatic HPC applications: HipMer~\cite{georganas2015hipmer}, IDBA~\cite{peng2012idba}, Megahit~\cite{li2015megahit} and metaSPAdes~\cite{nurk2016metaspades}.
+These four are the leading applications that perform \emph{de novo} genome assembly, which is one of the most computationally challenging bioinformatics problems.
+The datasets can be very large (for example, metagenomes can have raw sequence datasets on the order of terabytes), and the algorithms are hard to scale efficiently.
+For example, of the four applications, only HipMer scales efficiently to distributed memory systems.
+Consequently, \emph{de novo} assemblers are typically run on very large shared-memory systems, with at least 0.5TB of memory.
+Thus our experimental platform is typical of the sort of hardware that would be used for these kinds of applications.
+
+Furthermore, these applications implement complex pipelines, with multiple different stages, some of which are compute-intensive, some I/O-intensive, and some communication-intensive.
+Exactly which stages are used and how much they contribute to the performance depends to a large degree on the program configuration and the input datasets.
+A single execution assembling a large genome could take days on our large evaluation system, making it prohibitive to exhaustively characterize the full range of allowable settings.
+Even running a partial characterization (like DVFS-only) for a fixed input is unrealistic for most such applications in practice, motivating the need for a general solution.
+
+Although these four applications are solving the same problem, they are implemented in very different ways, with different programming languages, different algorithms and different data flows.
+For example, HipMer can have up to 20 different stages, whereas Megahit may have only a few.
+Overall, these applications provide a broad coverage of a range of different bioinformatics approaches (frequency counting, graph traversal, alignment, sorting, etc.).
+
+Like with training applications, we configure each evaluation application to run with 160 threads, except for metaSPAdes which uses 80 threads.
+We fix the application inputs and configurations for our evaluation, but of course they support a variety of configurations and inputs which affect performance and energy consumption behavior.
+% Due to the long application runtimes, it is infeasible to characterize these applications in all configurations, despite the application settings and inputs being fixed.
+Solely to use as a baseline in our evaluation, we perform a time-consuming DVFS-only characterization by running them in each DVFS setting with all 160 virtual cores allocated (for metaSPAdes, all 80 physical cores are used as the baseline instead).
+Note that this data is \emph{not} used in classifier training.
+Based on these partial characterizations, we see that \emph{each application has a different most energy-efficient static setting}.
+The applications are thus prime candidates for our approach of using classification to predict the appropriate settings at runtime.
+
+
+\subsection{Classification Algorithms}
+
+This section identifies and briefly describes the classifiers we use.
+For data processing and classifier implementations, we use the Machine Learning toolkit scikit-learn, version 0.19.1 \cite{scikit-learn}.
+% See the scikit-learn documentation for implementation details.
+We do not attempt to optimize algorithm performance or prediction accuracy by tuning any implementation knobs.
+We demonstrate the feasibility of using classification without the need for fine-tuning.
+
+\begin{figure}[t]
+  \begin{centering}
+    \input{img/classifiers/classifier_recall.tex}
+    \caption{Training data recall for 15 classification algorithm implementations.}
+    \label{fig:recall}
+  \end{centering}
+% \vskip -1.0em
+\end{figure}
+
+With the labeled training data in \figref{feat-space-none} (\secref{challenges-learning}), it is clear that the a useful classification algorithm must handle a complex space.
+We validate this hypothesis by performing an offline analysis of $15$ algorithms using our training data.
+One of the metrics we looked at was training data recall, which we present in \figref{recall}.
+The algorithms are: AdaBoost (AB), Decision Tree (DT), Extra Trees (ET), Gradient Boosting (GB), Gaussian Naive Bayes (GNB), K-Nearest Neighbors (KNN), Linear Discriminant Analysis (LDA), Multi-layer Perceptron (MLP), Quadratic Discriminant Analysis (QDA), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine with a linear kernel (SVM (Lin)), SVM with a degree=3 polynomial kernel (SVM (Poly3)), SVM with a different linear kernel (SVMLinear), and SVM with a radial basis function kernel (SVM (RBF)).
+Some approaches have poor recall and thus are not likely to perform well in practice.
+
+When a mis-prediction occurs, the impact on energy consumption varies---some are suboptimal but still reduce energy consumption over the naive \emph{race} setting, while others actually make it worse.
+We tested SVM (Lin) (\figref{feat-space-svm-kern-lin}) online---in most cases it reduced energy, but consumed 22\% \emph{more energy} than \emph{race} with the Megahit application, demonstrating the importance of selecting a good classifier.
+We choose five promising algorithms that support a range of different classification techniques to use in the evaluation:
+\begin{enumerate}
+\item ET -- an extremely randomized decision tree, similar to Random Forest \cite{Geurts2006ExtraTrees}.
+\item GB -- fits multiple regression trees on the negative gradient of the deviance loss function \cite{scikit-learn, friedman2001GradientBoosting}.% cites scikit-learn for the definition
+\item KNN -- a simple majority vote of the nearest neighbors from the training data ($k=5$, by default).
+\item MLP -- a neural network optimizing the log-loss function using \emph{lbfgs}, a \emph{tanh} activation function, and four layers \cite{HintonMultiLayerPerceptron}.
+\item SVM -- a maximum margin classifier using a radial basis function (RBF) kernel.
+\end{enumerate}
+The only classifier with non-default configurations is MLP, in order to add additional layers to better represent deep learners, and to specify the activation and solver functions.
+Our evaluation compares the energy consumption of real application executions when using these five classifiers in different configurations.

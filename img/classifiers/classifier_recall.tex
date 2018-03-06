@@ -1,0 +1,78 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 1,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+% axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0.5,
+% xmax=16.5,
+xmax=15.5,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ytick=\empty,
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},
+xticklabels={
+% {AdaBoost},
+% {Decision~Tree},
+% {Extra~Trees},
+% {Gradient~Boosting},
+% {Gaussian~Naive~Bayes},
+% {K-Nearest~Neighbor},
+% {Linear~Discriminant~Analysis},
+% {MultiLayer~Perceptron},
+% {Quadratic~Discriminant~Analysis},
+% {Random~Forest},
+% {Stochastic~Gradient~Descent},
+% {SVM~Linear~Kernel},
+% {SVM~Polynomial~Kernel},
+% {SVMLinear},
+% {SVM~RBF~Kernel},
+{AB},
+{DT},
+{ET},
+{GB},
+{GNB},
+{KNN},
+{LDA},
+{MLP},
+{QDA},
+{RF},
+{SGD},
+{SVM~(Lin)},
+{SVM~(Poly3)},
+{SVMLinear},
+{SVM~(RBF)},
+},
+ymin=0,
+ymax=1.1,
+ytick={0,0.2,0.4,0.6,0.8,1.0},
+yticklabels={0,0.2,0.4,0.6,0.8,1.0},
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+ylabel={\footnotesize Training Recall},
+ylabel shift={0mm},
+]
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=8pt,
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/classifiers/classifier_recall.txt};
+
+
+\end{groupplot}
+
+\end{tikzpicture}

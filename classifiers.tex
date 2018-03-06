@@ -1,1 +1,42 @@
 \chapter{Classifiers}
+
+
+
+
+\input{classifiers-motivation}
+\input{classifiers-framework}
+\input{classifiers-usage}
+\input{classifiers-evaluation}
+
+\section{Related Work}
+
+\TODO{Find appropriate place for this.}
+
+Power and energy in HPC systems is a growing concern, though prior work in the area has often not allowed trading performance for power or energy savings.
+For example, Adagio uses DVFS to save energy with less than 1\% increase in runtime \cite{RountreeAdagio}.
+Other work depends on accurate prediction of a code's critical path to reduce power where it will not slow down an application \cite{Jitter,Marathe2015}.
+Patki \etal propose to better utilize available power with hardware over-provisioning to increase total system throughput \cite{PatkiRMAP}.
+Sarood \etal have shown similar results: hardware over-provisioning increases performance given a power cap \cite{Sarood2013}.
+Hardware over-provisioning acknowledges that compute resources are no longer the primary factor limiting cluster size---power is, allowing us to more aggressively trade performance and power/energy consumption.
+
+Other works demonstrate that low-level hardware performance counters can drive solutions for modeling and improving power/energy consumption \cite{WuHPCComputer,Chetsa,Libutti2014,Sasaki}.
+Using Dynamic Concurrency Throttling and DVFS to reduce energy consumption without performance loss, Curtis-Maury \etal use hardware events to create an energy-aware logistic regression model for predicting performance and power \cite{Curtis-Maury2008}.
+
+As the number of system settings increases and their interaction becomes more complicated, several approaches have turned to machine learning to manage them.
+Paragon \cite{Paragon} and Quasar \cite{quasar} guarantee quality-of-service constraints in heterogeneous data centers using a scheduler based on the learning system that won the Netflix prize \cite{NetflixPrize}.
+LEO uses a hierarchical Bayesian model to minimize energy for different system utilization requirements \cite{LEO}.
+These approaches all estimate the performance and power of every possible system configuration, then search those estimates to find the best configuration that meets their operating constraints.
+The need to estimate every configuration's behavior is expensive, requiring half a second \cite{LEO} to several seconds \cite{Paragon} of overhead.
+In contrast, the approach in this paper simply returns the best system settings without predicting their actual energy efficiency, an approach that requires orders of magnitude less overhead (see \tblref{classifiers-overhead} in \secref{classifiers-eval-overhead}).
+Ferroni \etal use classification based on hardware events to select the best power model for an application from a predetermined set, and then assign resources to that application in a multi-tenant virtualized infrastructure \cite{FerroniTACO}.
+This approach and the proposed approach are complementary, in that Ferroni \etal assign resources at the node-level, while the proposed approach can fine-tune resource usage within a node.
+
+Our proposed approach is most closely related to other node-level approaches for managing performance and energy.
+PUPiL maximizes node performance given a power cap by adjusting system settings to the particular needs of an application \cite{pupil}.
+Chasapis \etal maximize performance for power-capped NUMA nodes by recognizing the effect that manufacturing variability can have on individual core performance \cite{Chasapis2016}.
+Both of these approaches maximize performance for a given power constraint.
+Neither, however, is capable of minimizing energy, which requires changing both power and performance as in our proposed approach.
+ParallelismDial is a node-level approach for managing application-level parallelism to increase energy efficiency \cite{Sridharan2013}.
+ParallelismDial has similar goals to our proposed approach, but they are complementary.
+It works at the application level, while our approach operates at the system level.
+In future work, it would likely be beneficial tocombine the two to further reduce overhead and improve energy savings.

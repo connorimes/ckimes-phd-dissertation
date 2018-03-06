@@ -1,0 +1,101 @@
+\section{Classifying System Settings}
+\label{sec:classifiers-framework}
+
+We propose to predict energy-efficient settings at runtime, without the overhead of estimating the behavior of all possible system settings before producing a result.
+As with many prior works in managing power/energy in HPC systems, we use hardware performance counters to measure application and system behavior.
+
+\begin{figure}[t]
+  \begin{centering}
+    \input{img/classifiers/scheme-ee.tex}
+    \caption{Design for using machine learning classifiers to predict energy-efficient system settings based on performance counter behavior.}
+    \label{fig:classifier-runtime}
+  \end{centering}
+\vskip -1.0em
+\end{figure}
+
+\figref{classifier-runtime} demonstrates our proposed approach.
+While an application runs on the compute node, hardware performance counters are polled in the background at regular intervals.
+For our experiments, we use the PCM tool to collect performance counter data \cite{PCMGit}.
+The data is scaled, then processed using Principal Component Analysis (PCA) to identify which fields correlate well with energy efficiency.
+We also use feature selection to limit the number of hardware counters used by the classifier to reduce runtime overhead (evaluated in \secref{eval-clf-settings}).
+The classifier predicts the most energy-efficient settings to use, which are then actuated on the system.
+The process then repeats at the next interval.
+
+
+\subsection{Training Data}
+
+% \TODO{Figure: Training approach as a pipeline diagram?}
+
+A classifier must be trained before it can be used.
+To collect training data, we characterize the behavior of various benchmark applications on the target platform by running them in all possible settings while collecting hardware performance counter results.
+In other words, if there are $N$ different allowable settings, each application is executed $N$ times, or once in each setting.
+If $M$ applications are used in training, then there are a total of $N \times M$ data points in the training set.
+
+Characterization can be time-consuming, but only needs to be done once for a platform and can be completed in a reasonable period of time by keeping application execution times short.
+Choosing applications that are representative of those that will be used on the system improves the likelihood that the classifier can accurately predict settings during runtime.
+Additionally, training applications should be chosen that exercise the system hardware components in different patterns to cover a wide range of possible use cases.
+% As with most statistical techniques, more data typically leads to better results.
+
+Application energy efficiency (EE) is defined as the amount of work completed per unit of energy (J) used.
+Low-level hardware performance counters do not have a metric for quantifying true application progress (work completed), but the instructions retired by the system (INST) is a suitable proxy.
+Energy efficiency is then quantified as:
+\begin{eqnarray}
+EE = \frac{INST}{J}
+\label{eqn:ee}
+\end{eqnarray}
+Each application has a single most energy-efficient setting, so the $N$ executions for the $M$ training set applications are labeled with that setting:
+\begin{eqnarray}
+% Label = \argmax_{i \in \{1, \ldots, N\}}EE_i
+Label[m][n] = \argmax_{i \in N}EE_i \,\,\,\,\,\,\forall m \in M,\,\,\forall n \in N
+\label{eqn:label}
+\end{eqnarray}
+% A label can take any form, \eg a setting index or string name, so long as the actuator knows how to interpret it.
+The total instruction count is not fixed for an application execution---the count typically increases with the application execution time, \eg due to background processes like PCM or kernel tasks.
+As such, it is important to note that labeling the most energy-efficient configuration using \eqnref{label} is different than using the minimum-energy execution from the characterization.
+There are two reasons for using instruction count in computing energy efficiency.
+First, energy efficiency can be quantified at any point during an execution, making it a useful metric for runtime behavior analysis.
+Second and more importantly, \eqnref{ee} is a function of events happening \emph{at the time}.
+Total energy requires knowing all events that \emph{will} happen during the application execution, introducing the possibility that the classifiers might be learning something about application input rather than the way hardware events correspond to energy consumption.
+Accounting for instructions helps to avoid this pitfall.
+
+
+\subsection{Performance Counters}
+\label{sec:perf-counters}
+
+Performance counter metrics are available at different levels of granularity---system, socket, and core.
+For simplicity, we limit ourselves to system-wide data.
+\tblref{pcm} lists the performance counters that we process for our experiments \cite{PCMFields}.
+
+\begin{table}[t]
+\caption{Overview of system-level performance counters.}
+\label{tbl:pcm}
+\small
+\centering
+\begin{tabular}{c|c}
+  \textbf{Performance Counter} & \textbf{Description} \\
+  \hline
+  EXEC & Instructions per nominal CPU cycle \\
+  IPC & Instructions per cycle \\
+  FREQ & Frequency relative to nominal CPU frequency \\
+  AFREQ & FREQ, excluding the time when the CPU is sleeping \\
+  L3MISS & L3 cache line misses \\
+  L2MISS & L2 cache line misses \\
+  L3HIT & L3 Cache hit ratio \\
+  L2HIT & L2 Cache hit ratio \\
+  L3MPI & L3 Cache misses per instruction \\
+  L2MPI & L2 Cache misses per instruction \\
+  READ & Memory read traffic \\
+  WRITE & Memory write traffic \\
+  INST & Number of instructions retired \\
+  Proc Energy & Energy consumed by the processor \\
+  DRAM Energy & Energy consumed by the DRAM \\
+\end{tabular}
+% \vskip -.7em
+\end{table}
+
+Performance counters are also translated into rates (as needed), which is necessary in order to vary the sampling interval without scaling values (evaluated in \secref{eval-clf-settings}).
+Because we use PCM to collect performance counter metrics, we read more hardware counters than we process (\tblref{pcm}).
+In practice, a fielded solution would reduce overhead by only reading and processing counters that are used.
+Most prior works aggressively limit the hardware counters they access, both to reduce sampling overhead and to reduce computation in their models \cite{Alvarado,Libutti2014,Curtis-Maury2008}.
+Additionally, using INST as a measure of application progress to compute energy efficiency is an imperfect solution.
+However, prior works have used it successfully and some have even attempted to measure only those instructions considered useful in measuring application progress, \eg ignoring spinlocks or parallelization/synchronization instructions \cite{Paragon}.

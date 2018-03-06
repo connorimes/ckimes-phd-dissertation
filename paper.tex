@@ -1,49 +1,49 @@
 \documentclass{ucetd}
-\usepackage{subfigure,epsfig,amsfonts}
-\usepackage{amsthm}
+
+% \usepackage{subfigure,epsfig,amsfonts}
+% \usepackage{amsthm}
 \usepackage{natbib}
 \bibliographystyle{plain}
 
-\usepackage[normalem]{ulem}
-\usepackage{float}
+% \usepackage[normalem]{ulem}
+% \usepackage{float}
 \usepackage{url}
-\usepackage{makeidx}
-\usepackage{graphicx}
-\usepackage{graphics}
-\usepackage{multicol}
-\usepackage{xspace}
-\usepackage{chngpage}
+% \usepackage{makeidx}
+% \usepackage{graphicx}
+% \usepackage{graphics}
+% \usepackage{multicol}
+% \usepackage{xspace}
+% \usepackage{chngpage}
 %\usepackage{narrow}
 %\usepackage{fullpage}
 %\usepackage{subfigure}
 \usepackage{subfig}
-\usepackage{multirow}
-\usepackage{rotating}
+% \usepackage{multirow}
+% \usepackage{rotating}
 \usepackage{color}
 %\usepackage{algorithmic2e}
-\usepackage{algpseudocode}
-\usepackage{algorithm}
-\usepackage{savesym}
-\usepackage{amsmath}
-\usepackage{amssymb,latexsym}
-\everymath{\displaystyle}
-\savesymbol{iint} 
-\usepackage{txfonts} 
-\restoresymbol{TXF}{iint}
+% \usepackage{algpseudocode}
+% \usepackage{algorithm}
+% \usepackage{savesym}
+% \usepackage{amsmath}
+% \usepackage{amssymb,latexsym}
+% \everymath{\displaystyle}
+% \savesymbol{iint} 
+% \usepackage{txfonts} 
+% \restoresymbol{TXF}{iint}
 %\usepackage{mathptmx} % amsmath makes the paper longer
-\usepackage{mathrsfs}
-\usepackage{leading}
+% \usepackage{mathrsfs}
 %\usepackage{algorithmic}
 %\usepackage{algorithm}
 %\usepackage{fullpage}
 %\usepackage[font={small,bf},nooneline]{caption}
-\usepackage{hyphenat}
-\usepackage{leading}
-\let\labelindent\relax
+% \usepackage{hyphenat}
+% \usepackage{leading}
+% \let\labelindent\relax
 \usepackage{enumitem}
 %\usepackage[natbib=true,backend=bibtex,firstinits=true,style=numeric-comp,sorting=nyt,defernumbers,maxnames=10,maxcitenames=2,doi=false,isbn=false,url=false]{biblatex}
-\usepackage{balance}
-\usepackage{pbox}
+% \usepackage{balance}
+% \usepackage{pbox}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -134,10 +134,22 @@ tick label style={font=\footnotesize},
 \newcommand{\eqnref}[1]{Eqn.~\ref{eqn:#1}}
 \newcommand{\eqnsref}[2]{Eqns.~\ref{eqn:#1} and~\ref{eqn:#2}}
 \newcommand{\eqnrref}[2]{Eqns.~\ref{eqn:#1}--\ref{eqn:#2}}
+\newcommand{\lstref}[1]{Listing~\ref{lst:#1}}
 \newcommand{\insref}[1]{Instruction~\ref{ins:#1}}
 \newcommand{\tblref}[1]{Table~\ref{tbl:#1}}
 \newcommand{\appref}[1]{Appendix~\ref{app:#1}}
 \newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
+
+\newcommand{\argmin}{\arg\!\min}
+\newcommand{\argmax}{\arg\!\max}
+\newcommand{\minimize}{minimize}
+\newcommand{\maximize}{maximize}
+\newcommand{\optimize}{optimize}
+\newcommand{\st}{s.t.}
+
+\newcommand{\app}[1]{\mbox{\texttt{#1}}}
+\newcommand{\function}[1]{\mbox{\texttt{#1}}}
+\newcommand{\variable}[1]{\mbox{\texttt{#1}}}
 
 % Custom hyphenation rules
 \hyphenation{Ang-strom}
@@ -152,8 +164,8 @@ tick label style={font=\footnotesize},
 \date{June 2018}
 
 %% Use these commands to set a dedication and epigraph text
-\dedication{Dedication Text}
-\epigraph{Epigraph Text}
+\dedication{\TODO{Dedication Text}}
+\epigraph{\TODO{Epigraph Text}}
 
 
 \begin{document}
@@ -175,12 +187,14 @@ tick label style={font=\footnotesize},
 
 \acknowledgments
 % Enter Acknowledgements here
-\input{acknowledgments}
+% \input{acknowledgments}
+\TODO{Acknowledgments}
 
 \input{abstract}
 \mainmatter
 \input{intro}
-\input{controllers}
+\input{poet}
+\input{copper}
 \input{classifiers}
 \input{conclusion}
 

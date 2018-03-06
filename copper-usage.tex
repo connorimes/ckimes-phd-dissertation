@@ -1,0 +1,168 @@
+\section{Experimental Setup}
+\label{sec:copper-usage}
+
+This section details the platform and applications used to evaluate CoPPer.
+We then quantify application performance variability, which directly impacts an application's ability to be controlled.
+Finally, we describe the control approaches CoPPer is evaluated against.
+
+\subsection{Testing Platform}
+
+We evaluate CoPPer using a server-class system with dual Xeon E5-2690 processors running Ubuntu 14.04 LTS with Linux kernel 3.13.0.
+Each processor socket has its own memory controller and supports 8 physical cores and 8 Hyperthreads, for a total of 32 virtual cores in the system.
+The processors support 15 DVFS settings, 1.2--2.9 \GHz, plus TurboBoost up to 3.3 \GHz.
+We bind applications to all 32 virtual cores and interleave with both memory controllers using \mbox{\texttt{numactl}}.
+To record runtime power behavior, we read energy from each socket's Model-Specific Register and sum the two values \cite{SandyBridge,energymon}.
+Energy measurements are only used to evaluate CoPPer, they are \emph{not} required in practice.
+
+RAPL supports a variety of zones, otherwise known as power planes, for controlling the power limits on different hardware components.
+The Core power plane controls the power cap for all cores in a socket while the Uncore power plane, typically only available on client hardware, controls the power cap for on-board graphics hardware.
+The DRAM power plane, only available on server-class hardware,\footnote{We have also seen the DRAM zone on client hardware, but the RAPL documentation does not back up this observation.} controls the power for main memory.
+The Package power plane encompasses the Core the Uncore power planes, the last-level cache, and memory controllers.
+Intel Skylake processors support the PSys (or Platform) power plane for managing the entire system-on-chip~\cite{skylake}.
+The Package and PSys zones both support \emph{long\_term} and \emph{short\_term} power constraints; other zones only support a single constraint.
+See the RAPL documentation for a more complete description.
+
+For our experiments, we enable TurboBoost and set power caps for the RAPL \emph{short\_term} constraint at the \emph{Package} level.
+We keep the system's default time window of $7812.5$\us. %7812.5\us
+On our evaluation system, RAPL specifies a minimum of 51 W per socket, although we found that 25 W per socket is a more reasonable lower bound.
+RAPL specifies a maximum of 215 W per socket, and although this is far more than a socket ever actually seems to use, it is still an acceptable maximum value since CoPPer will not allocate more power than is necessary.
+Therefore, we specify a 50 W lower bound and a 430 W upper bound to be split evenly between the sockets, \eg a system power cap of 200 W sets a 100 W limit on each socket.
+A more complex power partitioning scheme could conceivably be applied to systems with heterogeneous architectures or otherwise unbalanced behavior between power capped components, but that is beyond the scope of this work.
+
+To apply RAPL power caps, we provide an easy-to-use tool called \app{RAPLCap}, but we stress again that power capping implementations are independent of CoPPer.
+For example, the \function{apply\_powercap} function used in \lstref{example-copper} might be:
+\lstset{emph={%  
+    raplcap_get_num_sockets, raplcap_set_limits%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Applying a power cap with RAPLCap},%
+  morekeywords={uint32_t, raplcap, raplcap_limit},%
+  label={lst:example-powercap}]%
+
+raplcap rc;
+
+void apply_powercap(double powercap) {
+  uint32_t n = raplcap_get_num_sockets(&rc);
+  raplcap_limit rl = {
+    // time window = 0 keeps current time window
+    .seconds = 0.0,
+    // share powercap evenly across sockets
+    .watts = powercap / (double) n
+  };
+  for (uint32_t i = 0; i < n; i++) {
+    raplcap_set_limits(i, &rc, RAPLCAP_ZONE_PACKAGE, NULL, &rl);
+  }
+}
+\end{lstlisting}
+% We present this approach rather than just giving CoPPer a power range of 30 W - 60 W and applying its output directly to each socket with the expectation that others may wish to partition the power cap differently.
+The RAPL interface sets a limit on average power consumption over a time window, with hardware controlling DVFS and power allocation within that window.
+
+
+\subsection{Applications and Inputs}
+\label{sec:copper-inputs}
+
+Our experiments use applications from the PARSEC benchmark suite \cite{PARSEC}, MineBench \cite{minebench}, STREAM \cite{stream}, and SWISH++ \cite{swish}.
+We instrument the applications with a modified Heartbeats interface to measure performance, as real applications would \cite{icac2010heartbeats}.
+PARSEC provides a wide variety of parallel applications that exhibit different ranges of performance and power behavior.
+MineBench provides a representative set of data mining applications, some of which support parallel execution.
+STREAM is a synthetic benchmark that stresses main memory and represents memory-bound applications.
+SWISH++ is a file indexing and search engine.
+All inputs are delivered with or generated directly from the benchmark sources, with the exception of \app{dedup} which uses a publicly available disc image, and \app{raytrace} and \app{x264} which are from standard test sequences.
+
+Applications contain top-level loops, where each loop iteration completes a \emph{job}.
+For very high performance applications, we batch a fixed number of iterations into a single job.
+As is common in feedback control systems, CoPPer executes at fixed job intervals called \emph{window periods}.
+For example, CoPPer will compute a new power cap every 50 video frames in \app{x264}.
+We select window periods that are sufficiently long to prevent changing power caps too frequently, but small enough to allow CoPPer to adapt behavior in reasonably responsive times intervals.
+\tblref{inputs} presents our application configurations.
+
+
+\begin{table}[t]
+\scriptsize
+\centering
+\caption{Application Inputs and Configurations.}
+\begin{tabular}{cccc}
+  \textbf{Application} & \textbf{Input} & \textbf{Jobs} & \textbf{Window Size} \\
+  \hline
+  \hline
+  blackscholes    & 10 million options             & 400      & 20 \\
+  bodytrack       & sequenceB                      & 261      & 20 \\
+  canneal         & 2500000.nets                   & 384      & 50 \\
+  dedup           & FC-6-x86\_64-disc1.iso         & 421      & 50 \\
+  facesim         & Storytelling                   & 100      & 20 \\
+  ferret          & corel:lsh                      & 2,000    & 50 \\
+  fluidanimate    & in\_500K.fluid out.fluid       & 160      & 20 \\
+  freqmine        & webdocs\_250k.dat              & 140      & 40 \\
+  raytrace        & thai\_statue.obj               & 200      & 20 \\
+  streamcluster   & 2000000 (points)               & 200      & 20 \\
+  swaptions       & self-generated                 & 1,000    & 50 \\
+  x264            & rush\_hour                     & 500      & 50 \\
+  vips            & orion\_18000x18000.v           & 795      & 50 \\
+  % \hline
+  % jacobi          & 8000x8000 grid                 & 200      & 20 \\
+  % \hline
+  STREAM          & self-generated                 & 1,000    & 50 \\
+  % \hline
+  swish++         & swish++-large-126M.index       & 2,900    & 50 \\
+  % \hline
+  HOP             & particles\_0\_64               & 400      & 50 \\
+  KMeans          & edge                           & 200      & 20 \\
+  KMeans-Fuzzy    & edge                           & 200      & 20 \\
+  ScalParC        & F26-A32-D250K.tab              & 200      & 20 \\
+  SVM-RFE         & outData.txt                    & 400      & 50 \\
+  \hline
+  \hline
+\end{tabular}
+\label{tbl:inputs}
+\end{table}
+
+\begin{figure}[tb]
+  \input{img/copper/variability.tex}
+  \caption{Application job performance variability.}
+  \label{fig:copper-variation}
+\end{figure}
+
+Applications exhibit variability in their performance behavior, with some behaving more predictably than others.
+\figref{copper-variation} demonstrates the behavior of the applications used in this paper when running in an uncontrolled setting (default system power caps).
+Naturally, better predictability typically results in lower error in meeting performance targets, as will be shown in \secref{copper-eval-perf}.
+
+If a window period is too short, the overhead of changing system settings combined with signal noise resulting from application variability prevents performance controllers from converging.
+Both actuation overhead and performance predictability can be improved by increasing the size of window periods.
+However, longer window periods mean that it takes controllers more time to converge on a target and reduces their responsiveness to changes in application or system behavior.
+In practice, choosing a window period is dependent on the both the application and system properties, as well as the deployment context.
+
+We set a lower bound of 20 jobs per window period for the benefit of the sophisticated DVFS-only controller we evaluate against (discussed shortly).
+It divides the discrete number of jobs in a window period between two DVFS frequencies, so that the average window performance precisely meets the target.
+Thus a minimum of 20 jobs ensures less than 5\% performance error in its scheduling.
+CoPPer suffers no such scheduling limitation, but we make the accommodation for the DVFS controller anyway in an effort to provide the most challenging comparison possible.
+In our evaluation, we are also sometimes limited by the size of the test inputs, \eg for \app{facesim}.
+As a result, an execution might contain only a few window periods during which the controllers can possibly be converged since they must have an initial observation window period followed by an initial period of adjustment.
+
+
+\subsection{Execution and Analysis}
+\label{sec:copper-analysis}
+
+Prior to performing the evaluation, we first characterize the behavior of all applications by running them without any control at each of the evaluation system's DVFS frequencies and measuring their performance and power behavior.
+% We also characterize the applications by setting power caps at 10 Watt intervals between 50 and 300 Watts.
+From these characterizations, which are \emph{only required for our analysis and not in practice}, we derive an oracle with perfect foreknowledge of job behavior and no computation overhead.
+For each performance target used in the evaluation, the oracle produces a DVFS schedule that never misses a performance goal.
+Until a job is complete, it runs at the highest-performance frequency for the application (which is not always the highest frequency or the TurboBoost setting).
+Once a job completes, the oracle then sets the most energy-efficient frequency and aggressively places the processor cores in a low-power sleep state, with no delay or transition overhead.
+The oracle is therefore an ideal \emph{performance} DVFS governor and a good baseline for comparison---modern Linux systems provide a real performance governor, which is not as efficient as our oracle.
+With the exception of unachievable performance targets, we compare the energy consumption of all the executions in the evaluation against this oracle to determine their relative energy efficiency.
+
+The different analyses compare CoPPer with various \emph{gain limits} against a simple linear DVFS controller (based on modification of an existing controller for meeting power requirements \cite{lefurgy2008power}) and a sophisticated DVFS controller that meets soft performance constraints and schedules for optimal energy consumption~\cite{POET}.
+The simple linear DVFS controller estimates the ratio of control change (a primitive application-specific base speed estimate) in the first iteration, whereas a textbook controller requires this value at initialization and is rarely as good as our runtime estimate.
+It then uses an $O(log(n))$ algorithm to map speedup values to the lowest of $n$ DVFS frequencies that meets the performance target, which is also an improvement over textbook approaches in that limiting the controller to discrete DVFS settings prevents oscillations.
+
+The sophisticated DVFS controller requires a system model that maps DVFS frequencies to speedup and powerup values.
+It uses this model to divide window periods between two DVFS settings to meet a performance target precisely, where the schedule is computed using an $O(n^2)$ algorithm to find the best energy consumption subject to the performance constraint.
+This approach results in low error and often higher energy efficiency than the simple approach, as \secref{copper-eval-perf} will show.
+We also use a much more efficient DVFS actuation function than the sophisticated DVFS controller comes with, reducing its actuation overhead by two orders of magnitude.
+
+We provide the DVFS controllers with linear models (\eg a $2\times$ change in frequency results in a $2\times$ change in performance and power), which works quite well on our evaluation system.
+It should be noted, however, that poor models can cause slow, oscillating, non-convergent, or otherwise unpredictable behavior in model-driven controllers.
+In contrast to the DVFS controllers, CoPPer does not require a model, only the minimum and maximum power values, and therefore can run in constant $O(1)$ time.
+% Both CoPPer and the DVFS controller are configured with the exact same performance/power model, derived from the DVFS characterization of \app{vips} as described in \secref{copper-framework}.
+% Applications always start with all resources allocated, \ie the TurboBoost frequency when evaluating DVFS or the 240 W max power (the upper bound) when using CoPPer.

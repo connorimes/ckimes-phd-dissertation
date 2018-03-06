@@ -1,0 +1,172 @@
+\section{A General Power Capping Design}
+\label{sec:copper-framework}
+
+\begin{figure}[t]
+  \centering
+  \input{img/copper/scheme.tex}
+  \caption{CoPPer's feedback control design.}
+  \label{fig:copper-runtime}
+\end{figure}
+
+CoPPer's goal is to provide soft performance guarantees, with the competing goal of keeping the power as low as possible.
+To achieve the best energy efficiency, a power capping framework for meeting performance targets must not allocate more power than is actually needed by an application.
+CoPPer uses an adaptive control-theoretic approach to meet soft real-time performance constraints, and employs a \emph{gain limit} to proactively reduce power consumption when it determines that power is over-allocated.
+For maximum portability, CoPPer is independent of any particular system, application, and power capping implementation.
+
+
+\subsection{Adaptive Controller Formulation}
+
+\figref{copper-runtime} presents CoPPer's feedback control design.
+CoPPer requires three pieces of information at runtime: (1) the soft \textbf{performance goal}, (2) \textbf{performance feedback}, and (3) the \textbf{minimum and maximum power} that the system allows.
+A user provides CoPPer with the performance goal, $P_{ref}$.
+At runtime, the application measures its own performance, $p_m(t)$, which it provides to CoPPer.
+The minimum and maximum power caps, $U_{min}$ and $U_{max}$, are system properties.
+
+The \textbf{controller} first computes the \textbf{performance error}, $e(t)$, between the desired and measured performance:
+\begin{eqnarray}
+  e(t) = P_{ref} - p_m(t)
+  \label{eqn:copper-error}
+\end{eqnarray}
+It then computes a \emph{speedup} value as:
+\begin{eqnarray}
+  s(t) = max\left(1, gain(t) \cdot min\left(s(t-1) + \frac{e(t)}{b(t)}, \frac{U_{max}}{U_{min}}\right)\right)
+  \label{eqn:copper-speedup-control}
+\end{eqnarray}
+where $s(t-1)$ is the speedup signal generated in the previous iteration, $b(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
+The gain is described in more detail shortly (\secref{copper-framework-gain}).
+Other feedback controllers use similar formulations, but without the gain~\cite{POET,Bard}.
+Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $P_{ref}$ is sometimes unachievable.\footnote{In control terminology, this is an \emph{anti-windup} mechanism.}
+Finally, the new \textbf{power cap} to be applied is computed as:
+
+\begin{eqnarray}
+  u(t) = U_{min} \cdot s(t)
+  \label{eqn:new-powercap}
+\end{eqnarray}
+
+In \secref{copper-motivation-power}, \figref{copper-tradeoffs-vips-pwr} shows that, unlike with DVFS frequencies, a scalable compute-bound application's speedup is a non-linear function of the power cap.
+\figref{copper-vips-example} then illustrates how formulating a controller based on a linear model can cause the controller to converge very slowly, or to not converge at all.
+CoPPer overcomes this limitation by treating the application's base speed, $b(t)$, as a time-varying value and estimating it with a Kalman filter.
+In practice, this approach is analogous to estimating a non-linear curve with a series of tangent lines, each with slope $b(t)$.
+Thus, CoPPer's use of the Kalman filter allows it to overcome the problematic non-linear relationship between performance and power caps.
+
+
+\subsection{The Gain Limit}
+\label{sec:copper-framework-gain}
+
+\begin{figure}[t]
+  \centering
+  % \vskip -1.8em
+  \subfloat[DVFS]%
+  {\input{img/copper/tradeoffs-hop-dvfs.tex}%
+  \label{fig:copper-tradeoffs-hop-dvfs}}
+  \subfloat[Power Cap]%
+  {\input{img/copper/tradeoffs-hop-pwr.tex}%
+  \label{fig:copper-tradeoffs-hop-pwr}}
+  \caption{DVFS / Power cap performance impact for \app{HOP}.}
+  \label{fig:copper-tradeoffs-hop}
+\end{figure}
+
+Applications exhibit different performance behaviors when controlling DVFS frequencies or power caps.
+In many cases, allocating more power to an application does not actually increase its performance. % -- a serious problem that existing solutions often fail to account for.
+% For example, \figref{copper-tradeoffs-vips} demonstrates the
+% performance impact of DVFS frequencies and power caps for the \app{vips} application running on the evaluation
+% platform used in this paper.
+With \app{vips} in \figref{copper-tradeoffs-vips}, performance scales (linearly) as higher DVFS frequencies are applied, but eventually a predefined maximum allowable frequency is reached.
+% Many systems try to work around this limitation by exposing a TurboBoost DVFS setting.
+Performance increases (non-linearly) as higher power caps are applied, until a little beyond the system's thermal design power (TDP).
+Unfortunately, TDP is not a reliable indicator of the maximum power cap that can be applied efficiently.
+\figref{copper-tradeoffs-hop} demonstrates the power cap/performance behavior of the \app{HOP} application,
+where performance levels-off well before the system TDP, and begins exhibiting
+performance unpredictability before beginning to achieve some small increases in average performance again once the power cap is \emph{greater than} than the system TDP.
+These behaviors make it difficult for controllers to efficiently meet performance targets.
+CoPPer uses a \emph{gain limit} to avoid over-allocating power when it is not useful, \eg for unachievable performance targets in \app{vips} or moderate targets in \app{HOP}.
+
+The gain limit is used in computing the $gain(t)$ term in \eqnref{copper-speedup-control}.
+This term is initially 1, and will remain so until the controller settles.  Based on the performance history, gain may be reduced to lower the speedup when CoPPer detects that the extra speedup is not beneficial, and therefore is wasting power.
+In general, the convex properties of performance/power tradeoff spaces ensure that reducing the speedup never increases power consumption, and in most cases reduces it.
+
+% There cost reduction consists of two competing components.
+Intuitively, if the performance error value computed in \eqnref{copper-error} is low, then the system has converged to the performance target and the speedup signal should remain where it is.
+However, if error values are high but the \emph{difference} in error values between iterations is low, the controller has settled, but the performance target is not achievable.
+It therefore may be beneficial to reduce the speedup, and thus the power.
+Speedup is reduced by setting gain to:
+\begin{eqnarray}
+  gain(t) = 1 - \alpha_c \cdot e_{ns}(t) \cdot \Delta e_{ns}(t)
+  \label{eqn:cost-pole}
+\end{eqnarray}
+where $\alpha_c$ ($0 \le \alpha_c < 1$) is the \emph{gain limit}, a constant that controls how low the gain can go, and:
+\begin{eqnarray}
+  e_n(t) = \frac{|e(t)|}{P_{ref}}
+  \label{eqn:en} \\
+  \Delta e_n(t) = \left| e_n(t-1) - e_n(t) \right|
+  \label{eqn:den} \\
+  e_{ns}(t) = 1 - \frac{1}{e_{n}(t)+1}
+  \label{eqn:ens} \\
+  \Delta e_{ns}(t) = \frac{1}{\Delta e_{n}(t)+1}
+  \label{eqn:dens}
+\end{eqnarray}
+Since $P_{ref}$ is the performance target, $e_n(t)$ is the absolute normalized performance error.
+$\Delta e_n(t)$ in \eqnref{den} is the absolute change in $e_n(t)$ since the previous iteration.
+\eqnsref{ens}{dens} compute values $e_{ns}(t)$ and $\Delta e_{ns}(t)$, which determine how much impact $e_n(t)$ and $\Delta e_{n}(t)$ have on reducing the speedup.
+Both $e_{ns}(t)$ and $\Delta e_{ns}(t)$ lay in the unit circle.
+As normalized performance error $e_n(t)$ approaches 0, $e_{ns}(t)$ also approaches 0, which reduces the impact of the gain limit in \eqnref{cost-pole}.
+Conversely, if the error is high, $e_{ns}(t)$ approaches 1 and the gain limit will have a greater impact on the change speedup.
+As the change in normalized performance error $\Delta e_{n}(t)$ approaches 0, $\Delta e_{ns}(t)$ approaches 1, thus increasing the gain limit's impact in \eqnref{cost-pole}.
+Conversely, if the change in error is high, $\Delta e_{ns}(t)$ approaches 0 and the gain limit will have less impact on the change in speedup.
+Therefore, \eqnref{cost-pole} reduces the speedup signal by a factor of at most $\alpha_c$, with the greatest change in speedup occurring when the absolute performance error $e_n(t)$ is high and the absolute change in error $e_n(t)$ is low.
+Setting $\alpha_c=0$ disables the gain limit entirely, corresponding to $gain(t) =1 $ in \eqnref{copper-speedup-control}.
+
+Note that in \eqnref{copper-speedup-control}, the upper clamping is performed prior to applying the gain.
+High performance errors force a speedup value too high for the gain to overcome if the speedup is not clamped first.
+In cases of high performance error, the gain limit's effectiveness is also constrained by the accuracy of $U_{max}$ and $U_{min}$.
+If speedup is not clamped at a reasonable upper value, the gain limit must be quite high to overcome the inaccuracy.
+
+Recall that CoPPer holds $gain(t)$ at 1 until the controller converges.
+Until then, the controller is an adaptive deadbeat control system that retains the corresponding control theoretic guarantees \cite{ICSE2014}.
+Specifically, it can converge to the desired performance in as little as one control iteration.
+At that point, CoPPer computes \eqnrref{cost-pole}{dens}, which may change $gain(t)$.
+In control theoretic terms, a non-zero gain is equivalent to adding a zero to the characteristic equation of the closed loop system.
+Given the definition of $gain(t)$, it is equivalent to a zero greater than 1, which moves the controller in the opposite direction from the feedback signal.
+Normally, this would be undesirable behavior, but this is exactly the behavior we want when we are no longer seeing performance improvements by increasing the power cap.
+
+
+\subsection{Using CoPPer}
+\label{sec:copper-implementation}
+
+Application-level feedback provides high-level metrics that are conducive to goal-oriented software and has been shown to provide a more reliable measure of application progress than low-level metrics like performance counters or memory bandwidth \cite{PTRADE}.
+Many applications that are subject to performance constraints already measure performance and integrate with runtime DVFS controllers to meet performance targets.
+A performance target is any positive real value that make sense for the application, and can conceivably be configured from any number of sources, \eg a command line parameter, a configuration file, or dynamically via a software interface.
+At desired time or work intervals called \emph{window periods} (described further in \secref{copper-inputs}), the application measures its performance and calls the controller.
+Developers for this class of applications already perform these tasks, so all that remains is to replace function calls to an existing DVFS controller with those for CoPPer.
+
+CoPPer is designed to be independent of any particular system, application, and power capping implementation.
+It is initialized with a performance target, the minimum and maximum allowed power values, and the starting power cap.\footnote{An accurate starting power cap is optional, but knowing the initial configuration helps the controller to settle as quickly as possible.}
+After each window period, the \function{copper\_adapt} function is called with an identifier and the current application performance.
+This function returns the new power cap, which is then applied to the system.
+For example:
+
+\lstset{emph={%  
+    copper_init, copper_adapt, apply_powercap%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Using CoPPer to compute and apply power caps.},%
+  morekeywords={uint64_t, uint32_t, hbsc_ctx, raplcap, raplcap_limit, copper},%
+  label={lst:example-copper}]%
+
+// initialize CoPPer
+copper cop;
+copper_init(&cop, perf_goal, pwr_min, pwr_max, pwr_start);
+// application main loop
+for (i = 1; i <= NUM_LOOPS; i++) {
+  do_application_work();
+  if (i % window_size == 0) {
+    // end of window period
+    perf = get_window_performance();
+    powercap = copper_adapt(&cop, i, perf);
+    apply_powercap(powercap);
+  }
+}
+\end{lstlisting}
+The underlined functions simply replace the existing DVFS-related ones.
+Furthermore, the \function{apply\_powercap} function is independent of CoPPer---an example of our implementation is provided in the next section.

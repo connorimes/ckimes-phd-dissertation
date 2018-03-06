@@ -1,0 +1,71 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 1,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+% axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0,
+xmax=21,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ytick=\empty,
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20},
+xticklabels={
+{blackscholes},
+{bodytrack},
+{facesim},
+{ferret},
+{fluidanimate},
+{frequmine},
+{raytrace},
+{swaptions},
+{vips},
+{x264},
+{canneal},
+{dedup},
+{streamcluster},
+{STREAM},
+{SWISH++},
+{HOP},
+{KMeans},
+{KMeans-Fuzzy},
+{ScalParC},
+{SVM-RFE},
+},
+ymin=0,
+ymax=1.0,
+ytick={0,0.2,0.4,0.6,0.8,1.0},
+yticklabels={0,0.2,0.4,0.6,0.8,1.0},
+% legend cell align=left, 
+% legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+ylabel shift={0mm},
+ylabel style={align=center},
+]
+\nextgroupplot[ylabel={\footnotesize Coeff. of Variation \\ \scriptsize (Std. Deviation/Mean)},
+ybar=\pgflinewidth,
+bar width=3.5pt,
+% legend entries = {{\footnotesize $\mathsf{Server}$}},
+% legend style={draw=none,legend columns=2,at={(0.5,1.4)},anchor=north},
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/copper/variability.txt};
+\node at (axis cs:6.0,0.9) [rotate=35] {\scriptsize{$2.8$}};
+
+
+\end{groupplot}
+
+\end{tikzpicture}

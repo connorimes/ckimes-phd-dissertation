@@ -1,0 +1,85 @@
+\section{Motivation}
+\label{sec:copper-motivation}
+
+% We review a number of energy-aware schedulers that rely on DVFS.
+% We then discuss the current processor landscape as justification for why DVFS might soon no longer be controllable by software.
+% Finally, we illustrate how the simple linear models that work well for meeting performance requirements by tuning DVFS can produce sub-optimal behavior when directly applied to power capping.
+
+\subsection{DVFS and Scheduling for Energy}
+\label{sec:copper-motivation-dvfs}
+
+Many modern computer systems are underutilized, leading to significant portions of time where application performance requirements can be met with less than the full system capacity \cite{google,meisnerISCA2011}.
+This trend has led to flourishing research in energy-aware scheduling that tailors resource usage to meet the performance requirements while minimizing energy.
+Software DVFS management has been essential in many energy-aware scheduling algorithms \cite{Albers,YDS}.
+Recent survey papers devote entire sections to the various ways DVFS has been used in scheduling systems \cite{ZhuralevSurvey,MittalSurvey}.
+Re-surveying this work is beyond the scope of this paper, but we highlight several examples to show the broad applicability of DVFS.
+
+At the processor level, DVFS has been used to meet performance requirements \cite{Lu2002,Wu2004} and implement power capping \cite{lefurgy2008power}.
+Allowing DVFS to be set separately on different cores provides further benefits \cite{Isci2006,Rangan2009}.
+Within a processor, separating the cache into its own voltage domain and scaling its frequency independent of the processor provides additional energy savings \cite{adaptiveCache}.
+Similarly, managing DRAM DVFS increases energy efficiency \cite{Memscale,Diniz2007}.  
+
+Indeed, with DVFS benefiting so many different components, it is clear that solutions which coordinate DVFS among components provide even better performance and energy benefits \cite{meisnerISCA2011}.
+Examples include systems that coordinate DVFS with core usage \cite{packandcap-old,packandcap-new,TCST}, coordination of processor and DRAM DVFS \cite{CoScale,Chen2011,Felter2005,Li2007}, and DVFS with thread scheduling \cite{Rangan2009,Winter2010}.
+Several other approaches coordinate processor-wide DVFS with adaptations to the memory system and processor pipeline \cite{METE,Bitirgen2008,dubach2010}.
+
+
+\subsection{The Future of Software DVFS}
+There are strong indications that DVFS will not be directly controllable by software in future processors.
+Since SandyBridge, Intel processors take software DVFS settings as suggestions, and hardware has been free to dynamically alter the actual clockspeed and voltage independently from the software-specified setting \cite{lwn602479,KernelPstate}.
+With the Skylake architecture, Intel has been actively campaigning to move DVFS management wholly to hardware and instead have software specify power.
+The hardware is then free to rapidly change DVFS settings to achieve better performance while still respecting those power limits \cite{SpeedShift}.
+For example, if software sets power limits requiring any 50ms time window to average 100W, hardware is free to use turbo mode to speed up the processing of any bursty work within that 50ms, as long as it compensates by running in a low-power state for some of that time.
+
+Of course, even as DVFS shifts to hardware, it will still be software's responsibility to provide its own notion of either ``best'' or ``good enough'' performance, subject to hardware-imposed constraints like thermal design power and energy consumption costs.
+The capability to specify power caps and simultaneously provide some optimization is already provided by interfaces like Intel's RAPL \cite{RAPL}.
+Recent work shows that a combination of RAPL and software resource management can achieve even better performance while guaranteeing power consumption \cite{pupil}.
+What is still needed, however, is the software component that guarantees performance without using DVFS.
+We address this need with CoPPer, which provides soft performance guarantees by manipulating hardware power caps, thus allowing the hardware to perform fine-grained optimizations.
+
+
+\subsection{The Challenges of Actuating Power}
+\label{sec:copper-motivation-power}
+
+DVFS is being replaced with hardware power capping, but meeting performance targets with power caps instead of DVFS settings introduces new challenges.
+\figref{copper-tradeoffs-vips} demonstrates how the compute-bound \app{vips} application's performance is affected by DVFS frequencies (\figref{copper-tradeoffs-vips-dvfs}) compared to processor power caps (\figref{copper-tradeoffs-vips-pwr}) on our evaluation system.
+Three challenges are immediately apparent from the figures.
+First, DVFS produces a linear response in performance, but power capping is \emph{non-linear}.
+Second, power capping has \emph{diminishing returns}: as power increases, the change in performance becomes smaller.
+Third, \emph{the range} of DVFS settings is much smaller than power settings: the ratio of the maximum to minimum DVFS setting is $11/4=2.75$, but power capping has a ratio of over 6 (as can be seen from the x-axes).
+
+\begin{figure}[t]
+  \centering
+  % \vskip -1.8em
+  \subfloat[DVFS]%
+  {\input{img/copper/tradeoffs-vips-dvfs.tex}%
+  \label{fig:copper-tradeoffs-vips-dvfs}}
+  \subfloat[Power Cap]%
+  {\input{img/copper/tradeoffs-vips-pwr.tex}%
+  \label{fig:copper-tradeoffs-vips-pwr}}
+  \caption{DVFS / Power Cap performance impact for \app{vips}.}
+  \label{fig:copper-tradeoffs-vips}
+\end{figure}
+
+The linear relationship between DVFS and performance makes it easy to apply textbook control theoretic techniques to build a performance management system based on DVFS, and many examples exist in the literature \cite{GRAPE,ControlWare,lefurgy2008power,SWiFT,KaramanolisEtAl-2005a,josep-isca2016,ICSE2014}.
+With DVFS, control models assume that---for compute-bound applications---a $2\times$ change in frequency produces a $2\times$ change in performance.
+Applying the same techniques to build a performance management system based on power capping is more complicated.
+The major issue is that controllers based on time-invariant linear models will have varying error dependent on the current power cap.
+The simple solution is to build a linear model that never overestimates the relationship between power and speedup \cite{ICSE2014}.
+The downsides to this approach are: (1) a developer must know the maximum error for any application the system might run and (2) the overestimate slows the control reaction.
+
+\begin{figure}
+  \centering
+  \input{img/copper/VIPS-example.tex}
+  % \vskip -1.8em
+  \caption{DVFS and power capping with linear models.}
+  \label{fig:copper-vips-example}
+\end{figure}
+
+\figref{copper-vips-example} shows the difference between a controller based on a linear DVFS model extracted from \figref{copper-tradeoffs-vips-dvfs} and two (one conservative and one aggressive) based on fitting time-invariant linear models to the power capping data from \figref{copper-tradeoffs-vips-pwr}.
+All approaches start at the maximum DVFS or power setting and must bring performance down to the required level while minimizing energy.
+\figref{copper-vips-example} shows the DVFS controller quickly reaches the desired performance, but the conservative power capping controller is much slower to react.
+The conservative approach never violates the performance requirement, but its slow reaction wastes energy.
+The aggressive approach over-reacts, oscillating around the performance target instead of settling on it.
+These results demonstrate how sensitive the power capping approaches can be to their input models.
+The next section describes an adaptive control design for meeting performance goals with power capping that overcomes the difficulties highlighted by this example without requiring a user-specified model.

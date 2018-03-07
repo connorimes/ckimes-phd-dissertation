@@ -1,2 +1,174 @@
 \section{Using POET}
 \label{sec:poet-usage}
+
+This section details the platforms and applications used to evaluate POET.
+
+
+\subsection{Testing Platforms}
+
+We use two modern embedded devices with different hardware.
+We selected these two platforms because prior work has shown that they expose different timing and energy tradeoffs~\cite{Imes2014}.
+\tblref{poet-systemknobs} shows the hardware details for both, highlighting the configurable resources, the cardinality of the set of alternatives for each, and the maximum speedup achievable by manipulating that resource alone.
+Both platforms run Ubuntu Linux 14.04.
+The Vaio uses kernel 3.13.0, while the ODROID runs kernel 3.4.104.
+In both cases, \mbox{\texttt{cpufrequtils}} controls processor clock speeds.
+A \textbf{configuration} is a unique combination of allowable values for the system resources.
+
+\begin{table}[t]
+\caption{System configurations.}
+\centering
+\begin{tabular}{clcc}
+  & \textbf{Resource} & \textbf{Settings} & \textbf{Max Speedup} \\
+\hline
+\hline
+  \multirow{3}{*}{\begin{turn}{90}\textbf{Vaio}\end{turn}} 
+  & cores        &  2 & 1.81 \\
+  & core speeds  & 11 & 2.72 \\
+  & hyperthreads &  2 & 1.10 \\ 
+\hline
+\hline
+  \multirow{4}{*}{\begin{turn}{90}\textbf{ODROID}\end{turn}} 
+  & big cores          & 4 & 6.10 \\
+  & big core speeds    & 9 & 1.97 \\
+  & LITTLE cores       & 4 & 3.94 \\
+  & LITTLE core speeds & 8 & 2.40 \\
+\hline
+\hline
+\end{tabular}
+\label{tbl:poet-systemknobs}
+\end{table}
+
+While the Vaio claims to support different frequency settings on different virtual cores, our experience leads us to conclude that this is not the case.
+Thus, we allow only configurations where all cores are set to the same frequency.
+
+The ODROID's version of the Exynos5 Octa does not support executing on the big and LITTLE clusters simultaneously, and all cores in a cluster must operate at the same frequency.
+We use a mainline Linux kernel with the default In Kernel Switcher for managing cluster migration.
+%IKS maintains compatibility with existing schedulers by modifying existing DVFS systems, but at a cost of supporting execution on only one cluster at a time. This is achieved on the ODROID by using dummy frequency values for the LITTLE cores so as not to overlap with the frequencies provided by the big cores.
+
+To capture power measurements on the Vaio, we use the Model-Specific Register (MSR) of the Haswell processor~\cite{SandyBridge}.
+On the ODROID, we poll INA-231 power sensors~\cite{ina231} available on the XU+E model to capture power data for the A15 and A7 clusters as well as for the DRAM and for the GPU.
+Basic power figures of the two platforms are shown in~\tblref{poet-power}.
+
+Capturing these metrics naturally requires hardware resources that expose power or energy data to software.
+The modified version of Heartbeats includes energy readers for some common hardware (\eg the MSR) and exposes a simple interface for extending to new hardware.
+Collecting power data on new platforms with different power or energy monitors is easy and does not require any modifications to POET.
+
+\begin{table}[tb]
+% \vskip -1.5em
+\centering
+\caption{System power characteristics.}
+\begin{tabular}{cccc}
+  \textbf{System} & \textbf{Idle Power} & \textbf{Min Power} & \textbf{Max Power} \\
+  \hline
+  \hline
+  Vaio   & 2.50 W & 3.04 W & 8.05 W \\
+  ODROID & 0.12 W & 0.17 W & 8.14 W \\
+  \hline
+  \hline
+\end{tabular}
+\label{tbl:poet-power}
+\end{table}
+
+
+\subsection{Applications}
+
+To represent a wide variety of embedded applications, we use eight different benchmarks, none of which were originally written to provide predictable timing.
+We choose applications that do not enforce any timing guarantees to challenge POET's approach as much as possible.
+
+The first five applications are included in the PARSEC benchmark suite~\cite{parsec}.
+Specifically, we use \app{blackscholes}, \app{bodytrack}, \app{facesim}, \app{ferret}, and \app{x264}.
+Bodytrack and x264 process video input and could be required to match the frame rate of a live feed (\eg from an on-board camera).
+Ferret is a toolkit for content-based similarity search of non-text data and should satisfy a latency requirement on how fast results are returned to users.
+Facesim creates realistic animations of a human face from a model and time sequence of muscle movements, and must maintain a real-time frame rate.
+The sixth and seventh applications are \app{dijkstra} and \app{sha}, from the ParMiBench benchmark suite~\cite{parmibench}.
+Dijkstra\footnote{We use the parallelized multiple queue implementation provided with the ParMiBench benchmark suite.} computes single-source shortest paths in a graph.
+SHA (Secure Hash Algorithm) is used for secure storage and transmission of data and must maintain response time to ensure timely communication.
+The last application is \app{STREAM}~\cite{stream}, a synthetic benchmark for measuring sustainable memory bandwidth, representing a variety of memory-bound applications.
+
+All benchmarks are modified as discussed in~\secref{poet-implementation}, adding Heartbeats and POET calls.
+The code snippet shown in \lstref{poet-example} provides an example of application code, highlighting the POET function calls.
+
+Adding POET to existing applications does not require many modifications to the original code.
+The complete modification of an existing application requires nine function calls plus associated variable declarations, for a total of 14 lines of code.
+The user provides a desired latency target via the Heartbeats API using the \variable{min\_heartrate} and \variable{max\_heartrate} variables, which represent a desired minimum and maximum speed in terms of jobs completed per second.
+POET simply takes the average of these two values, meaning they can be the same.
+Given $I(t)$ jobs in a window and a target latency $\tau$, the desired rates are easily computed as:
+\begin{equation}
+  min\_heartrate = max\_heartrate = \frac{I(t)}{\tau} 
+  \label{eqn:latency-to-performance}
+\end{equation}
+As demonstrated below, Heartbeats initialization also accepts requests for minimum and maximum accuracy and power -- POET does not use these, so they can safely be set to any value.
+When initializing POET, the user should specify the system's configurations, encoded in \variable{control\_states} and \variable{cpu\_states}.
+
+\lstset{emph={%  
+    poet_state, poet_init, poet_apply_control, poet_destroy%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Example of POET application code.},%
+  label={lst:poet-example}]%
+
+// initialization
+heartbeat_t* heart =
+  heartbeat_acc_pow_init(window_size, buffer_depth, "heartbeat.log",
+                         min_heartrate, max_heartrate, min_accuracy, max_accuracy,
+                         1, hb_energy_impl_alloc(), min_power, max_power);
+get_control_states(NULL, &control_states, &nstates);
+get_cpu_states(NULL, &cpu_states, &nstates);
+poet_state* state = poet_init(heart, nstates, control_states, cpu_states,
+                              &apply_cpu_config, &get_current_cpu_state,
+                              buffer_depth, "poet.log");
+// execution of main loop
+while(running) {
+  heartbeat_acc(heart, count++, 1);
+  poet_apply_control(state);
+  doWork();
+}
+// cleanup
+poet_destroy(state);
+free(control_states);
+free(cpu_states);
+heartbeat_finish(heart);
+\end{lstlisting}
+
+
+\subsection{Application Inputs}
+\label{sec:poet-inputs}
+
+
+\tblref{poet-inputs} shows the inputs used for each of the applications.
+All inputs used are packaged with the original benchmarks, with the exception of the x264 input which comes from a set of standard test sequences.
+Recall that these applications were not originally designed to provide predictable timing.
+We quantify this inherent unpredictability by measuring the latency of each job and computing the standard deviation and mean over all jobs in an application.
+\figref{poet-variation} shows the ratio of standard deviation to mean for each application when running without POET.
+The figure shows that our applications have a range of natural behavior from low variance (implying natural predictability, \eg blackscholes) to high variance (meaning that the application naturally has widely distributed latencies, \eg x264).
+The variability in the applications is largely the same across platforms, indicating that it is a fundamental property of the applications and not the devices.
+
+\begin{table}[t]
+\small
+\centering
+\caption{Input and Configuration Details.}
+\begin{tabular}{cccc}
+  \textbf{Application} & \textbf{Input} & \textbf{Jobs} & \textbf{Window Size} \\
+  \hline
+  \hline
+  blackscholes   & 1 million options              & 400 batches   & 20 \\
+  bodytrack      & sequenceB                      & 261 frames    & 20 \\
+  facesim        & Storytelling                   & 100 frames    & 20 \\
+  ferret         & corel:lsh                      & 2,000 queries & 20 \\
+  x264           & ducks\_take\_off               & 500 frames    & 20 \\
+  dijkstra       & input\_small                   & 1,000 paths   & 20 \\
+  sha            & in\_file(1-16)                 & 1,000 hashes  & 50 \\
+  STREAM         & self-generated                 & 1,000 updates & 50 \\
+  \hline
+  \hline
+\end{tabular}
+\label{tbl:poet-inputs}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/variability.tex}
+  \caption{Application Latency Variability.}
+  \label{fig:poet-variation}
+\end{figure}

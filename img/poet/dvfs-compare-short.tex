@@ -1,0 +1,63 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 2,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+% axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0,
+xmax=5,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ylabel style={align=center},
+ytick=\empty,
+ymin=.98,
+ymax=1.2,
+ytick={1,1.05,1.1,1.15,1.2},
+yticklabels={1.0,,1.1,,1.2},
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+]
+\nextgroupplot[ybar=\pgflinewidth,
+ylabel={Vaio\\Energy\\(Normalized)},
+bar width=8pt,
+legend entries = {{DVFS-only},{POET}},
+legend style={draw=none,legend columns=2,at={(0.5,1.4)},anchor=north,font=\footnotesize},
+]
+\addplot table[x index=0,y index=4, col sep=tab] {img/poet/dvfs-compare-short.txt};
+\addplot table[x index=0,y index=5, col sep=tab] {img/poet/dvfs-compare-short.txt};
+
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=8pt,
+ylabel={ODROID\\Energy\\(Normalized)},
+ylabel shift={0mm},
+ymin=.98,
+ymax=5.5,
+ytick={1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+yticklabels={1.0,,2.0,,3.0,,4.0,,5.0,},
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\footnotesize},
+xtick={1,2,3,4},
+xticklabels={
+{25\%},
+{50\%},
+{75\%},
+{95\%}},
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/poet/dvfs-compare-short.txt};
+\addplot table[x index=0,y index=3, col sep=tab] {img/poet/dvfs-compare-short.txt};
+
+\end{groupplot}
+\end{tikzpicture}

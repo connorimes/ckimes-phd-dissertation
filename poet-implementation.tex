@@ -1,0 +1,118 @@
+\section{Implementation}
+\label{sec:poet-implementation}
+
+We describe how the framework in the previous section is realized in a C library.
+We specify the information that must be provided by POET's users, describe the library interface, and then discuss the implementation of the runtime engine.
+
+\subsection{POET's External Inputs}
+
+POET requires three pieces of information from users.
+First, it needs the available system configurations and their associated timing and power characteristics.
+Second, it needs a means to measure timing and power consumption during runtime.
+Third, it requires the application to specify the desired latency target.
+
+The first input is the specification of available system configurations.
+POET separates the system configurations into two data structures.
+The first is system-agnostic and contains a configuration identifier along with \textbf{speedup} and \textbf{powerup} values.
+The second is system-specific and can take any form a developer considers appropriate to define a system configuration.
+To simplify the programmer's job, POET includes a default format for this second structure which contains a configuration identifier, the DVFS frequency to apply, and the number of cores to use.
+Snippets of actual configuration files representing both these data structures are presented in \figref{config-examples}.
+\secref{poet-usage} describes how to characterize a system's timing and power behavior.
+These results can be used to create configurations if they are not already available.
+
+\begin{figure}[t]
+\begin{minipage}[t]{.45\columnwidth}
+\lstset{
+  belowskip=0pt,
+  aboveskip=0pt,
+}
+\begin{lstlisting}[frame=tlr,%
+  %caption={System-agnostic.},%
+  label={lst:control_config_example}]%
+
+#id        speedup         powerup
+0          1               1
+1          1.20            1.09
+2          1.40            1.16
+3          1.60            1.30
+4          2.12            1.35
+5          2.53            1.50
+6          2.88            1.64
+7          3.18            1.69
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{.45\columnwidth}
+\lstset{
+  belowskip=0pt,
+  aboveskip=0pt,
+}
+\begin{lstlisting}[frame=tlr,%
+  %caption={System-specific.},%
+  label={lst:cpu_config_example}]%
+
+#id        frequency        cores
+0          250000           0
+1          300000           0
+2          350000           0
+3          400000           0
+4          250000           1
+5          300000           1
+6          350000           1
+7          250000           2
+\end{lstlisting}
+\end{minipage}
+\vskip -1.5em
+\caption{Example of POET system-agnostic (left) and system-specific (right) configuration files.}
+\label{fig:config-examples}
+\end{figure}
+
+To measure both latency and power, we modify the Heartbeats API \cite{PTRADE} to record power data along with timing statistics.
+We then modify applications to issue heartbeats at appropriate points during processing, typically after the completion of every job.
+The issued heartbeats contain power and timing data that POET queries at runtime.
+
+The third necessary input is a latency target.
+The user provides the target through the Heartbeats API, specifying a minimum and maximum latency goal.
+The timing targets can change during runtime, and POET will take care of the adaptation automatically.
+
+
+\subsection{POET's Interface}
+
+Users interact with only three POET functions.
+\function{poet\_init} initializes POET and returns a \variable{poet\_state} data structure reference.
+\function{poet\_apply\_control} executes the controller, runs \algoref{poet-optimal}, and configures the platform.
+\function{poet\_destroy} cleans up the \variable{poet\_state} data structure.
+
+POET's initialization function takes, as parameters, references to: the heartbeat data structure used to store the timing and power of the application, the system's configurations, and the function that applies the given system configurations.
+It also receives an optional reference to the function that determines the system's current state and a log file name.
+The first system configuration data structure (system-agnostic) is of type \variable{poet\_control\_state\_t}, and the second (system-specific) has type \variable{void}.
+
+The two functions passed by reference are the only ones that need to know the format of the second data structure and are therefore passed the \variable{void} type reference given to \function{poet\_init} as parameters.
+The first of these two functions must have a signature that matches the \variable{poet\_apply\_func} definition and the second must match the \variable{poet\_curr\_state\_func} definition.
+
+The other two API functions, \function{poet\_apply\_control} and \function{poet\_destroy}, take the \variable{poet\_state} reference as their only parameter.
+This variable contains all the control state required to implement the framework described in \secref{poet-framework}.
+
+Auxiliary functions are also provided to load system configurations from files, discover the initial system configuration, and apply system configurations.
+The latter two of these meet the \variable{poet\_curr\_state\_func} and \variable{poet\_apply\_func} definitions, respectively, and can be passed to \function{poet\_init}.
+These auxiliary functions are platform-dependent and thus kept separate to maintain portability, allowing users to easily substitute their own versions.
+They are, however, generic enough that most Linux users do not need to write their own.
+
+
+\subsection{POET's Runtime}
+
+After an application signals its power and latency with a heartbeat, it makes a call to \function{poet\_apply\_control}, which contains POET's core logic.
+Heartbeats are initialized with a {\em window size} value that indicates the number of jobs to complete in a given {\em time interval}.
+The window size is analogous to $I(t)$ from \eqnref{poet-work}, while the time interval is equivalent to $\tau$ from \eqnref{poet-time} and \algoref{poet-optimal}.
+At the completion of a window, the POET runtime calculates the estimated base speed with \eqnref{kalman-filter}, then computes the latency error with \eqnref{poet-error}.
+It subsequently applies the controller of \eqnref{poet-control} to determine the speedup necessary to eliminate the computed error.
+Finally it determines the energy-minimal resource schedule that achieves the necessary speedup using \algoref{poet-optimal} and applies the first configuration in the schedule by executing the provided \variable{poet\_apply\_func} function.
+
+The last step, a call to the \variable{poet\_apply\_func} specified by the user, is a platform-dependent operation.
+For example, the function included with POET for Linux platforms invokes the \mbox{\texttt{taskset}} utility to force the process and all of its threads onto the desired number of cores and uses the \mbox{\texttt{cpufrequtils}} interface to adjust the cores' clock speeds.
+Developers can specify their own function.
+For example, a system may require a different approach to change the number of active cores.
+Also, a system may have additional configurable resources that could be adjusted, like memory and network bandwidth.
+
+The only remaining task is to apply the second configuration in the schedule at the appropriate time during the next window.
+When the computed number of heartbeats to wait passes, the \variable{poet\_apply\_func} function executes again, but no further computation is performed.
+At the completion of the heartbeat window, the control process repeats.

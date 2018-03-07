@@ -1,0 +1,10 @@
+ 
+Number	Benchmark	ODROID-STD/MEAN	VAIO-STD/MEAN	   
+1	blackscholes	0.051322	0.056613	   
+2	bodytrack	0.113786	0.07423	   
+3	facesim	0.104096	0.126609	   
+4	ferret	0.292185	0.341522	   
+5	x264	0.517005	0.536231	   
+6	dijkstra	0.208635	0.141808	   
+7	sha	0.047651	0.057242	   
+8	stream	0.032154	0.10086	 

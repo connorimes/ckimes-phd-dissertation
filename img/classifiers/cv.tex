@@ -1,5 +1,4 @@
 \begin{tikzpicture}
-\begin{centering}
 
 \definecolor{s1}{RGB}{228, 26, 28}
 \definecolor{s2}{RGB}{55, 126, 184}
@@ -50,6 +49,7 @@ legend style={draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,line width=
 \addplot[thick, solid, color=s1] table[x index=0,y index=2,col sep=tab] {img/classifiers/cv/coev_idba.txt};
 \addplot[thick, solid, color=s2] table[x index=0,y index=1,col sep=tab] {img/classifiers/cv/coev_idba.txt};
 
+
 \nextgroupplot[ylabel={Megahit \\ Coeff. of Var.},
 ytick={0,0.5,1.0,1.5,2.0},
 yticklabels={0,0.5,1.0,1.5,2.0},
@@ -66,6 +66,5 @@ xticklabel style={font=\footnotesize},
 \addplot[thick, solid, color=s2] table[x index=0,y index=1,col sep=tab] {img/classifiers/cv/coev_megahit.txt};
 
 \end{groupplot}
-\end{centering}
 
 \end{tikzpicture}

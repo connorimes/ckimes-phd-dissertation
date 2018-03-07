@@ -1,0 +1,74 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 2,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+%axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0,
+xmax=10,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ylabel style={align=center},
+ytick=\empty,
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+]
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=6pt,
+ylabel={Vaio\\Energy},
+ylabel shift={0mm},
+ymin=1.0,
+ymax=1.2,
+ytick={1,1.05,1.1,1.15,1.2},
+yticklabels={1.0,1.05,1.1,1.15,1.2},
+legend entries = {{25\%},{50\%},{75\%},{95\%}},
+legend style={draw=none,legend columns=4,at={(0.5,1.35)},anchor=north,font=\footnotesize},
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/poet/ee-v.txt};
+\addplot table[x index=0,y index=3, col sep=tab] {img/poet/ee-v.txt};
+\addplot table[x index=0,y index=4, col sep=tab] {img/poet/ee-v.txt};
+\addplot table[x index=0,y index=5, col sep=tab] {img/poet/ee-v.txt};
+
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=6pt,
+ylabel shift={0mm},
+ymin=1.0,
+ymax=1.2,
+ytick={1,1.05,1.1,1.15,1.2},
+yticklabels={1,1.05,1.1,1.15,},
+ylabel={ODROID\\Energy},
+ylabel shift={0mm},
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7,8,9,10},
+xticklabels={
+{blackscholes},
+{bodytrack},
+{facesim},
+{ferret},
+{x264},
+{dijkstra},
+{sha},
+{STREAM},
+{\textbf{Average}}},
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/poet/ee-o.txt};
+\addplot table[x index=0,y index=3, col sep=tab] {img/poet/ee-o.txt};
+\addplot table[x index=0,y index=4, col sep=tab] {img/poet/ee-o.txt};
+\addplot table[x index=0,y index=5, col sep=tab] {img/poet/ee-o.txt};
+
+\end{groupplot}
+\end{tikzpicture}

@@ -4,7 +4,7 @@
 We describe how the framework in the previous section is realized in a C library.
 We specify the information that must be provided by POET's users, describe the library interface, and then discuss the implementation of the runtime engine.
 
-\subsection{POET's External Inputs}
+\subsection{External Inputs}
 
 POET requires three pieces of information from users.
 First, it needs the available system configurations and their associated timing and power characteristics.
@@ -21,13 +21,14 @@ Snippets of actual configuration files representing both these data structures a
 These results can be used to create configurations if they are not already available.
 
 \begin{figure}[t]
-\begin{minipage}[t]{.45\columnwidth}
+\centering
+\begin{minipage}{.45\columnwidth}
 \lstset{
   belowskip=0pt,
   aboveskip=0pt,
 }
 \begin{lstlisting}[frame=tlr,%
-  %caption={System-agnostic.},%
+  caption={System-agnostic.},%
   label={lst:control_config_example}]%
 
 #id        speedup         powerup
@@ -40,14 +41,16 @@ These results can be used to create configurations if they are not already avail
 6          2.88            1.64
 7          3.18            1.69
 \end{lstlisting}
-\end{minipage}\hfill
-\begin{minipage}[t]{.45\columnwidth}
+\end{minipage}
+% \hfill
+\hspace*{0.4cm}
+\begin{minipage}{.45\columnwidth}
 \lstset{
   belowskip=0pt,
   aboveskip=0pt,
 }
 \begin{lstlisting}[frame=tlr,%
-  %caption={System-specific.},%
+  caption={System-specific.},%
   label={lst:cpu_config_example}]%
 
 #id        frequency        cores
@@ -61,8 +64,8 @@ These results can be used to create configurations if they are not already avail
 7          250000           2
 \end{lstlisting}
 \end{minipage}
-\vskip -1.5em
-\caption{Example of POET system-agnostic (left) and system-specific (right) configuration files.}
+% \vskip -1.5em
+\caption{Example of POET configuration files.}
 \label{fig:config-examples}
 \end{figure}
 
@@ -75,7 +78,7 @@ The user provides the target through the Heartbeats API, specifying a minimum an
 The timing targets can change during runtime, and POET will take care of the adaptation automatically.
 
 
-\subsection{POET's Interface}
+\subsection{Software Interface}
 
 Users interact with only three POET functions.
 \function{poet\_init} initializes POET and returns a \variable{poet\_state} data structure reference.
@@ -98,7 +101,7 @@ These auxiliary functions are platform-dependent and thus kept separate to maint
 They are, however, generic enough that most Linux users do not need to write their own.
 
 
-\subsection{POET's Runtime}
+\subsection{Runtime}
 
 After an application signals its power and latency with a heartbeat, it makes a call to \function{poet\_apply\_control}, which contains POET's core logic.
 Heartbeats are initialized with a {\em window size} value that indicates the number of jobs to complete in a given {\em time interval}.

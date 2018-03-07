@@ -101,8 +101,8 @@ The energy savings are especially high on the ODROID as POET is able to take adv
 This data clearly demonstrates that systems that are provisioned for a rarely seen worst case latency can greatly benefit from POET's generalized approach.
 This is also further confirmation of prior studies showing that DVFS by itself is not optimal \cite{Hoffmann2012,MeisnerISCA2011}.
 
-The exact energy savings compared to DVFS vary considerably for each application and latency target.
-Therefore, we include more detailed charts in \appref{poet-dvfs-compare}.
+% The exact energy savings compared to DVFS vary considerably for each application and latency target.
+% Therefore, we include more detailed charts in \appref{poet-dvfs-compare}.
 
 
 \subsection{Responding to Application Phases}
@@ -183,7 +183,7 @@ These results also demonstrate some limitations of the approach.
 POET supports only soft real-time constraints.
 The controller is guaranteed to converge to the desired latency and is provably robust to errors, but latency goals may be violated during the settling time, as seen in \figref{poet-multiapp} when POET adapts to the presence of the new application.
 In addition, highly variable applications can still cause temporary latency violations before the control action settles again, as seen in \figref{poet-phases-x264} when controlling the high-variance x264 application.
-This is further evidence that there is a tension between timeliness and energy reduction \cite{Abeni} -- the tremendous energy savings on the ODROID come at a cost of some latency errors compared to \emph{race to idle}.
+This is further evidence that there is a tension between timeliness and energy reduction \cite{Abeni}---the tremendous energy savings on the ODROID come at a cost of some latency errors compared to \emph{race-to-idle}.
 %While the system is
 %provably robust to errors, more accurate speedup estimates produce
 %better results.

@@ -2,7 +2,7 @@
 \label{sec:classifiers-evaluation}
 
 We now evaluate the effectiveness of using machine learning classifiers to predict energy-efficient system settings during application runtime.
-First, we compare against the naive \emph{race} setting, \ie all sockets allocated with HyperThreads and DVFS set to TurboBoost, and against a DVFS \emph{Oracle}.
+First, we compare against the naive \emph{race-to-idle} heuristic, \ie all sockets allocated with HyperThreads and DVFS set to TurboBoost, and against a DVFS \emph{Oracle}.
 We then quantify how varying sampling/prediction intervals and the number and types of features impacts classifier effectiveness.
 We discuss how application dynamics affect the classifiers and evaluate the overhead of different parts of the classifier runtime.
 Finally, we explore using separate classifiers for taskset and DVFS, then discuss limitations.
@@ -20,11 +20,11 @@ Finally, we explore using separate classifiers for taskset and DVFS, then discus
 \end{figure}
 
 We first demonstrate how effective runtime classification is at reducing energy consumption.
-\figref{compare-apps-pca4} demonstrates results for each application, normalized to the \emph{race} setting (dashed line) for each.
+\figref{compare-apps-pca4} demonstrates results for each application, normalized to the \emph{race-to-idle} setting (dashed line) for each.
 On average across all four applications, energy consumption is reduced by 19.3\%.
 The most extreme results are from the IDBA and Megahit applications.
 For IDBA, each classifier outperforms the \emph{Oracle}---the average energy savings is 28.1\%, and as much as 30.2\% when using the GB classifier.
-Conversely, for Megahit, the classifiers have the highest energy consumption over the \emph{Oracle}, though still always better than \emph{race}.
+Conversely, for Megahit, the classifiers have the highest energy consumption over the \emph{Oracle}, though still always better than \emph{race-to-idle}.
 Megahit saves 11\% energy on average---8.7\% in the worst case with ET, and 15\% at best with MLP.
 The behavior for these applications is discussed further in \secref{eval-dynamics}.
 % We note both here and in the remainder of the evaluation that there is no consistently best classifier across applications.
@@ -39,7 +39,7 @@ HPC applications are designed to parallelize well, meaning this is not the typic
 % python ClassificationPlotUtils.py -s boggle -c boggle/characterizations/HIPMER/0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF_2101000/pcm.csv boggle/classifications/5s/HIPMER_moredata/ET/pcm.csv -i 1 5
   \centering
   % \vskip -0.1em
-  \subfloat[HipMer in naive static \emph{race} setting.]
+  \subfloat[HipMer in naive static \emph{race-to-idle} heuristic.]
   % {\centering \includegraphics[width=\columnwidth]{figs/ts_hipmer_2101000_pca4.pdf}
   {\centering \input{img/classifiers/ts_hipmer_2101000_pca4.tex}
   \label{fig:ts-hipmer-dvfs}
@@ -59,7 +59,7 @@ HPC applications are designed to parallelize well, meaning this is not the typic
 \end{figure}
 
 To demonstrate how energy savings are achieved, \figref{ts-hipmer} shows the runtime, power, energy efficiency, and cumulative energy consumption for executions of the HipMer application (Y values are normalized across both time series for each metric).
-\figref{ts-hipmer-dvfs} runs HipMer in the \emph{race} setting, and although the runtime is short, the high power also results in poor energy consumption.
+\figref{ts-hipmer-dvfs} runs HipMer in the \emph{race-to-idle} heuristic, and although the runtime is short, the high power also results in poor energy consumption.
 In contrast, \figref{ts-hipmer-all-et} demonstrates running with the ET classifier---the execution takes longer, but the significantly lower power results in nearly 20\% less energy consumption in total, despite the increase in runtime.
 Each figure shows clear phases in the execution, indicated by relatively long-term changes in both power and energy efficiency (per \eqnref{ee}, a function of instruction rate and power).
 Classifiers adapt to changes in feature values like instruction rate and power by changing their predictions to run the application more efficiently, thus decreasing total energy consumption.
@@ -83,7 +83,7 @@ The sampling and prediction interval dictates how quickly a classifier can respo
 \figref{interval} shows the normalized energy consumption, averaged across applications, for each classifier at 1, 5, and 10 second intervals.
 The thin dotted line at 0.75 is the average normalized energy consumption for the \emph{Oracle}.
 The 1 second interval is clearly the worst, only outperforming the others for the ET classifier.
-It is closer to the \emph{race} setting than the \emph{Oracle} for GB and SVM, but still better than \emph{race}.
+It is closer to the \emph{race-to-idle} heuristic than the \emph{Oracle} for GB and SVM, but still better than \emph{race-to-idle}.
 Both the 5 and 10 second intervals perform well---although the 10 second interval does better for one particular classifier (KNN), the 5 second interval is similar on average and is more responsive.
 We elect to use the 5 second interval for the remainder of our experiments, as it provides a good tradeoff of energy efficiency and responsiveness to changing application behavior.
 
@@ -155,7 +155,7 @@ The difficulty arises when performance counter values fluctuate rapidly enough t
 % Even so, a very real penalty is also incurred when new settings turn out not to be energy-efficient due to the application rapidly changing its behavior before another prediction is made and actuated.
 In \figref{cv}, we examine \pc{POWER\_DRAM} and \pc{EXEC} performance counter behaviors without any runtime actuation, with all sockets/cores allocated and using the maximum DVFS frequency \emph{without} TurboBoost (to avoid fluctuations incurred when temporarily running in higher DVFS frequencies).
 For the first 10 minutes of each execution, we compute coefficient of variation over 5 second windows to demonstrate the variability that our classifiers see.
-We present results for IDBA, which in most cases outperforms the \emph{Oracle}, and for Megahit, which exhibits rapid fluctuations and consistently performs worse than the \emph{Oracle} (but still better than \emph{race}).
+We present results for IDBA, which in most cases outperforms the \emph{Oracle}, and for Megahit, which exhibits rapid fluctuations and consistently performs worse than the \emph{Oracle} (but still better than \emph{race-to-idle}).
 While IDBA does exhibit fluctuations, they are typically short-lived---most of the time the performance counter values are relatively stable.
 In contrast, Megahit is constantly noisy, resulting in frequent changes to system settings.
 
@@ -292,7 +292,7 @@ There is, of course, additional overhead in running two classifiers instead of o
 In each case, the same type of classifier is used for both taskset and DVFS prediction.
 In 3 of 5 cases, $Separate$ actually outperforms the $Single$ approach.
 However, it is also possible for $Separate$ to perform rather poorly, as seen with the MLP classifier.
-The average MLP behavior is representative of the applications tested (\ie not caused by an outlier)---in three of the four applications evaluated, MLP classifying taskset and DVFS separately performed worse than the \emph{race} setting.
+The average MLP behavior is representative of the applications tested (\ie not caused by an outlier)---in three of the four applications evaluated, MLP classifying taskset and DVFS separately performed worse than the \emph{race-to-idle} heuristic.
 Of course, taskset and DVFS prediction may benefit from using different classification algorithms.
 We tested taskset-only and DVFS-only classifiers in isolation and empirically determined that, for our system and applications, the ET classifier works best for taskset prediction and the SVM classifier works best for DVFS prediction.
 The solid horizontal line indicates the energy consumption for this ET/SVM classifier mix.

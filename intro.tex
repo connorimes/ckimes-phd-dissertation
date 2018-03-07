@@ -1,5 +1,12 @@
 \chapter{Introduction}
 
+\section{Thesis Statement}
+
+This thesis explores two problems in balancing software performance and energy consumption in computing systems: 1) meeting application performance goals while minimizing energy consumption, and 2) running applications as energy-efficiently as possible (maximizing the work to energy consumption ratio).
+We address the first problem by using control theory to meet performance goals while tuning system settings, such as DVFS frequencies, core allocations, or hardware power caps, to optimize energy consumption.
+We treat the second as a classification problem, using low-level hardware counter metrics with machine learning approaches to predict the most energy-efficient system settings at runtime.
+
+
 \section{Problem Description}
 
 Performance and energy consumption are conflicting goals in computing systems and must be appropriately balanced to satisfy user requirements.
@@ -19,7 +26,7 @@ Furthermore, we can also derive configurations that lie on the convex hull of th
 A significant amount of software is subject to performance requirements, and power/energy is then optimized under the performance constraint in an effort to increase battery life or reduce power costs.
 Until recently, heuristic approaches were often sufficient to meet performance goals while achieving near-minimal energy consumption.
 However, heuristic approaches to balancing performance and power/energy rely on assumptions about the performance/power tradeoff space of an application and system that we have found are not portable between applications and modern systems.
-For example, the classic race-to-idle heuristic can achieve low energy consumption on one system, but high energy consumption on another compared with a pace-to-idle or never-idle approach \cite{Imes2014}.
+For example, the classic \emph{race-to-idle} heuristic can achieve low energy consumption on one system, but high energy consumption on another compared with a \emph{pace-to-idle} or \emph{never-idle} approach \cite{Imes2014}.
 While performance/power tradeoff spaces were mostly linear on older systems, advances in technology have caused them to be more non-linear on modern systems.
 An important observation by Kim \etal is, ``Unless the function of a given machine is a straight line originating from the idle state, (0, $P_{idle}$), an idling heuristic is never optimal for all instances'' \cite{kim-cpsna2015}.
 In short, the more convex the tradeoff space, the further from optimal any idling approach is.
@@ -75,7 +82,7 @@ Kim \etal prove that an optimal solution to this constrained optimization proble
 POET was originally designed for embedded systems \cite{POET,ImesMS}; we later evaluated it on a server-class system \cite{POETMCSoC}.
 
 POET's evaluation uses DVFS and core allocation as the system knobs to control performance and energy consumption.
-While significant prior work has used these knobs, their solutions tend to be restricted to particular applications \cite{TODO} and systems \cite{TODO}, limiting their portability.
+While significant prior work has used these knobs, their solutions tend to be restricted to particular applications and systems, limiting their portability.
 In contrast, POET's design is independent of any particular application or platform and their performance/power tradeoff spaces.
 
 We find that POET achieves:
@@ -117,17 +124,17 @@ At the highest performance targets, CoPPer's gain-limit saves even more energy: 
 \end{itemize}
 
 
-\subsection{Energy Efficiency with Machine Learning}
+\subsection{CESS}
 
 In other scenarios, it is desirable to maximize energy efficiency, \ie complete a computation using the least energy possible.
-It is becoming well established that the race-to-idle approach does not achieve this (our discussion of race-to-idle in the context of performance constraints earlier is irrelevant, since if that heuristic cannot meet a constraint, no other approach can).
+It is becoming well established that the \emph{race-to-idle} approach does not achieve this (our discussion of \emph{race-to-idle} in the context of performance constraints earlier is irrelevant, since if that heuristic cannot meet a constraint, no other approach can).
 It may then seem reasonable to simply run in the lowest-power system configuration, but this approach fails to account for the passage of time---energy consumption may still exceed optimal.
 Identify the most energy-efficient system setting is challenging since the optimal setting varies depending on varying application resource demands.
 
 We address this problem in the High Performance Computing (HPC) domain.
 It has historically been desirable in HPC to run software as fast as possible rather than meeting a particular performance goal.
 The motivation behind this approach is either to get an answer to a scientific question as fast as possible or for the HPC cluster to complete as much work as possible, \ie maximize the cluster throughput.
-Completing an application as fast as possible leaves little room for power/energy optimization, although some work has been done in this area \cite{TODO}.
+Completing an application as fast as possible, \ie \emph{race-to-idle}, leaves little room for power/energy optimization, although some work has been done in this area (see \secref{related}.
 Until recently, maximizing application performance also solved the latter problem, but now we are moving toward the era of exascale systems with strict power budgets \cite{Exascale20MW}.
 Hardware over-provisioning, which allows more systems to operate in a cluster than can actually be supported if each were consuming their maximum power budget, has been proposed as an approach to improve cluster throughput since systems do not usually consume their maximum allowable power consumption \cite{PatkiRMAP}.
 

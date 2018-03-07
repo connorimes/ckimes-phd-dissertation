@@ -76,7 +76,7 @@ With \app{vips} in \figref{copper-tradeoffs-vips}, performance scales (linearly)
 Performance increases (non-linearly) as higher power caps are applied, until a little beyond the system's thermal design power (TDP).
 Unfortunately, TDP is not a reliable indicator of the maximum power cap that can be applied efficiently.
 \figref{copper-tradeoffs-hop} demonstrates the power cap/performance behavior of the \app{HOP} application,
-where performance levels-off well before the system TDP, and begins exhibiting
+where performance levels off well before the system TDP, and begins exhibiting
 performance unpredictability before beginning to achieve some small increases in average performance again once the power cap is \emph{greater than} than the system TDP.
 These behaviors make it difficult for controllers to efficiently meet performance targets.
 CoPPer uses a \emph{gain limit} to avoid over-allocating power when it is not useful, \eg for unachievable performance targets in \app{vips} or moderate targets in \app{HOP}.

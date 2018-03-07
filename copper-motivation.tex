@@ -1,27 +1,8 @@
 \section{Motivation}
 \label{sec:copper-motivation}
 
-% We review a number of energy-aware schedulers that rely on DVFS.
-% We then discuss the current processor landscape as justification for why DVFS might soon no longer be controllable by software.
-% Finally, we illustrate how the simple linear models that work well for meeting performance requirements by tuning DVFS can produce sub-optimal behavior when directly applied to power capping.
-
-\subsection{DVFS and Scheduling for Energy}
-\label{sec:copper-motivation-dvfs}
-
-Many modern computer systems are underutilized, leading to significant portions of time where application performance requirements can be met with less than the full system capacity \cite{google,meisnerISCA2011}.
-This trend has led to flourishing research in energy-aware scheduling that tailors resource usage to meet the performance requirements while minimizing energy.
-Software DVFS management has been essential in many energy-aware scheduling algorithms \cite{Albers,YDS}.
-Recent survey papers devote entire sections to the various ways DVFS has been used in scheduling systems \cite{ZhuralevSurvey,MittalSurvey}.
-Re-surveying this work is beyond the scope of this paper, but we highlight several examples to show the broad applicability of DVFS.
-
-At the processor level, DVFS has been used to meet performance requirements \cite{Lu2002,Wu2004} and implement power capping \cite{lefurgy2008power}.
-Allowing DVFS to be set separately on different cores provides further benefits \cite{Isci2006,Rangan2009}.
-Within a processor, separating the cache into its own voltage domain and scaling its frequency independent of the processor provides additional energy savings \cite{adaptiveCache}.
-Similarly, managing DRAM DVFS increases energy efficiency \cite{Memscale,Diniz2007}.  
-
-Indeed, with DVFS benefiting so many different components, it is clear that solutions which coordinate DVFS among components provide even better performance and energy benefits \cite{meisnerISCA2011}.
-Examples include systems that coordinate DVFS with core usage \cite{packandcap-old,packandcap-new,TCST}, coordination of processor and DRAM DVFS \cite{CoScale,Chen2011,Felter2005,Li2007}, and DVFS with thread scheduling \cite{Rangan2009,Winter2010}.
-Several other approaches coordinate processor-wide DVFS with adaptations to the memory system and processor pipeline \cite{METE,Bitirgen2008,dubach2010}.
+We discuss the current processor landscape as justification for why DVFS might soon no longer be controllable by software.
+We then illustrate how the simple linear models that work well for meeting performance requirements by tuning DVFS can produce sub-optimal behavior when directly applied to power capping.
 
 
 \subsection{The Future of Software DVFS}

@@ -20,12 +20,12 @@ As these approaches do not trade application speed, they reduce energy strictly 
 While it is tempting to use the same approaches to minimize energy by simply removing the constraint on application runtime, failing to account for the impact of lower-power resource settings on execution time can result in worse energy consumption.
 
 Typical resource management approaches in HPC clusters primarily attempt to optimize application completion time, only worrying about power consumption to the extent that the total cluster power constraint is not violated, and ignoring energy consumption altogether.
-Although there are various techniques for assigning jobs to nodes, minimizing their runtime is usually achieved by running the individual compute nodes as fast as possible---an approach which we call \emph{race}.
-Using \emph{race} makes resource scheduling on a node easy, but it is never as energy-efficient as a more intelligent approach that understands how system settings affect performance and power tradeoffs on a per-application basis \cite{kim-cpsna2015}.
+Although there are various techniques for assigning jobs to nodes, minimizing their runtime is usually achieved by running the individual compute nodes as fast as possible, \ie the \emph{race-to-idle} heuristic.
+Using \emph{race-to-idle} makes resource scheduling on a node easy, but it is never as energy-efficient as a more intelligent approach that understands how system settings affect performance and power tradeoffs on a per-application basis \cite{kim-cpsna2015}.
 The reason is that \emph{racing} to finish a job as fast as possible minimizes execution time, but the increase in power dwarfs the time savings, resulting in high energy consumption.
 
 In addition to reducing costs, maximizing energy efficiency will also improve overall system throughput in power-constrained environments.
-In over-provisioned clusters, the hardware can draw more total power than the infrastructure can physically deliver to the system if nodes operate in the \emph{race} setting \cite{Sarood2013}.
+In over-provisioned clusters, the hardware can draw more total power than the infrastructure can physically deliver to the system if nodes use \emph{race-to-idle} \cite{Sarood2013}.
 Optimizing energy efficiency increases total cluster throughput by (1) allowing more applications to run in parallel due to lower per-application power consumption, while (2) still considering application runtime due to its impact on energy consumption.
 Therefore, new resource management approaches are required that focus solely on minimizing energy to reduce the cost of science (in Joules), even if the overall runtime is increased.
 

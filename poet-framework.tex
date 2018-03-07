@@ -152,6 +152,7 @@ Thus, linear programming theory states an optimal solution exists for this probl
   \label{algo:poet-optimal}
 \end{algorithm}
 
+\TODO{Align this description with the algorithm, \ie using $\omega$ instead of $\tau$ (see MS thesis).}
 \algoref{poet-optimal} takes the set of configurations, the controller's speedup, and the time interval $\tau$ specified by the application.
 It then divides the configurations in two distinct sets.
 The first set contains all configurations with a speedup less than or equal to the target.
@@ -161,13 +162,7 @@ If the energy of the pair is lower than any previous energy, the algorithm store
 When the algorithm terminates, its output is the pair of chosen configurations and their assigned times.
 The algorithm tests all possible pairs from the two sets, each of which contains at most $C$ elements, so an upper bound to the algorithm complexity is $O(C^2)$.
 We know that there is an optimal solution to the linear program with at most two non-zero $\tau_c$ (as the dual problem has two dimensions \cite{LP}) and \algoref{poet-optimal} tests all pairs of configurations.
-Therefore, {\em \algoref{poet-optimal} will find a minimal-energy schedule}.
-% In practice this process can be sped up by considering only
-% Pareto-optimal (in performance/power) configurations.  Sorting into
-% Pareto-optimal takes $O(C \text{lg} C)$ time and need only be done
-% once.  After sorting, configurations can be indexed by a bucketed hash
-% table with speedup as the key.  Given a sufficiently large table this
-% reduces the per control invocation complexity to constant time.
+Therefore, \algoref{poet-optimal} will find a minimal-energy schedule.
 
 
 \subsection{Discussion of Generality and Robustness}
@@ -182,7 +177,7 @@ Finally, the customizable pole $p$ in \eqnref{poet-control} allows for flexibili
 
 The ability to control robustness to inaccuracies and model errors is a major advantage of feedback control systems~\cite{ICSE2014}
 In particular, POET is stable and converges to the desired latency without oscillations provided that $0 \le p < 1$.
-Formal analysis of this behavior can be obtained by applying standard control techniques -- see the original POET publication for further details \cite{POET}.
+Formal analysis of this behavior can be obtained by applying standard control techniques---see the original POET publication for further details \cite{POET}.
 
 In addition to provable convergence, the control formulation allows us to analyze POET's robustness to user error.
 In particular, suppose $\Delta$ is a multiplicative error term, indicating the largest error in the speedup values provided in the system configurations.

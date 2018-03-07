@@ -1,0 +1,101 @@
+\chapter{Related Work}
+\label{sec:related}
+
+This chapter discusses work related to performance, power, and energy awareness.
+We first discuss work relating to POET and CoPPer---meeting performance constraints and optimizing energy consumption.
+Research in this area has historically been common in the embedded systems domain, though some work has explored approaches for systems at larger scales.
+We then discuss power and energy-aware work in the High Performance Computing domain.
+
+
+\section{Performance Constraints and Energy Awareness}
+
+Computing systems are often underutilized, leading to significant portions of time where application performance requirements can be met with less than the full system capacity \cite{google,MeisnerISCA2011}.
+This trend has led to flourishing research in energy-aware scheduling that tailors resource usage to meet the performance requirements, often while optimizing another dimension like power or energy consumption.
+Modern systems expose a variety of configurable resources, which software can adjust to tune performance and power behavior.
+This flexibility allows the system to adapt to different circumstances or different application needs, but also increases software complexity.
+The problem is exacerbated when software must achieve portability across a range of different systems, all of which expose different resources to software.
+
+% DVFS and core allocation
+Software-based DVFS management is essential for many energy-aware scheduling algorithms \cite{Albers,YDS}.
+At the processor level, DVFS has been used to meet performance requirements \cite{Lu2002,Wu2004} and implement power capping \cite{lefurgy2008power}.
+Allowing DVFS to be set separately on different cores provides further benefits \cite{Isci2006,Rangan2009}.
+Similarly, managing DRAM DVFS increases energy efficiency \cite{Memscale,Diniz2007}.
+Recent survey papers devote entire sections to the various ways DVFS has been used in scheduling systems \cite{ZhuralevSurvey,MittalSurvey}.
+In modern multicore systems, allocating a subset of cores and sockets (with aggressive clock-gating to save power) is also common, and more recently comes with the additional challenge of scheduling for heterogeneous architectures \cite{Petrucci2012}.
+
+% Naive approaches
+One simple heuristic for minimizing energy is \emph{race-to-idle}, which allocates all resources until a job completes and then idles the system until the next job arrives \cite{google}.
+This heuristic is portable since it does not require knowledge about the system, but empirical studies show that it is not optimal \cite{google,Cheng2009,Yun2010,Yang2007}.
+A recent study by Kim \etal demonstrates that an optimal solution requires knowledge of how the different configurable resources in a system affect the specific application under controlf---information which \emph{race-to-idle} does not use \cite{kim-cpsna2015}.
+The same study shows that \emph{race-to-idle} is dominated by a \emph{pace-to-idle} heuristic, \ie \emph{pace-to-idle} is theoretically never worse than \emph{race-to-idle} and can be much better.
+
+% Multiple knobs
+It is not surprising that a number of different frameworks have arisen for intelligently controlling multiple resources to minimize energy.
+Many empirical studies have shown that it is more energy efficient to coordinate multiple resources than to manage any one alone \cite{google,Cheng2009,Yun2010,Yang2007}.
+Examples include systems that coordinate DVFS with core usage \cite{packandcap-old,packandcap-new,TCST}, coordination of processor and DRAM DVFS \cite{CoScale,Chen2011,Felter2005,Li2007}, and DVFS with thread scheduling \cite{Rangan2009,Winter2010}.
+Several other approaches coordinate processor-wide DVFS with adaptations to the memory system and processor pipeline \cite{METE,Bitirgen2008,dubach2010}.
+For example, Dubach \etal coordinate several microarchitectural features~\cite{dubach2010},
+Petrucci \etal coordinate thread scheduling and the use of heterogeneous cores \cite{Petrucci2012}, while Maggio \etal coordinate core allocation and clockspeed~\cite{TCST}.
+Bertini \etal coordinate tiers of a multi-tier webserver for e-commerce \cite{Bertini2007}.
+AbouGhazaleh \etal coordinate the speed of the processor and cache \cite{AbouGhazaleh2007}, while Yun \etal also coordinate the speeds of multiple on-chip components \cite{Yun2010}.
+Liu \etal coordinate job scheduling and clock speed on clusters \cite{Liu2008}.
+Bitirgen \etal coordinate clockspeed, cache, and memory bandwidth in a multicore~\cite{Bitirgen2008}.
+The METE system manages clockspeed, memory bandwidth, and core usage \cite{METE}.
+Sinangil \etal co-design processor architecture which exposes both monitoring and configurable resources with an operating system that dynamically manages those resources \cite{sinangil2014self}.
+All of these approaches coordinate multiple resources, but do so using system-specific implementations, \eg METE's controller would have to be redesigned to work with Bitirgen et al.'s architecture.
+
+% Complementary approaches
+We note two approaches that are complementary to the POET project.
+Zhao \etal manage processor speed to meet both reliability and timing constraints with minimal energy \cite{Zhao2012}.
+This problem is complicated by the effect DVFS scaling has on hardware reliability.
+It is possible that POET's general approach to resources other than DVFS might allow additional energy savings if incorporated in Zhao et al.'s work.
+He \etal propose adaptive energy management in the power circuitry itself to meet timing constraints while adapting the delivered energy to increase battery efficiency \cite{He2013}.
+It is possible that combining POET's runtime-level resource management with this supply-level approach would further increase efficiency.
+
+% General frameworks for multiple resources
+Several frameworks have been proposed to meet real-time constraints by managing multiple resources.
+These approaches are typically implemented as middleware that take a specification of available resources and a performance goal, and then meet that goal.
+Rajkumar \etal propose a general framework (with system specific implementation) for allocating resources to achieve real-time requirements, but this approach is not energy-aware \cite{Rajkumar}.
+Sojka \etal proposed a portable middleware layer for allocating resources to meet soft real-time constraints, but this system does not minimize energy \cite{Sojka}.
+ControlWare is another middleware approach that uses control theory to meet quality-of-service constraints, but does not address energy concerns \cite{ControlWare}.
+
+These approaches provide portable real-time guarantees, which is itself a hard problem, but they do not provide energy savings.
+LEO is a machine learning system that can meet performance constraints with minimal energy consumption \cite{LEO}.
+LEO is very accurate and provides high energy savings, even with no prior knowledge of the application currently running.
+Its approach is extremely portable, but also incurs very high overhead.
+Interestingly, LEO and POET have complementary weaknesses -- POET has low runtime overhead, but requires prior knowledge in the form of a configuration model while LEO has high overhead, but requires no prior knowledge.
+Follow-up work to LEO was CALOREE, which addressed this issue \cite{CALOREE}.
+PTRADE also uses control theory to manage general collections of resources \cite{PTRADE}, and is perhaps the most similar to POET.
+PTRADE minimizes power consumption, but not necessarily energy.
+In addition, PTRADE uses heuristic optimizations, which are not portable, while POET uses a true minimal-energy scheduling algorithm.
+
+
+\section{High Performance Computing}
+
+Power and energy in HPC systems is a growing concern, though prior work in the area has often not allowed trading performance for power or energy savings.
+For example, Adagio uses DVFS to save energy with less than 1\% increase in runtime \cite{RountreeAdagio}.
+Other work depends on accurate prediction of a code's critical path to reduce power where it will not slow down an application \cite{Jitter,Marathe2015}.
+Patki \etal propose to better utilize available power with hardware over-provisioning to increase total system throughput \cite{PatkiRMAP}.
+Sarood \etal have shown similar results: hardware over-provisioning increases performance given a power cap \cite{Sarood2013}.
+Hardware over-provisioning acknowledges that compute resources are no longer the primary factor limiting cluster size---power is, allowing us to more aggressively trade performance and power/energy consumption.
+
+Other works demonstrate that low-level hardware performance counters can drive solutions for modeling and improving power/energy consumption \cite{WuHPCComputer,Chetsa,Libutti2014,Sasaki}.
+Using Dynamic Concurrency Throttling and DVFS to reduce energy consumption without performance loss, Curtis-Maury \etal use hardware events to create an energy-aware logistic regression model for predicting performance and power \cite{Curtis-Maury2008}.
+
+As the number of system settings increases and their interaction becomes more complicated, several approaches have turned to machine learning to manage them.
+Paragon \cite{Paragon} and Quasar \cite{quasar} guarantee quality-of-service constraints in heterogeneous data centers using a scheduler based on the learning system that won the Netflix prize \cite{NetflixPrize}.
+LEO uses a hierarchical Bayesian model to minimize energy for different system utilization requirements \cite{LEO}.
+These approaches all estimate the performance and power of every possible system configuration, then search those estimates to find the best configuration that meets their operating constraints.
+The need to estimate every configuration's behavior is expensive, requiring half a second \cite{LEO} to several seconds \cite{Paragon} of overhead.
+In contrast, our approach simply returns the best system settings without predicting their actual energy efficiency, an approach that requires orders of magnitude less overhead (see \secref{classifiers-eval-overhead}).
+Ferroni \etal use classification based on hardware events to select the best power model for an application from a predetermined set, and then assign resources to that application in a multi-tenant virtualized infrastructure \cite{FerroniTACO}.
+This approach and the proposed approach are complementary, in that Ferroni \etal assign resources at the node-level, while the proposed approach can fine-tune resource usage within a node.
+
+Our approach for maximizing energy efficiency is most closely related to other node-level approaches for managing performance and energy.
+PUPiL maximizes node performance given a power cap by adjusting system settings to the particular needs of an application \cite{pupil}.
+Chasapis \etal maximize performance for power-capped NUMA nodes by recognizing the effect that manufacturing variability can have on individual core performance \cite{Chasapis2016}.
+Both of these approaches maximize performance for a given power constraint.
+Neither, however, is capable of minimizing energy, which requires changing both power and performance as in our proposed approach.
+ParallelismDial is a node-level approach for managing application-level parallelism to increase energy efficiency \cite{Sridharan2013}.
+ParallelismDial has similar goals to our proposed approach, but they are complementary---it works at the application level, while our approach operates at the system level.
+In future work, it would likely be beneficial to combine the two to further reduce overhead and improve energy savings.

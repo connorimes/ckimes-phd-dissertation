@@ -1,8 +1,14 @@
-\chapter{POET}
+\chapter{POET: The Performance with Optimal Energy Toolkit}
 \label{sec:poet}
 
-This chapter describes POET, the \textbf{P}erformance with \textbf{O}ptimal \textbf{E}nergy \textbf{T}oolkit.
+This chapter describes POET (the \textbf{P}erformance with \textbf{O}ptimal \textbf{E}nergy \textbf{T}oolkit).
+\secref{related} discussed existing work in managing performance and power/energy awareness.
+Like POET, a number of these approaches use feedback control to manage timing constraints \cite{Agilos,Bertini2007,grace2,CoAdapt,Maggio13,TCST,ControlWare,PTRADE,Fu2012,Li2007}.
+POET is most related to prior approaches that abstract resource management into a middleware or runtime, like \cite{ControlWare,Sojka,PTRADE,Rajkumar}.
+Control techniques provide a formal framework for reasoning about the dynamic behavior of the system.
+POET is unique in its energy awareness, in its design for portability, and the incorporation of a true minimal-energy resource allocation algorithm.
 
+\TODO{Combine RTAS and MCSoC papers, including motivation, usage, and evaluation.}
 
 \input{poet-motivation}
 \input{poet-framework}
@@ -13,6 +19,8 @@ This chapter describes POET, the \textbf{P}erformance with \textbf{O}ptimal \tex
 
 \section{Inspired Projects}
 \label{sec:poet-inspired}
+
+\TODO{Find appropriate place for this material, \eg an Appendix?}
 
 POET has also been used as the foundation for other controllers and projects.
 We expanded on POET to create Bard, which adds the ability to instead meet soft power constraints and maximize performance \cite{Bard}.

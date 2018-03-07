@@ -87,8 +87,8 @@ One of the metrics we looked at was training data recall, which we present in \f
 The algorithms are: AdaBoost (AB), Decision Tree (DT), Extra Trees (ET), Gradient Boosting (GB), Gaussian Naive Bayes (GNB), K-Nearest Neighbors (KNN), Linear Discriminant Analysis (LDA), Multi-layer Perceptron (MLP), Quadratic Discriminant Analysis (QDA), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine with a linear kernel (SVM (Lin)), SVM with a degree=3 polynomial kernel (SVM (Poly3)), SVM with a different linear kernel (SVMLinear), and SVM with a radial basis function kernel (SVM (RBF)).
 Some approaches have poor recall and thus are not likely to perform well in practice.
 
-When a mis-prediction occurs, the impact on energy consumption varies---some are suboptimal but still reduce energy consumption over the naive \emph{race} setting, while others actually make it worse.
-We tested SVM (Lin) (\figref{feat-space-svm-kern-lin}) online---in most cases it reduced energy, but consumed 22\% \emph{more energy} than \emph{race} with the Megahit application, demonstrating the importance of selecting a good classifier.
+When a mis-prediction occurs, the impact on energy consumption varies---some are suboptimal but still reduce energy consumption over the naive \emph{race-to-idle} heuristic, while others actually make it worse.
+We tested SVM (Lin) (\figref{feat-space-svm-kern-lin}) online---in most cases it reduced energy, but consumed 22\% \emph{more energy} than \emph{race-to-idle} with the Megahit application, demonstrating the importance of selecting a good classifier.
 We choose five promising algorithms that support a range of different classification techniques to use in the evaluation:
 \begin{enumerate}
 \item ET -- an extremely randomized decision tree, similar to Random Forest \cite{Geurts2006ExtraTrees}.

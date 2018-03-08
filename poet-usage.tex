@@ -29,33 +29,33 @@ Recall that these applications were not originally designed to provide predictab
 The evaluation is broken down into two categories.
 In the first part of the evaluation, we use two modern embedded devices with different hardware---a Sony VAIO SVT11226CXB tablet PC with a mobile Intel Haswell processor, and a Hardkernel ODROID-XU+E ARM big.LITTLE development platform.
 We selected these two platforms because prior work has shown that they expose different timing and energy tradeoffs~\cite{Imes2014}.
-\tblref{poet-embedded-systemknobs} shows the hardware details for both, highlighting the configurable resources, the cardinality of the set of alternatives for each, and the maximum speedup achievable by manipulating that resource alone.
+% \tblref{poet-embedded-systemknobs} shows the hardware details for both, highlighting the configurable resources, the cardinality of the set of alternatives for each, and the maximum speedup achievable by manipulating that resource alone.
 Both platforms run Ubuntu Linux 14.04 LTS.
 The Vaio uses kernel 3.13.0, while the ODROID runs kernel 3.4.104.
 
-\begin{table}[t]
-\caption{Embedded system configurations.}
-\centering
-\begin{tabular}{clcc}
-  & \textbf{Resource} & \textbf{Settings} & \textbf{Max Speedup} \\
-\hline
-\hline
-  \multirow{3}{*}{\begin{turn}{90}\textbf{Vaio}\end{turn}} 
-  & cores        &  2 & 1.81 \\
-  & core speeds  & 11 & 2.72 \\
-  & hyperthreads &  2 & 1.10 \\ 
-\hline
-\hline
-  \multirow{4}{*}{\begin{turn}{90}\textbf{ODROID}\end{turn}} 
-  & big cores          & 4 & 6.10 \\
-  & big core speeds    & 9 & 1.97 \\
-  & LITTLE cores       & 4 & 3.94 \\
-  & LITTLE core speeds & 8 & 2.40 \\
-\hline
-\hline
-\end{tabular}
-\label{tbl:poet-embedded-systemknobs}
-\end{table}
+% \begin{table}[t]
+% \caption{Embedded system configurations.}
+% \centering
+% \begin{tabular}{clcc}
+%   & \textbf{Resource} & \textbf{Settings} & \textbf{Max Speedup} \\
+% \hline
+% \hline
+%   \multirow{3}{*}{\begin{turn}{90}\textbf{Vaio}\end{turn}} 
+%   & cores        &  2 & 1.81 \\
+%   & core speeds  & 11 & 2.72 \\
+%   & hyperthreads &  2 & 1.10 \\ 
+% \hline
+% \hline
+%   \multirow{4}{*}{\begin{turn}{90}\textbf{O-XU+E}\end{turn}} 
+%   & big cores          & 4 & 6.10 \\
+%   & big core speeds    & 9 & 1.97 \\
+%   & LITTLE cores       & 4 & 3.94 \\
+%   & LITTLE core speeds & 8 & 2.40 \\
+% \hline
+% \hline
+% \end{tabular}
+% \label{tbl:poet-embedded-systemknobs}
+% \end{table}
 
 The second part of the evaluation uses a dual-socket server system, where each socket contains 8 cores.
 With hyperthreading, the system exposes 32 virtual cores.
@@ -79,9 +79,10 @@ On the server system, we set the DVFS frequency on all cores, regardless if a pa
   \textbf{System} & \textbf{Idle Power} & \textbf{Min Power} & \textbf{Max Power} \\
   \hline
   \hline
-  Vaio   & 2.50 W  & 3.04 W  & 8.05 W \\
-  ODROID & 0.12 W  & 0.17 W  & 8.14 W \\
-  Server & 17.90 W & 37.80 W & 199.26 W \\
+  Vaio        & 2.50 W  & 3.04 W  & 8.05 W \\
+  ODROID-XU+E & 0.12 W  & 0.17 W  & 8.14 W \\
+  Server      & 17.90 W & 37.80 W & 199.26 W \\
+  % ODROID-XU3  & 0.21 W  & 0.19 W  & 6.37 W \\
   \hline
   \hline
 \end{tabular}
@@ -89,7 +90,7 @@ On the server system, we set the DVFS frequency on all cores, regardless if a pa
 \end{table}
 
 To capture power measurements on the Vaio and the server system, we use the Model-Specific Register (MSR) of the Haswell processor~\cite{SandyBridge}.
-On the ODROID, we poll INA-231 power sensors~\cite{ina231} available on the XU+E model to capture power data for the A15 and A7 clusters as well as for the DRAM and for the GPU.
+On the ODROIDs, we poll INA-231 power sensors~\cite{ina231} to capture power data for the A15 and A7 clusters as well as for the DRAM and for the GPU.
 Basic power figures of the three platforms are shown in~\tblref{poet-power}.
 Capturing these metrics naturally requires hardware resources that expose power or energy data to software.
 The modified version of Heartbeats includes energy readers for some common hardware (\eg the MSR) and exposes a simple interface for extending to new hardware.

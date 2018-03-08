@@ -92,7 +92,7 @@ POET provides formal guarantees about its steady-state convergence and robustnes
 
 The optimizer turns the generic control signal computed by the controller into a system-specific resource allocation strategy, translating the speedup $s(t)$ computed with \eqnref{poet-control} into a \emph{schedule} for the available resources.
 The schedule is computed for the next $\tau$ time units.
-To meet the requirement on the target latency and avoid deadline misses, POET ensures that the application completes $I(t)$ jobs in the next interval\footnote{In our implementation, both the jobs to be completed and an acceptable scheduling period $\tau$ are specified by the application.}, with $I(t) = \tau \cdot s(t) \cdot b(t)$.
+To meet the requirement on the target latency and avoid deadline misses, POET ensures that the application completes $W$ jobs in the next interval\footnote{In our implementation, both the jobs to be completed and an acceptable scheduling period $\tau$ are specified by the application.}, with $W = \tau \cdot s(t) \cdot b(t)$.
 
 As shown in \figref{poet-runtime}, the optimizer takes, as input, a resource specification containing the set of available system configurations.
 There are $C$ possible configurations in the system and by convention, we number the configurations from $0$ to $C-1$.
@@ -100,11 +100,11 @@ We use $c = 0$ to indicate the configuration where the least amount of resources
 In contrast, configuration $C-1$ maximizes the resource availability.
 Each configuration $c$ is associated with a power consumption $p_c$ and speedup $s_c$.
 
-Given this information, POET schedules for each configuration $c$ an execution time $\tau_c$, ensuring that the $I(t)$ iterations complete and the total energy consumption is minimized. To do so, POET solves the following optimization problem:
+Given this information, POET schedules for each configuration $c$ an execution time $\tau_c$, ensuring that the $W$ iterations complete and the total energy consumption is minimized. To do so, POET solves the following optimization problem:
 \begin{eqnarray}
 \minimize && \sum_{c=0}^{C-1} \tau_c \cdot p_c \label{eqn:poet-power} \\
 \st %&& \nonumber\\
-&& \sum_{c=0}^{C-1} \tau_c \cdot s_c \cdot b(t) =  I(t) \label{eqn:poet-work} \\
+&& \sum_{c=0}^{C-1} \tau_c \cdot s_c \cdot b(t) =  W \label{eqn:poet-work} \\
 && \sum_{c=0}^{C-1} \tau_c =  \tau \label{eqn:poet-deadline} \\
 && 0 \le \tau_c \le \tau, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:poet-time}
 \end{eqnarray}
@@ -122,36 +122,33 @@ Thus, linear programming theory states an optimal solution exists for this probl
     \footnotesize
     \Require $C$ \Comment{system configurations, given by user}
     \Require $s(t)$ \Comment{speedup, given by \eqnref{poet-control}}
-    %\Require $b(t)$ \Comment{base application speed, given by \eqnref{kalman-filter}}
-    %\Require $r_d$ \Comment{desired performance, given by application}
-	\Require $\omega$ \Comment{discrete work units, given by application}
-    \State $under = \{c \mid s_c \le s(t) \}$
-	\State $over = \{c \mid s_c > s(t)\}$
-    \State $candidates = \{\langle u, o \rangle \mid u \in under, o \in over\}$
+%    \Require $b(t)$ \Comment{given by \eqnref{kalman-filter} (\appref{KalmanFilter})}
+    \Require $\tau$ \Comment{timing constraint, given by application}
+  \State $under = \{c \mid s_c \le s(t) \}$
+    \State $over = \{c \mid s_c > s(t)\}$
+    \State $candidates = \{\langle u,o \rangle \mid u \in under, o \in over\}$
     \State $energy = \infty$
-    \State $optimal = \langle -1, -1 \rangle$
-    \State $schedule = \langle 0, 0 \rangle$ \newline
-    \For {$\langle u, o \rangle \in candidates$} \Comment{loop over all pairs}
-	\State $\omega_u = \omega \cdot \left\lfloor \frac{s_o \cdot (s_u - s(t))}{s(t) \cdot (s_u - s_o)} \right\rfloor$
-    % \State $\omega_u = \frac{\omega \cdot s(t) - \omega \cdot s_o}{s_u -s_o}$
-  \Comment{compute the work units to spend in each configuration in pair}
-    \State $\omega_o = \omega - \omega_u$
-    \State $newEnergy = \omega_u \cdot p_u + \omega_o \cdot p_o$
-	\Comment{compute energy of this pair}
+    \State $optimal = \langle -1,-1 \rangle$
+    \State $schedule = \langle 0,0 \rangle$ \newline
+    \For {$\langle u,o \rangle \in candidates$} \Comment{loop over all pairs}
+    \State $\tau_u = \frac{\tau \cdot s(t) - \tau \cdot s_o}{s_u -s_o}$
+  \Comment{compute time to spend in each config in pair}
+    \State $\tau_o = \tau - \tau_u$
+    \Comment{compute energy of this pair}
+    \State $newEnergy = \tau_u \cdot p_u + \tau_o \cdot p_o$
     \If {$newEnergy < energy$}
   \Comment{compare energy to best found so far}
     \State $energy = newEnergy$
-    \State $optimal = \langle u, o \rangle$
-    \State $schedule = \langle \omega_u,\omega_o \rangle$
+    \State $optimal = \langle u,o \rangle$
+    \State $schedule = \langle \tau_u,\tau_o \rangle$
     \EndIf
     \EndFor \newline \newline
     \Return $optimal$ \Comment{pair of configurations with minimal energy} \newline
-    \Return $schedule$ \Comment{work units to spend in each configuration}
+    \Return $schedule$ \Comment{time to spend in each configuration}
   \end{algorithmic}
   \label{algo:poet-optimal}
 \end{algorithm}
 
-\TODO{Align this description with the algorithm, \ie using $\omega$ instead of $\tau$ (see MS thesis).}
 \algoref{poet-optimal} takes the set of configurations, the controller's speedup, and the time interval $\tau$ specified by the application.
 It then divides the configurations in two distinct sets.
 The first set contains all configurations with a speedup less than or equal to the target.

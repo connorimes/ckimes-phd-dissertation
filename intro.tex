@@ -68,7 +68,7 @@ This tehsis addresses these two problems with three distinct projects:
 \begin{itemize}
 \item POET, the \textbf{P}erformance with \textbf{O}ptimal \textbf{E}nergy \textbf{T}oolkit: a portable, control-theoretic framework for meeting application performance goals while optimizing energy consumption by tuning DVFS and core allocation.
 \item CoPPer, \textbf{Co}ntrol \textbf{P}erformance with \textbf{P}ow\textbf{er}: a model-free, control-theory based framework for meeting application performance constraints while optimizing energy consumption by specifying processor power caps.
-\item CESS, \textbf{C}lassification of \textbf{E}nergy-efficient \textbf{S}ystem \textbf{S}ettings: A machine learning classifier for predicting the most energy-efficient system settings in-situ based on low-level hardware performance counter metrics.
+\item CEES, \textbf{C}lassification of \textbf{E}nergy-\textbf{e}fficient \textbf{S}ettings: A machine learning classifier for predicting the most energy-efficient system settings in-situ based on low-level hardware performance counter metrics.
 \end{itemize}
 
 
@@ -90,10 +90,9 @@ We find that POET achieves:
 \begin{itemize}
 \item \textbf{Ease of Use}: Integrating POET with applications only requires a few additional lines of code.
 \item \textbf{Predictable Performance}: POET meets various performance targets, minimizing the error between the goal and the achieved performance.
-\item \textbf{Energy Savings}: Using an offline oracle, we verify that POET achieves near-optimal energy consumption, which includes POET's runtime overhead.
+\item \textbf{Energy Savings}: Using an offline oracle, we verify that POET achieves near-optimal energy consumption (\eg 1.3\% on an Intel-powered table, 2.9\% on an ARM big.LITTLE system), which includes POET's runtime overhead.
 \item \textbf{Adaptability}: POET adapts to phases in application and input behavior, achieving increased energy savings during periods of low computational demand.
 Additionally, POET adapts to noise in the system introduced by co-scheduled applications to ensure that performance goals are still met when feasible, and making a best effort otherwise.
-\item \TODO{Summary of results...}
 \end{itemize}
 
 
@@ -125,7 +124,7 @@ At the highest performance targets, CoPPer's gain-limit saves even more energy: 
 \end{itemize}
 
 
-\subsection{CESS}
+\subsection{CEES}
 
 In other scenarios, it is desirable to maximize energy efficiency, \ie complete a computation using the least energy possible.
 It is becoming well established that the \emph{race-to-idle} approach does not achieve this (our discussion of \emph{race-to-idle} in the context of performance constraints earlier is irrelevant, since if that heuristic cannot meet a constraint, no other approach can).

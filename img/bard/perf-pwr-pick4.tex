@@ -1,0 +1,203 @@
+\begin{tikzpicture}
+\begin{centering}
+
+\definecolor{s1}{RGB}{228, 26, 28}
+\definecolor{s2}{RGB}{55, 126, 184}
+\definecolor{s3}{RGB}{77, 175, 74}
+\definecolor{s4}{RGB}{152, 78, 163}
+\definecolor{s5}{RGB}{255, 127, 0}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=4 by 2,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=10pt
+    },
+height=3.5cm,
+width=0.26\textwidth,
+xmajorgrids,
+ymajorgrids,
+grid style={dashed},
+xmin=40,
+xmax=500,
+yticklabel pos=left,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+xticklabel shift={-5pt},
+yticklabel shift={-5pt},
+yticklabel style={font=\footnotesize},
+ylabel style={align=center},
+unbounded coords=jump,
+]
+
+% Performance
+
+\nextgroupplot[
+ylabel={\footnotesize Normalized \\ Performance}, % Performance
+xlabel={\footnotesize x264},
+xlabel shift={-2.75cm},
+xtick={0,125,251,375,500},
+ytick={0,0.25,0.5,0.75,1,1.25,1.5,1.75,2},
+yticklabels={0.0,,0.5,,1.0,,1.5,,2.0},
+ymin=0,
+ymax=2,
+xmin=0,
+xmax=500,
+legend entries={{Vaio},{ODROID-XU3}},
+legend style={draw=none,at={(2.5,1.65)},anchor=north,legend columns=4,line width=5pt,font=\footnotesize},
+]
+\addplot[thick, solid, color=s1] table[x index=1,y index=4,col sep=comma] {img/bard/perf-pwr-x264-v.csv};
+\addplot[thick, solid, color=s3] table[x index=1,y index=4,col sep=comma] {img/bard/perf-pwr-x264-o.csv};
+\addplot[thick, dashed, black] coordinates {(251,0) (251, 2)};
+\addplot[thick, solid, black] coordinates {(0,1) (250, 1)};
+
+
+\nextgroupplot[
+xtick={0,60,119,180,240,260},
+xlabel={\footnotesize bodytrack},
+xlabel shift={-2.75cm},
+ytick={0,0.25,0.5,0.75,1,1.25,1.5,1.75,2},
+yticklabels={0.0,,0.5,,1.0,,1.5,,2.0},
+ymin=0,
+ymax=2,
+xmin=0,
+xmax=260,
+]
+\addplot[thick, solid, color=s1] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-bodytrack-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-bodytrack-o.csv};
+\addplot[thick, dashed, black] coordinates {(119,0) (119, 2)};
+\addplot[thick, solid, black] coordinates  {(0,1) (119, 1)};
+
+
+\nextgroupplot[
+xlabel shift={-2.75cm},
+xlabel={\footnotesize sha},
+ytick={0,0.25,0.5,0.75,1,1.25,1.5,1.75,2},
+yticklabels={0.0,,0.5,,1.0,,1.5,,2.0},
+ymin=0,
+ymax=2,
+xmin=100,
+xmin=0,
+xmax=500,
+xtick={0,125,249,375,500},
+]
+\addplot[thick, solid, color=s1] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-sha-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-sha-o.csv};
+\addplot[thick, dashed, black] coordinates {(249,0) (249, 2)};
+\addplot[thick, solid, black] coordinates  {(0,1) (248, 1)};
+
+
+\nextgroupplot[
+xlabel shift={-2.75cm},
+xlabel={\footnotesize stream},
+ytick={0,0.25,0.5,0.75,1,1.25,1.5,1.75,2},
+yticklabels={0.0,,0.5,,1.0,,1.5,,2.0},
+ymin=0,
+ymax=2,
+xmin=0,
+xmax=500,
+xtick={0,100,200,299,400,500},
+]
+\addplot[thick, solid, color=s1] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-stream-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=1,col sep=comma] {img/bard/perf-pwr-stream-o.csv};
+\addplot[thick, dashed, black] coordinates {(299,0) (299, 2)};
+\addplot[thick, solid, black] coordinates  {(0,1) (298, 1)};
+
+% Power
+
+\nextgroupplot[
+ylabel={\footnotesize Normalized \\ Power}, % Power
+ylabel shift={6.8pt},
+xtick={0,125,250,375,500},
+ytick={0,1,2,3,4,5,6,7},
+yticklabels={,1,,3,,5,,7},
+ymin=0,
+ymax=7,
+xmin=0,
+xmax=500,
+xlabel={\footnotesize $time$ [frame]},
+xlabel near ticks,
+xticklabels={0,,250,,500},
+xticklabel style={font=\footnotesize},
+]
+\addplot[thick, solid, color=s1] table[x index=1,y index=5,col sep=comma] {img/bard/perf-pwr-x264-v.csv};
+\addplot[thick, solid, color=s3] table[x index=1,y index=5,col sep=comma] {img/bard/perf-pwr-x264-o.csv};
+\addplot[thick, dashed, black] coordinates {(251,4) (251, 12)};
+\addplot[thick, solid, color=s1] table[x index=1,y index=5,col sep=comma] {img/bard/perf-pwr-x264-v.csv};
+\addplot[thick, solid, color=s3] table[x index=1,y index=5,col sep=comma] {img/bard/perf-pwr-x264-o.csv};
+\addplot[thick, dashed, black] coordinates {(251,0) (251, 10)};
+\addplot[thick, solid, black] coordinates {(251,1) (500, 1)};
+
+
+
+\nextgroupplot[
+ytick={0,1,2,3,4,5,6,7},
+yticklabels={,1,,3,,5,,7},
+ymin=0,
+ymax=7,
+xmin=0,
+xmax=260,
+xtick={0,60,119,180,240,260},
+xticklabels={0,,119,,240,},
+xlabel={\footnotesize $time$ [frame]},
+xlabel near ticks,
+xticklabel style={font=\footnotesize},
+]
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-bodytrack-o.csv};
+\addplot[thick, dashed, black] coordinates {(119,3) (119, 12)};
+\addplot[thick, solid, color=s1] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-bodytrack-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-bodytrack-o.csv};
+\addplot[thick, dashed, black] coordinates {(119,0) (119, 10)};
+\addplot[thick, solid, black] coordinates {(119,1) (260, 1)};
+
+\nextgroupplot[
+ytick={0,1,2,3,4,5,6,7},
+yticklabels={,1,,3,,5,,7},
+ymin=0,
+ymax=7,
+xmin=100,
+xmin=0,
+xmax=500,
+xtick={0,125,250,375,500},
+xticklabels={0,,249,,500},
+xlabel={\footnotesize $time$ [1000 hashes]},
+xlabel near ticks,
+xticklabel style={font=\footnotesize},
+]
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-sha-o.csv};
+\addplot[thick, dashed, black] coordinates {(249,4) (249, 12)};
+\addplot[thick, solid, color=s1] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-sha-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-sha-o.csv};
+\addplot[thick, dashed, black] coordinates {(249,0) (249, 10)};
+\addplot[thick, solid, black] coordinates {(249,1) (500, 1)};
+
+
+\nextgroupplot[
+ytick={0,1,2,3,4,5,6,7},
+yticklabels={,1,,3,,5,,7},
+ymin=0,
+ymax=7,
+xmin=0,
+xmax=500,
+xtick={0,100,200,299,400,500},
+xticklabels={0,,,299,,500},
+xlabel={\footnotesize $time$ [10M ops]},
+xlabel near ticks,
+xticklabel style={font=\footnotesize},
+]
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-stream-o.csv};
+\addplot[thick, dashed, black] coordinates {(299,2) (299, 4)};
+\addplot[thick, solid, color=s1] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-stream-v.csv};
+\addplot[thick, solid, color=s3] table[x index=0,y index=2,col sep=comma] {img/bard/perf-pwr-stream-o.csv};
+\addplot[thick, dashed, black] coordinates {(299,0) (299, 10)};
+\addplot[thick, solid, black] coordinates {(299,1) (500, 1)};
+
+
+
+\end{groupplot}
+\end{centering}
+
+\end{tikzpicture}

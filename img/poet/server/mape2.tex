@@ -1,0 +1,65 @@
+\begin{tikzpicture}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 2,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+%axis x line* = bottom,
+xlabel near ticks,
+major x tick style = transparent,
+xlabel={},
+height=3.5cm,
+width=0.95\columnwidth,
+xmin=0,
+xmax=10,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+ytick=\empty,
+ylabel style={align=center},
+ymin=0,
+ymax=8,
+ytick={0,2,4,6,8,10},
+yticklabels={0,2,4,6,8,10},
+legend cell align=left, 
+legend style={ column sep=1ex },
+ymajorgrids,
+grid style={dashed},
+]
+
+\nextgroupplot[ybar=\pgflinewidth,
+bar width=6pt,
+ylabel={Server\\MAPE (\%)},
+ylabel shift={0mm},
+ymin=0,
+ymax=10,
+xticklabel shift={0pt},
+x tick label style={rotate=35, anchor=east, font=\scriptsize},
+xtick={1,2,3,4,5,6,7,8,9,10},
+xticklabels={
+{blackscholes},
+{bodytrack},
+{facesim},
+{ferret},
+{x264},
+{dijkstra},
+{sha},
+{STREAM},
+{\textbf{Average}}},
+legend entries = {{25\%},{50\%},{75\%},{95\%}},
+legend style={draw=none,legend columns=4,at={(0.5,1.35)},anchor=north,font=\footnotesize},
+]
+\addplot table[x index=0,y index=2, col sep=tab] {img/poet/server/mape-c.txt};
+\addplot table[x index=0,y index=3, col sep=tab] {img/poet/server/mape-c.txt};
+\addplot table[x index=0,y index=4, col sep=tab] {img/poet/server/mape-c.txt};
+\addplot table[x index=0,y index=5, col sep=tab] {img/poet/server/mape-c.txt};
+\node at (axis cs:3.7,9.0) [rotate=35] {\tiny{$18.0$}};
+\node at (axis cs:4.7,9.0) [rotate=35] {\tiny{$27.8$}};
+\node at (axis cs:5.3,9.0) [rotate=35] {\tiny{$16.2$}};
+
+\end{groupplot}
+\end{tikzpicture}

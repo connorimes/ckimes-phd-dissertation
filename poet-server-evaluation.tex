@@ -1,0 +1,151 @@
+\section{Server-class System Evaluation}
+\label{sec:poet-server-evaluation}
+
+This chapter describes POET's evaluation on a server-class system, which is divided into five parts.
+First, we demonstrate POET's ability to meet the latency requirements, then compare the energy consumption results to optimal.
+Next, we evaluate POET's ability to adapt to input with multiple phases, its ability to run subject to interference from another application, then finally discuss some differences with the embedded systems evaluation and quantify some overhead values.
+
+
+\subsection{Meeting Latency Targets}
+
+We demonstrate that POET is able to meet latency targets for each application on the manycore server system.
+Again, we \emph{characterize} each application $i$ by executing in all possible configurations without POET, derive an oracle, and set latency targets for each application that range from 25\% to 95\% of their respective performance capacities.
+The MAPE metric for quantifying POET's ability to meet the latency goals was described earlier in \eqnref{poet-mape} (\secref{poet-eval-embedded-performance}).
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/mape2.tex}  
+  \caption{Server system latency error (lower is better, 0 is optimal).}
+  \label{fig:poet-mape-server}
+\end{figure}
+
+\figref{poet-mape-server} presents the MAPE values for each application for the four latency targets.
+As before, the relationship between application variability and MAPE is clear -- higher variance typically results in higher MAPE.
+More volatile applications are more unpredictable and therefore more difficult to control.
+Still, the error values are generally low -- on par with the behavior on embedded systems.
+There are a few outliers, particularly with ferret and x264, which are both high variability applications.
+% The design of these two applications make them more difficult to control.
+\app{Ferret}'s threads are asynchronous, so work continues to be performed while system changes are being applied which introduces unpredictability into timing measurements.
+\app{X264} is continuously creating and destroying threads, sometimes causing errors when assigning threads to cores with \app{taskset}.
+Further increasing the size of the window period or adjusting the pole value in POET's controller helps offset these kinds of issues.
+MAPE penalizes every latency target violation, and error cannot be made up later by finishing jobs early.
+Still, POET achieves low MAPE for most executions on the manycore server system, despite the applications not being originally designed to provide predictable timing.
+
+
+\subsection{Energy Minimization}
+
+We now evaluate POET's energy efficiency in meeting the four latency targets by using the oracle derived from each application's characterization.
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/ee.tex}  
+  \caption{Server system energy consumption (lower is better, 1 is optimal).}
+  \label{fig:poet-server-ee}
+\end{figure}
+
+\figref{poet-server-ee} presents the ratio of energy consumption to optimal for each latency target, where unity is optimal and values greater than 1 show energy consumed over optimal.
+Executions include the POET runtime overhead and the overhead imposed by changing system configurations.
+On the resource-constrained embedded systems that POET was originally designed for, the overhead of changing resource allocations was low, but the manycore server system requires additional time and energy to apply changes.
+The overhead of resource schedule computation is dwarfed by the cost of applying DVFS settings to 32 cores and sometimes switching application core assignments between one and two processor sockets.
+There are more resources to manage on the manycore server than on the embedded systems POET was originally evaluated on, which increases time and energy overhead.
+Despite the challenges, POET still achieves near-optimal energy consumption.
+
+The 25\% target is clearly the most inefficient, and in fact is not actually achievable for STREAM without idling, which POET does not support.  
+Ferret and x264 appear to be efficient at the 25\% target, but this is just a side effect of their high MAPE.
+These observations are consistent with studies on server-class systems that demonstrate how inefficient these machines are when running at low utilizations \cite{google,pupil}.
+
+
+\subsection{Responding to Application Phases}
+
+We again examine POET with an application input that exhibits changes in its behavior over time.
+The analysis is the same as in the embedded systems evaluation, except that we increase each video phase length so that each phase is 1,500 jobs (frames), for a total of 4,500 jobs.
+
+\figref{poet-server-phases-default} shows the time series data for latency and power consumption when running the application without POET in the highest resource configuration ($C-1$).
+We again normalize latency to the maximum recorded value.
+The phases are clearly distinguishable by the change in latency at frames 1,500 and 3,000.
+In the embedded systems evaluation, we noted that the two systems did not process each phase with the same relative latency.
+The first phase was the most difficult (highest latency) for both systems, but the second phase was the easiest (lowest latency) on one while the third was the easiest on the other.
+Now on our server system we find that the first and third phases are just about the same level of difficulty, and the second phase is easiest.
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/x264-phases-default.tex}
+  \caption{Processing x264 input with distinct phases on a server system.}
+  \label{fig:poet-server-phases-default}
+\end{figure}
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/x264-phases-poet-clover.tex}    
+  \caption{Processing x264 input with distinct phases using POET on a server system.}
+  \label{fig:poet-server-phases-x264}
+\end{figure}
+
+\figref{poet-server-phases-x264} demonstrates enabling POET with a target that is about half of the system's maximum performance (twice the minimum latency).
+We launch the application in the highest resource configuration.
+During the first 100 frames, POET observes the application behavior, hence the low latency and higher power consumption.
+The first resource adjustment overshoots the latency target, reducing power consumption below where it will stabilize.
+Latency and power settle around frame 300, or the end of the second adjustment period.
+Later fluctuations are a result of variability in the input video (\app{x264} inputs exhibit high variance -- see \figref{poet-server-variation}).
+There is a discernible drop in power after frame 1,500, indicating the start of the second phase where fewer resources are required to meet the latency target.
+Power then increases after frame 3,000 when the processing again becomes more difficult.
+Despite these variations, latency goals are respected: MAPE is 5.6\% and energy is 20.2\% greater than optimal, which are similar to the \app{x264} results shown previously.
+
+
+\subsection{Adapting to Other Applications}
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/multiapp.tex}    
+  \caption{POET adapting to a background application on a server system.}
+  \label{fig:poet-server-multiapp}
+\end{figure}
+
+Again, we demonstrate POET adapt to changes in system resource behavior at runtime using the \app{bodytrack} application and a performance target of about 50\% capacity.
+Halfway through the execution, we launch an application in the background that does not use POET, but consumes system resources.
+POET adapts by allocating more system resources, \ie increasing the DVFS speeds and/or allocating more cores to \app{bodytrack} so that it continues to meet the original soft latency goal.
+
+\figref{poet-server-multiapp} presents a time series for this scenario, including the POET-controlled execution and another that uses a static resource allocation strategy that fixes the resource assignments at the start of the execution.
+The y-axis is normalized to the latency target, and the vertical line indicates when the second application is launched.
+For this test, we reduce the window size from $50$ to $40$ frames which allows for more window periods during the execution but increases volatility.
+As with the previous experiments, we launch the POET-controlled \app{bodytrack} application in the highest-resource setting, configuration $C-1$.
+During the first window period, POET observes application behavior, then makes its first resource allocation decision at frame $40$.
+By frame $80$, the end of the first period of adjustment, the average window job latency is near the target.
+After the second application is launched, there is a temporary increase in latency.
+POET detects this change and allocates additional resources so that the latency goal continues to be met.
+This adaptation results in 5.0\% MAPE for the entire execution.
+In contrast, the static allocation strategy fails to meet job deadlines after the second application begins, resulting in 23.9\% MAPE.
+
+POET adjusts resource allocations to adapt to changes in system resource behavior.
+Assuming there are sufficient resources still available, a POET-controlled application will continue to meet its soft deadlines, despite interference within the system.
+
+
+\subsection{Configurations and Overhead}
+
+\begin{figure}[t]
+  \centering
+  \input{img/poet/server/bodytrack-w20.tex}    
+  \caption{POET with insufficient window size.}
+  \label{fig:poet-bodytrack-w20}
+\end{figure}
+
+An important difference from the original POET analysis is the choice of the window period size for applications.
+For example, the \app{bodytrack} executions used a window size of $20$ on the embedded systems, but we used a size of $50$, and later $40$, for evaluations on the manycore server-class system for the same application.
+Faster application performance and larger number of resources on the server-class system increase the relative overhead of changing system resource allocations at runtime, making window size changes necessary.
+\figref{poet-bodytrack-w20} demonstrates the results of using a window size of $20$, which is too small, for a latency target of about 50\% capacity (the same one used the analysis of multiple applications).
+Although MAPE is still low at 2.95\%, the controller fails to converge, causing oscillations.
+
+We measure the overhead of three resource allocation tasks: (1) the POET controller and optimizer, which we call \textit{POET Core}, (2) application core assignment with \app{taskset}, which we call \textit{Affinity}, and (3) changing frequency settings with \textit{DVFS} for the 32 virtual cores.
+The latter two are executed by the platform-specific function defined by \function{POET\_apply\_func} (\secref{poet-interface}).
+Compared to a perfect implementation that requires no computation or resource allocation overhead and always meets the latency goal, each POET Core execution adds 0.12\ms~average latency overhead, each Affinity change averages 62.24\ms, and each DVFS change averages 65.08\ms.
+The POET Core overhead is negligible, but the others add 2.36\% and 2.47\% timing overhead to the example in \figref{poet-bodytrack-w20}, totaling almost 5\%.
+That cost is like adding a whole additional frame to the window period.
+Increasing the window size to $50$ reduces the Affinity and DVFS overhead to less than 1\% each for this bodytrack performance target.
+Faster applications require longer window periods to reduce the performance impact caused by the fixed overhead of changing resource allocations.
+
+The POET design models overhead as error and lets the control dynamics naturally correct any overhead.
+This approach works best on small-scale systems like the embedded systems we evaluated, but clearly has drawbacks on the larger system evaluated here.
+As explained above, we can overcome this drawback by using larger windows to amortize overhead.
+We could also extend POET to explicitly account for overhead and the cost of switching configurations.
+Such an approach would force POET to be conservative about switching configurations and likely reduce energy savings.
+A third approach would be to build hardware and operating system support for rapid configuration changes.
+We believe supporting this kind of adaptability is key for future multicore systems, as faster configuration changes increase the potential for energy savings.

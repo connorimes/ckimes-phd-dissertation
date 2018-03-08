@@ -99,3 +99,12 @@ Neither, however, is capable of minimizing energy, which requires changing both 
 ParallelismDial is a node-level approach for managing application-level parallelism to increase energy efficiency \cite{Sridharan2013}.
 ParallelismDial has similar goals to our proposed approach, but they are complementary---it works at the application level, while our approach operates at the system level.
 In future work, it would likely be beneficial to combine the two to further reduce overhead and improve energy savings.
+
+
+\section{Inspired Projects}
+
+\TODO{Expand on these works.}
+Research in this dissertation has been used as the foundation for projects by other researchers.
+Farrell and Hoffmann build on POET by additionally changing application accuracy to provide hard real-time guarantees \cite{meantime}.
+Aforementioned work by Mishra \etal combines POET with machine learning in a project called CALOREE to reduce the amount of offline work needed to generate resource specifications, and update both the specification and pole value online as new application behavior is learned \cite{CALOREE}.
+POET was also the starting point in an ongoing project called Proteus, in which is developing a programming language called FAST that allows programmers to specify more general constraints and optimizations called \emph{intents}, which uses both system and application knobs to satisfy.

@@ -79,6 +79,7 @@ The timing targets can change during runtime, and POET will take care of the ada
 
 
 \subsection{Software Interface}
+\label{sec:poet-interface}
 
 Users interact with only three POET functions.
 \function{poet\_init} initializes POET and returns a \variable{poet\_state} data structure reference.
@@ -111,7 +112,7 @@ It subsequently applies the controller of \eqnref{poet-control} to determine the
 Finally it determines the energy-minimal resource schedule that achieves the necessary speedup using \algoref{poet-optimal} and applies the first configuration in the schedule by executing the provided \variable{poet\_apply\_func} function.
 
 The last step, a call to the \variable{poet\_apply\_func} specified by the user, is a platform-dependent operation.
-For example, the function included with POET for Linux platforms invokes the \mbox{\texttt{taskset}} utility to force the process and all of its threads onto the desired number of cores and uses the \mbox{\texttt{cpufrequtils}} interface to adjust the cores' clock speeds.
+For example, the function included with POET for Linux platforms invokes the \app{taskset} utility to force the process and all of its threads onto the desired number of cores and uses the \app{cpufrequtils} interface to adjust the cores' clock speeds.
 Developers can specify their own function.
 For example, a system may require a different approach to change the number of active cores.
 Also, a system may have additional configurable resources that could be adjusted, like memory and network bandwidth.
@@ -119,3 +120,49 @@ Also, a system may have additional configurable resources that could be adjusted
 The only remaining task is to apply the second configuration in the schedule at the appropriate time during the next window.
 When the computed number of heartbeats to wait passes, the \variable{poet\_apply\_func} function executes again, but no further computation is performed.
 At the completion of the heartbeat window, the control process repeats.
+
+The code snippet shown in \lstref{poet-example} provides an example of application code, highlighting the POET function calls.
+% Adding POET to existing applications does not require many modifications to the original code.
+The complete modification of an existing application requires nine function calls plus associated variable declarations, for a total of 14 lines of code.
+The user provides a desired latency target via the Heartbeats API using the \variable{min\_heartrate} and \variable{max\_heartrate} variables, which represent a desired minimum and maximum speed in terms of jobs completed per second.
+POET simply takes the average of these two values, meaning they can be the same.
+Given $I(t)$ jobs in a window and a target latency $\tau$, the desired rates are easily computed as:
+\begin{equation}
+  min\_heartrate = max\_heartrate = \frac{I(t)}{\tau} 
+  \label{eqn:latency-to-performance}
+\end{equation}
+As demonstrated below, Heartbeats initialization also accepts requests for minimum and maximum accuracy and power -- POET does not use these, so they can safely be set to any value.
+When initializing POET, the user should specify the system's configurations, encoded in \variable{control\_states} and \variable{cpu\_states}.
+
+\lstset{emph={%  
+    poet_state, poet_init, poet_apply_control, poet_destroy%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Example of POET application code.},%
+  label={lst:poet-example}]%
+
+// initialization
+heartbeat_t* heart =
+  heartbeat_acc_pow_init(window_size, buffer_depth, "heartbeat.log",
+                         min_heartrate, max_heartrate, min_accuracy, max_accuracy,
+                         1, hb_energy_impl_alloc(), min_power, max_power);
+get_control_states(NULL, &control_states, &nstates);
+get_cpu_states(NULL, &cpu_states, &nstates);
+poet_state* state = poet_init(heart, nstates, control_states, cpu_states,
+                              &apply_cpu_config, &get_current_cpu_state,
+                              buffer_depth, "poet.log");
+// execution of main loop
+while(running) {
+  heartbeat_acc(heart, count++, 1);
+  poet_apply_control(state);
+  doWork();
+}
+// cleanup
+poet_destroy(state);
+free(control_states);
+free(cpu_states);
+heartbeat_finish(heart);
+\end{lstlisting}
+
+\TODO{Also present updated interface?}

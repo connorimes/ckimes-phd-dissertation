@@ -1,0 +1,55 @@
+\begin{tikzpicture}
+
+\definecolor{s1}{RGB}{228, 26, 28}
+\definecolor{s2}{RGB}{55, 126, 184}
+\definecolor{s3}{RGB}{77, 175, 74}
+\definecolor{s4}{RGB}{152, 78, 163}
+\definecolor{s5}{RGB}{255, 127, 0}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 1,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=5pt
+    },
+height=3.5cm,
+width=0.95\columnwidth,
+xmajorgrids,
+ymajorgrids,
+grid style={dashed},
+xmin=1,
+xmax=260,
+yticklabel pos=left,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+xticklabel shift={-5pt},
+yticklabel shift={-5pt},
+ylabel shift={-2pt},
+ylabel style={align=center},
+unbounded coords=jump,
+]
+
+\nextgroupplot[ylabel={\footnotesize Normalized \\ Latency}, % Performance
+ytick={0,0.4,0.6,0.8,1.0,1.2,1.4,1.6},
+yticklabels={,0.4,0.6,0.8,1.0,1.2,1.4,1.6},
+yticklabel style={font=\footnotesize},
+ymin=.4,
+ymax=1.6,
+xlabel={$time$ [frame]},
+xlabel near ticks,
+xtick={1,50,100,150,200,250},
+xticklabels={1,50,100,150,200,250},
+xticklabel style={font=\footnotesize},
+% legend entries={{POET}},
+% legend style={draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,line width=5pt,font=\footnotesize},
+]
+\addplot[thick, solid, color=s2] table[x index=0,y index=1,col sep=tab] {img/poet/server/bodytrack-w20.txt};
+\addplot[thick,solid, color=black] coordinates {(0,1) (260,1)};
+
+
+\end{groupplot}
+
+\end{tikzpicture}

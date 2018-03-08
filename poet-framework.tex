@@ -29,7 +29,6 @@ As we target multicore platforms, we assume each job may be processed by multipl
 
 
 \subsection{Controller}
-\label{sec:controllerdesign}
 
 The controller cancels the error between the desired job deadline $d_r$ and its measured latency $d_m(t)$ at time $t$.
 We consider the error $e(t)$ using the abstraction of the job speed, where the required speed is $1/d_r$ and the measured speed at time $t$ is $1/d_m(t)$.
@@ -89,7 +88,7 @@ POET provides formal guarantees about its steady-state convergence and robustnes
 
 
 \subsection{Optimizer}
-\label{sec:optimizer}
+\label{sec:poet-optimizer}
 
 The optimizer turns the generic control signal computed by the controller into a system-specific resource allocation strategy, translating the speedup $s(t)$ computed with \eqnref{poet-control} into a \emph{schedule} for the available resources.
 The schedule is computed for the next $\tau$ time units.
@@ -165,8 +164,7 @@ We know that there is an optimal solution to the linear program with at most two
 Therefore, \algoref{poet-optimal} will find a minimal-energy schedule.
 
 
-\subsection{Discussion of Generality and Robustness}
-\label{sec:properties}
+\subsection{Generality and Robustness}
 
 The controller and the optimizer both reason about speedup instead of absolute performance or latency.
 The absolute performance of the application, measured by the average latency of its jobs, will vary as a function of the application itself and the platform it executes on.

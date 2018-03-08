@@ -1,0 +1,10 @@
+ 
+Number	Benchmark	clover-STD/MEAN
+1	blackscholes	0.1151073861
+2	bodytrack	0.0688876101
+3	facesim	0.1078374462
+4	ferret	0.4950909702
+5	x264	0.3218235616
+6	dijkstra	0.0612642507
+7	sha	0.090532457
+8	stream	0.0350703657

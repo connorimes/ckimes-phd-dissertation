@@ -39,22 +39,22 @@ p_m(i) \ge P_{ref}  :& 0
 where $p_m(i)$ is the achieved performance for the $i$-th job.
 Each failure to achieve the performance target increases MAPE by an amount relative to how badly the target was missed.
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
   \input{img/copper/ee.tex}
   % \vskip -1em
   \caption{Application energy efficiency for DVFS controllers and CoPPer, with and without a gain limit, for $\mathsf{high}$, $\mathsf{medium}$, and $\mathsf{low}$ performance targets (higher is better).
   Results are normalized to an ideal \emph{performance} DVFS governor.}
   \label{fig:copper-ee}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
   \input{img/copper/mape.tex}
   % \vskip -1em
   \caption{Application performance error for DVFS controllers and CoPPer, with and without a gain limit, for for $\mathsf{high}$, $\mathsf{medium}$, and $\mathsf{low}$ performance targets (lower is better).}
   \label{fig:copper-mape}
-\end{figure*}
+\end{figure}
 
 \figsref{copper-ee}{copper-mape} present the energy efficiency and MAPE values for all applications and targets.
 Despite the challenges described in \secref{copper-motivation-power} (\eg non-linearity and larger range in the power cap/performance relationship), CoPPer achieves higher energy efficiency and similar MAPE compared to both the simple and sophisticated DVFS controllers for most applications and performance targets.
@@ -249,19 +249,19 @@ For this execution, energy efficiency is 1.25 compared to the ideal \emph{perfor
 \subsection{Multiple Applications}
 \label{sec:copper-eval-multiapp}
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
   \input{img/copper/multi_ee.tex}
   \caption{Application energy efficiency for DVFS controllers and CoPPer, with and without a gain limit, under interference by a second application (higher is better). Results are normalized to an ideal \emph{performance} DVFS governor.}
   \label{fig:copper-multi-ee}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
   \input{img/copper/multi_mape.tex}
   \caption{Application performance error for DVFS controllers and CoPPer, with and without a gain limit, under interference by a second application (lower is better).}
   \label{fig:copper-multi-mape}
-\end{figure*}
+\end{figure}
 
 This section evaluates CoPPer's resilience to interference from
 another application.

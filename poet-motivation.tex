@@ -6,7 +6,7 @@ We evaluate the timing and energy tradeoffs of a video encoder on two embedded p
 The two platforms not only have different resources for management, but also have latency and energy tradeoffs with different topologies.
 Thus, resource allocation strategies that save energy on one are wasteful on the other.
 
-\begin{table*}[t]
+\begin{table}[t]
 \caption{Two embedded platforms with different configurable components.}
 \label{tbl:poet-machines}
 \tiny
@@ -29,7 +29,7 @@ Thus, resource allocation strategies that save energy on one are wasteful on the
   \hline
 \end{tabular}
 % \vskip -.7em
-\end{table*}
+\end{table}
 
 Our example features a video encoder, composed of jobs, where each job encodes a frame.
 We instrument the encoder to report job latency and we measure the platform's energy consumption over time.

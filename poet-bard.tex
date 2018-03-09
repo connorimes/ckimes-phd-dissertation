@@ -161,11 +161,12 @@ For example, configuration with $id=7$ assigns cpu0, cpu1, and cpu2 (core mask 0
 % We specify a dash for cores 1--3 and 5--7 to prevent setting their frequencies explicitly which could result in unnecessary overhead.
 % Although cores 4--7 are not assigned, forcing a low DVFS setting reduces their power consumption while they idle.
 
-\begin{figure*}[t]
+\begin{figure}[t]
+  \centering
   \input{img/bard/perf-pwr-pick4.tex}  
   \caption{Changing constraints from timing to power.}
   \label{fig:bard-perf-pwr-change-pick4}
-\end{figure*}
+\end{figure}
 
 In \figref{bard-perf-pwr-change-pick4}, we observe the behavior of launching four applications with a performance goal, then switching to a power goal.
 % On both evaluation systems, we start with a performance target of 75\%.

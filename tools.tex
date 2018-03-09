@@ -3,27 +3,210 @@
 
 Tool building is often under-appreciated by the computer science research community, yet is crucial to enabling practical systems research.
 The projects in this dissertation led to the development of a handful of portable tools that we make available to the community at large.
-Link to the published code is available in \appref{urls}.
+Links to published code are available in \appref{urls}.
 
-In \secref{intro}, we described the \emph{observe}, \emph{decide}, and \emph{act} framework that Hoffmann proposed in his ``self-aware'' computing model \cite{HoffmannPhD}.
+In \secref{intro-description}, we described the \emph{observe}, \emph{decide}, and \emph{act} framework that Hoffmann proposed in his ``self-aware'' computing model \cite{HoffmannPhD}.
 While core material in this thesis focuses on the \emph{decide} phase, the tools described here are relevant to the \emph{observe} and \emph{act} phases.
 
 
 \section{Profiling}
 
-Heartbeats 2.0, heartbeats-simple, abstractions, language bindings...
-\TODO{...}
+The control-theory based projects presented in this thesis (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
+For applications to capture performance and power/energy data, they need a mechanism to capture and record metrics.
+Application developers often develop their own profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
+Hoffmann \etal proposed \interface{Heartbeats} to specify and record performance goals for self-aware applications \cite{icac2010heartbeats}.
+We extended this work in POET and Bard and released \interface{Heartbeats 2.0}, which included a primitive interface for portably capturing energy metrics.
+
+Later we developed a simplified profiling interface, aptly called \interface{Simple Heartbeats}, which allows more flexibility in recording application behavior.
+For example, it can record performance and power behavior for discontinuous loops or separate application code phases and is more portable across operating systems.
+Java and Rust language bindings and abstractions are also available for Simple Heartbeats, some of which are integrated with Servo, Mozilla's parallel web browsing engine \cite{servo}.
+These code bases are also used in other projects not described in this thesis.
+
+We also created \interface{Heartbeats Simple Classic} which wraps Simple Heartbeats and EnergyMon (described in the next section) while behaving more like Heartbeats 2.0.
+This interface benefits from the simplicity of the original Heartbeats design, and is used in CoPPer's evaluation.
 
 
-\section{Capturing Power/Energy Data}
+\section{Portable Power/Energy Readings with EnergyMon}
 
-POET (and the work that motivated it \cite{Imes2014}) ultimately led to developing EnergyMon, a portable software interface for accessing energy metrics at runtime \cite{energymon}.
-EnergyMon was integrated with Mozilla's Servo web browsing engine \cite{servo}.
-It is also utilized in other research projects, like the ongoing development of the FAST language, and in the CoPPer project described in this thesis.
-\TODO{...}
+There is a growing need for software to access power and energy data in-situ, like for the projects in this thesis.
+Designing and evaluating POET and Bard led us to conclude that a portable software interface for accessing energy metrics at runtime is necessary.
+The primitive interface we implemented in Heartbeats 2.0 was not as portable as needed, and did not allow capturing power/energy data in isolation.
+In response, we designed \interface{EnergyMon}.
+
+Accessing power/energy data requires writing system-specific code which is challenging for engineers and results in applications that are not portable across platforms.
+The diversity in sensor properties and current ad-hoc approaches for using them presents a significant challenge.
+The problem is more complex than simply locating and reading the correct files, hardware registers, or memory addresses.
+A portable interface must account for other factors:
+\begin{itemize}
+\item \textbf{Data Type:} Whether sensors expose \emph{power} or \emph{energy} data.
+\item \textbf{Access:} Privileges/constraints, \eg \emph{exclusive access}, particularly for external devices.
+\item \textbf{Units of measurement:} The power or energy units that sensors expose measurements in, and also their \emph{level of precision}.
+\item \textbf{Overflow:} Maximum values for sensor counters.
+\item \textbf{Refresh Interval:} How frequently sensors update.
+\item \textbf{Interface:} System abstractions, protocols, and data formats.
+\end{itemize}
+Sensors which only report power data \emph{must be polled} at their refresh interval so as not to lose data after the sensor refreshes.
+Power/energy readings may need to be \emph{extracted from other data} or \emph{transformed} before they are meaningful~\cite{WattsUp,OSP,SandyBridge}.
+Developers may even have to implement different \emph{protocols} and \emph{data formats}~\cite{WattsUp,OSP}.
+Furthermore, even a single system equipped with power or energy monitoring can offer multiple approaches to obtain it~\cite{RAPL,ina231,SandyBridge}.
+Correctly and accurately collecting power and energy data requires understanding and properly managing sensor properties and behavior.
+
+The first important design decision is which \emph{data type} to expose in a common interface.
+We choose energy, which unlike power, is not explicitly a function of time and can be recorded cumulatively, simplifying the interface.
+With an energy provider that records total energy consumed since some time $\tau = 0$, a power-aware application can simply record energy $E$ at the beginning and end of a time interval and compute the average power as $\Delta E / \Delta \tau$.
+In this way, the interface easily supports applications interested in energy or power.
+
+Next, a common interface can expose energy metrics in a standard and sufficiently precise \emph{unit of measurement} at a large enough data length to avoid \emph{overflow}.
+Applications therefore do not need to track various unit types and do conversions.
+A deceptively simple but important insight is not our choice of units or data length, but rather that counter overflow is one of the diverse sensor properties that applications should not have to worry about.
+We choose microjoules as 64-bit unsigned integers which are precise enough for the use cases we anticipate and avoid the need for floating point data types.
+At $100$ W of power, it would take about 5,850 years to overflow, and in our experience, modern sensors are too imprecise and models too inaccurate to justify smaller units.
+
+The \interface{EnergyMon} C interface defines an \struct{energymon} struct that contains seven function pointers and a \variable{state} variable:
+\begin{itemize}
+\item \variable{finit}: Initialize the energy monitor.
+\item \variable{fread}: Get the cumulative energy in microjoules.
+\item \variable{ffinish}: Destroy the energy monitor.
+\item \variable{fsource}: Get the name for the energy monitoring source.
+\item \variable{finterval}: Get the refresh interval in microseconds.
+\item \variable{fprecision}: Get the best possible precision in microjoules.
+\item \variable{fexclusive}: Get if exclusive access is required.
+\item \variable{state}: Pointer to a struct that the implementation uses to maintain internal state, \eg file descriptors or thread data.
+\end{itemize}
+This interface exposes some of the diverse properties described previously, like \emph{refresh interval} and sensor \emph{precision}, while hiding other properties that are not important to most software, like the \emph{underlying interfaces}, \emph{device protocols}, and \emph{data formats}.
+
+For any time $\tau$, where $\tau=0$ is the energy monitor's initialization, the following invariants hold for energy readings $E(\tau)$:
+\begin{eqnarray}
+  \forall \tau \ge 0 && \tau_i \le \tau_j \implies 0 \le E(\tau_i) \le E(\tau_j) \label{eqn:energy-monotonic} \\
+  && \tau = 0 \not \implies E(\tau) = 0 \label{eqn:energy-time-zero}
+\end{eqnarray}
+\eqnref{energy-monotonic} states that for any time at or after initialization, energy is always non-negative and monotonically increasing.
+\eqnref{energy-time-zero} states that the initial value does not have to be zero (could be larger).
+The following example of the EnergyMon C interface demonstrates computing the average power of a worker function:
+\lstset{emph={%  
+    energymon, energymon_get_default, finit, fread, ffinish%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Reading energy values and computing power with EnergyMon.},%
+  morekeywords={uint64_t},%
+  label={lst:energymon-example}]%
+
+energymon em;
+uint64_t start_uj, end_uj, start_usec, end_usec;
+
+// get the energymon instance and initialize
+energymon_get_default(&em);
+em.finit(&em);
+
+// get start time/energy
+start_usec = gettime_us(); // e.g. wrap clock_gettime
+start_uj = em.fread(&em);
+
+// application-specific processing
+do_work();
+
+// get end time/energy
+end_usec = gettime_us();
+end_uj = em.fread(&em);
+
+printf("Average power of do_work() in Watts: %f\n",
+       (end_uj-start_uj) / (double) (end_usec-start_usec));
+
+// destroy the instance
+em.ffinish(&em);
+\end{lstlisting}
+Other functions provide additional information about the implementation that software can use to make runtime decisions.
+For example, applications can use the name provided by \variable{fsource} for debugging or logging.
+\variable{finterval} can be used to determine a lower bound on sleep time for polling the energy monitor at regular intervals.
+\variable{fprecision} might inform a self-adaptive system how much noise to expect in power/energy data.
+\variable{fexclusive} could be used in deciding to share energy data with other software components.
+
+EnergyMon was integrated with Servo, Mozilla's parallel web browsing engine \cite{servo}.
+A complete design and evaluation is available in the original publication \cite{energymon} and an extended technical report \cite{EnergyMonTR}.
+EnergyMon is also used CoPPer's evaluation, as well other research projects not described in this thesis, \eg the ongoing development of the FAST language described in \secref{intro-ee}.
 
 
 \section{Power Capping}
 
-RAPLCap, powercap bindings, etc...
-\TODO{...}
+Evaluating Intel RAPL \cite{RAPL} ultimately led to the design and evaluation of the CoPPer project.
+Again, we found a distinct lack of tools to aid us---most material we found used low-level approaches for interfacing with RAPL that were hardware-dependent and required detailed understanding of RAPL as defined in Intel's software developer's manuals \cite{intel-sdm}.
+
+In recent years, the Linux kernel exposed some RAPL functionality via the \interface{powercap} file system interface \cite{powercap}.
+Perhaps the biggest advantage of the powercap interface is that a user does not have to configure the system's model-specific registers, which have very particular platform-dependent encodings.
+However, there were no software utilities available to assist in discovery of these RAPL capabilities, or in proper system actuation.
+We therefore developed a \interface{Linux powercap bindings} library and collection of applications to aid software developers with these tasks.
+These tools are now available in repositories for Debian-based Linux distributions, including Ubuntu 18.04 LTS ``Bionic Beaver'' and newer.
+The library usage is straightforward, for example (error checking excluded):
+\lstset{emph={%  
+    powercap_rapl_pkg, powercap_rapl_get_num_packages, powercap_rapl_init, powercap_rapl_destroy%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Basic lifecycle of the powercap library.},%
+  morekeywords={uint32_t},%
+  label={lst:powercap-example}]%
+
+uint32_t i, npackages;
+powercap_rapl_pkg* pkgs;
+
+// get number of processor sockets
+npackages = powercap_rapl_get_num_packages();
+
+// initialize
+pkgs = malloc(npackages * sizeof(powercap_rapl_pkg));
+for (i = 0; i < npackages; i++) {
+  powercap_rapl_init(i, &pkgs[i], 0);
+}
+
+// do a bunch of stuff with the interface here,
+// e.g., enable desired packages or power planes and get/set power caps...
+
+// now cleanup
+for (i = 0; i < npackages; i++) {
+  powercap_rapl_destroy(&pkgs[i]); {
+}
+free(pkgs);
+\end{lstlisting}
+Command-line utilities, not described further here, also make integration with scripts easy.
+
+While the powercap interface is sufficient for many use cases, it has some limitations.
+First, the configuration is not as fine-grained as it could be due to the kernel developers' data units choice (microjoules and microseconds).
+Second, it is only useful on systems running the Linux kernel.
+We address these limitations with \interface{RAPLCap}, a more general interface for accessing RAPL that provides multiple implementations.
+The two primary implementations are for Linux---the first wraps the Linux powercap bindings library; the second accesses the system model-specific registers which allows more fine-grained configuration, but must be updated as new hardware becomes available.
+The RAPLCap interface is also straightforward to use, for example (error checking excluded):
+\lstset{emph={%  
+    raplcap, raplcap_limit, powercap_rapl_init, raplcap_destroy, raplcap_set_limits%
+    },emphstyle={\color{black}\bfseries\underbar}%
+}%
+\begin{lstlisting}[language=C,%
+  caption={Setting RAPL power caps with RAPLCap.},%
+  morekeywords={uint32_t},%
+  label={lst:raplcap-example}]%
+
+raplcap rc;
+raplcap_limit rl_short, rl_long;
+uint32_t i, nsockets;
+
+// get the number of RAPL packages/sockets
+nsockets = raplcap_get_num_sockets(NULL);
+
+// initialize
+raplcap_init(&rc);
+
+// set caps of 100 Watts for short_term, 50 Watts for long_term constraints on each socket
+// a time window of 0 leaves the time window unchanged
+rl_short.watts = 100.0;
+rl_short.seconds = 0.0;
+rl_long.watts = 50.0;
+rl_long.seconds = 0.0;
+for (i = 0; i < nsockets; i++) {
+  raplcap_set_limits(&rc, i, RAPLCAP_ZONE_PACKAGE, &rl_long, &rl_short);
+}
+
+// cleanup
+raplcap_destroy(&rc);
+\end{lstlisting}
+RAPLCap also comes with command-line utilities, which are not described further here.
+Work is ongoing to implement RAPLCap on other operating systems like Apple OSX and Microsoft Windows, which expose different methods for configuring RAPL.

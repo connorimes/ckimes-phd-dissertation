@@ -1,7 +1,7 @@
 \section{Motivation}
 \label{sec:classifiers-motivation}
 
-In this section, we first describe how maximizing energy efficiency is distinct from maximizing performance or minimizing power consumption.
+We first describe how maximizing energy efficiency is distinct from maximizing performance or minimizing power consumption.
 As such, finding the most energy-efficient system setting requires new techniques.
 We then discuss the challenges of learning a model for mapping application/system behavior to energy-efficient system settings.
 
@@ -39,7 +39,7 @@ Furthermore, many applications progress through different \emph{phases} during e
 For example, an application may transition between compute- and memory-intensive processing, causing the most energy-efficient setting to change during runtime.
 It is therefore not optimal to choose a single setting statically when launching the application, necessitating a dynamic approach instead.
 
-In this paper, we explore learning approaches that adjust system settings to minimize application energy.
+We explore learning approaches that adjust system settings to minimize application energy.
 Specifically, we tune socket allocation, the use of HyperThreads, and processor DVFS.
 The learning component picks settings for the combination of these resources such that, at any point during the application execution, the system is operating in its most energy-efficient state.
 

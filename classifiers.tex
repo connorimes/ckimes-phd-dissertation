@@ -1,8 +1,16 @@
 \chapter{CESS: Classification of Energy-efficient Settings}
 
 This chapter describes CEES (\textbf{C}lassification of \textbf{E}nergy-\textbf{e}fficient \textbf{S}ettings).
+Energy and power consumption will be first-class constraints in future exascale systems \cite{exaosr-power}.
+For example, these systems are predicted to have strict operating budgets of approximately 20 MW \cite{Exascale20MW}.
+Additionally, exascale operating systems are required to actively ``decrease the cost per scientific insight'' \cite{DOEML}.  
+Minimizing application energy, even if runtime is increased, can (1) greatly reduce the cost (in Joules) of scientific insight and (2) increase application throughput in over-provisioned, power-constrained systems---such as future exascale computers \cite{Sarood2013,PatkiRMAP}---by allowing more applications to execute on a cluster simultaneously.
 
-\TODO{...}
+We therefore propose to dynamically monitor application and system behavior at runtime and use machine learning classification to predict the most energy-efficient resource settings as the application executes.
+The proposed approach has two distinct benefits.
+First, it can be applied to new applications without modifying either the classifier or application, as it does not require application-level instrumentation or hooks.
+Second, classification's low overhead makes it suitable for running in-situ on compute nodes.
+
 
 \input{classifiers-motivation}
 \input{classifiers-framework}

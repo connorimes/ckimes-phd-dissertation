@@ -1,14 +1,14 @@
 \section{Discussion of Results and Limitations}
 
-Our results show that POET achieves the goals of providing predictable timing and near minimal energy across multiple platforms.
-These results are obtained despite the facts that 1) the tested applications were not originally designed to offer predictable latency and 2) the test platforms vary greatly in size and capability, and have different latency/energy tradeoffs.
-The applications require only minimal modifications to run with POET, but no other changes are needed to exploit the different resources and latency/energy tradeoffs that different platforms offer.
-In summary, POET achieves our design goal of enabling predictable timing with near-optimal energy in a portable library.
+Our results show that POET achieves the goals of providing predictable timing and near-minimal energy across multiple platforms.
+These results are obtained despite the facts that 1) the tested applications were not originally designed to offer predictable timing, and 2) the test platforms vary greatly in size and capability, and have different latency/energy tradeoffs.
+The applications require only minimal modifications to run with POET, but no other changes are needed to exploit the different resources and tradeoffs that different platforms offer.
+% In summary, POET achieves our design goal of enabling predictable timing with near-optimal energy in a portable library.
 
 These results also demonstrate some limitations of the approach.
 POET supports only soft real-time constraints.
-The controller is guaranteed to converge to the desired latency and is provably robust to errors, but latency goals may be violated during the settling time, as seen in \figsref{poet-embedded-multiapp}{poet-server-multiapp} when POET adapts to the presence of the new application.
-In addition, highly variable applications can still cause temporary latency violations before the control action settles again, as seen in \figsref{poet-embedded-phases-x264}{poet-server-phases-x264} when controlling the high-variance x264 application.
+The controller is guaranteed to converge to the desired performance/latency goal and is provably robust to errors, but goals may be violated during the settling time, as seen in \figsref{poet-embedded-multiapp}{poet-server-multiapp} when POET adapts to the presence of new applications in the system.
+In addition, highly variable applications can still cause temporary violations before the control action settles again, as seen in \figsref{poet-embedded-phases-x264}{poet-server-phases-x264} when controlling the high-variance \app{x264} application.
 This is further evidence that there is a tension between timeliness and energy reduction \cite{Abeni}, \eg the tremendous energy savings on the ODROID come at a cost of some latency errors compared to the \emph{race-to-idle} heuristic.
 
 POET is also sensitive to the resource specifications provided by the user.
@@ -18,7 +18,7 @@ Instead, this overhead is modeled as an inaccuracy in the specified speedup.
 Our results show that this simplification works well in practice, but it may not be sufficient with different resources that have extremely long configuration transition latencies.
 In that case, the POET controller and optimizer should be extended to account explicitly for the overhead of switching configurations.
 
-Finally, POET currently assumes that only one of the running applications (consisting of multiple, possibly communicating threads) should meet a deadline.
+Finally, POET currently assumes that only one of the running applications should meet a performance/latency deadline.
 POET's Kalman filter guarantees that even when other applications are present in the system, the controller will compute the correct speedup to be applied, as demonstrated in \figsref{poet-embedded-multiapp}{poet-server-multiapp}.
 However, future work could extend POET with a priority scheme allowing multiple POET-enabled applications to work concurrently.
-In that scheme, high priority applications would be allocated the needed resources and lower priority applications would run in best-effort mode.
+In that scheme, high-priority applications would be allocated the needed resources and lower-priority applications would run in best-effort mode.

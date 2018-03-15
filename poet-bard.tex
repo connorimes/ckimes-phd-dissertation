@@ -11,14 +11,14 @@ An application on an embedded device (like a smartphone) may need to meet timing
 The same application may have tasks that execute when running in the background that are not time-sensitive and would benefit the user by keeping power consumption low so as not to drain the battery.
 Other systems that normally provide timing guarantees must continue operating with reduced capacity during hardware failures (\eg a broken cooling fan) or during periods of extremely low energy reserves (\eg at night or during cloudy weather for a system that harvests energy from a solar panel).
 
-A naive approach to solving this problem is to integrate two different solutions into the application -- one that meets timing constraints, and another for power.
+A naive approach to solving this problem is to integrate two different solutions into the application: one that meets timing constraints, and another for power.
 If the libraries are not properly managed, they may compete for control of system resources.
 This can result in failing to meet either goal, causing poor performance and high power consumption.
 Furthermore, it adds additional complexity to the program and increases the overhead in development and validation testing.
-Also, many existing solutions are specific to particular applications or systems, \ie they are not portable.
+Furthermore, many existing solutions are specific to particular applications or systems, \ie they are not portable.
 
 POET's portability makes it a perfect starting point for solving this problem.
-Bard extends POET by adding the ability to track both performance and power behavior and allow the user to decide which constraint/optimization scheme to use.
+Bard extends POET by adding the ability to track both performance and power behavior, allowing the user to decide which constraint/optimization scheme to use at any time.
 In summary, Bard (1) meets either timing or power constraints, (2) optimizes the other, and (3) remains portable across systems.
 
 
@@ -26,31 +26,31 @@ In summary, Bard (1) meets either timing or power constraints, (2) optimizes the
 
 Bard's formulations are very similar to POET.
 The key to rapidly switching from a performance to a power constraint and vice versa is to continually estimates both base values.
-The Bard controller then generates its generic control signal, $x(t)$, which can be either \emph{speedup} or \emph{powerup}:
+The Bard controller generates its \emph{generic control signal}, $x(t)$, which is either \emph{speedup} or \emph{powerup}:
 \begin{eqnarray}
-  x(t) = x(t-1) + (1-p) \cdot \frac{e_x(t)}{b_x(t)}
+  x(t) = x(t-1) + (1-\alpha) \cdot \frac{e_x(t)}{b_x(t)}
   \label{eqn:bard-xup-control}
 \end{eqnarray}
-The $x(t)$ term is the speedup or powerup computed (generalized $s(t)$ from POET); $b_x(t)$ represents either base speed or power, depending on the constraint.
+Here $b_x(t)$ represents either base speed or base power, depending on the constraint, both of which are continually estimated by a Kalman filter \cite{welch2006kalman}.
 
-The constrained optimization problem for meeting a performance goal and minimizing energy consumption remains the same as in POET (\eqnrref{poet-power}{poet-time} in \secref{poet-optimizer}).
+The constrained optimization problem for meeting a performance goal and minimizing energy consumption remains the same as in POET (\eqnrref{poet-power}{poet-time}).
 To meet a power goal $P_r$ and maximize performance, the problem becomes:
 \begin{eqnarray}
-  \maximize && \sum_{c=0}^{C-1} \tau_c \cdot s_c \label{eqn:timing} \\
+  \maximize && \sum_{c=0}^{C-1} \tau_c \cdot r_c \label{eqn:bard-timing} \\
   \st %&& \nonumber\\
-  && \sum_{c=0}^{C-1} \tau_c \cdot p_c \cdot b_p(t) \le P_r \label{eqn:power} \\
+  && \sum_{c=0}^{C-1} \tau_c \cdot p_c \le P_r \label{eqn:bard-power} \\
   && \sum_{c=0}^{C-1} \tau_c = 1 \label{eqn:work} \\
-  && \tau_c \ge 0, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:time}
+  && \tau_c \ge 0, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:bard-time}
 \end{eqnarray}
 
 \begin{algorithm}[t]
   \caption{Finding an Optimal Configuration Schedule.}
   \begin{algorithmic}
     \footnotesize
-    \Require $C$ \Comment{system configurations}
-    \Require $W$ \Comment{workload size}
-    \Require $constraint$ \Comment{PERFORMANCE or POWER}
-    \Require $x(t)$ \Comment{speedup/powerup, depending on $constraint$}
+    \Require $C$ \Comment{system configurations, given by user}
+    \Require $\omega$ \Comment{discrete work units, given by application}
+    \Require $constraint$ \Comment{PERFORMANCE or POWER, given by user or application}
+    \Require $x(t)$ \Comment{speedup/powerup, depending on $constraint$, given by \eqnref{bard-xup-control}}
   \State $U = \{c \mid x_c \le x(t) \}$
     \State $O = \{c \mid x_c > x(t)\}$
     \State $candidates = U \times O = \{\langle u,o \rangle \mid u \in U, o \in O\}$
@@ -58,44 +58,38 @@ To meet a power goal $P_r$ and maximize performance, the problem becomes:
     \State $optimal = \langle -1,-1 \rangle$
     \State $schedule = \langle -1,-1 \rangle$ \newline
     \For {$\langle u,o \rangle \in candidates$} \Comment{loop over all pairs}
-    \State $j_u = W \cdot \frac{x_u \cdot (x_o - x(t))}{x(t) \cdot (x_o - x_u)}$
-  \Comment{jobs spent in each config}
-    \State $j_o = W - j_u$
+    \State $\omega_u = \omega \cdot \frac{x_u \cdot (x_o - x(t))}{x(t) \cdot (x_o - x_u)}$
+  \Comment{compute the work units to spend in each configuration in pair}
+    \State $\omega_o = \omega - \omega_u$
   \If {$constraint = POWER$}
   \Comment{cost of this pair}
-  \State $newCost = \frac{W}{j_u \cdot s_u + j_o \cdot s_o}$
+  \State $newCost = \frac{\omega}{\omega_u \cdot s_u + \omega_o \cdot s_o}$
   \Comment{normalized latency}
   \Else
-  \State $newCost = \frac{j_u \cdot p_u + j_o \cdot p_o}{W}$
+  \State $newCost = \frac{\omega_u \cdot p_u + \omega_o \cdot p_o}{\omega}$
   \Comment{normalized energy}
   \EndIf
     \If {$newCost < cost$}
-  \Comment{compare cost to best so far}
+  \Comment{compare cost to best found so far}
     \State $cost = newCost$
     \State $optimal = \langle u,o \rangle$
-    \State $schedule = \langle j_u,j_o \rangle$
+    \State $schedule = \langle \omega_u,\omega_o \rangle$
     \EndIf
     \EndFor \newline \newline
     \Return $optimal$ \Comment{pair of configurations with minimal cost} \newline
-    \Return $schedule$ \Comment{jobs to spend in each configuration}
+    \Return $schedule$ \Comment{work units to spend in each configuration}
   \end{algorithmic}
   \label{algo:bard-optimal}
 \end{algorithm}
 
 \algoref{bard-optimal} further generalizes the POET optimizer behavior (\algoref{poet-optimal} in \secref{poet-optimizer}) to compute either a minimal-energy or maximal-performance schedule.
-It takes as input the configuration set $C$, workload size $W$, the $constraint$ type, and the generic control signal $x(t)$.
-% It similarly finds the optimal pair of configurations by partitioning $C$ into two pairwise disjoint subsets, $U$ and $O$.
-% $U$ contains the configurations with speedup or powerup values less than or equal to the signal computed by the controller with \eqnref{bard-xup-control}.
-% $O$ contains the rest, with values greater than the controller's signal.
-% The algorithm then loops over all possible pairs of configurations, with one chosen from each subset (the Cartesian product), and determines the schedule required to achieve the speedup or powerup given by the controller.
-The algorithm similarly loops over all possible pairs of configurations and determines the schedule required to achieve the speedup or powerup given by the controller.
-% Once the schedule is computed, its cost is determined.
-If the constraint is performance, energy is minimized; if the constraint is power, performance is maximized (latency is minimized).
-% The algorithm remembers the pair with the lowest cost and returns the optimal pair and their schedule.
+It takes as input the configuration set $C$, workload size $\omega$, the $constraint$ type, and the generic control signal $x(t)$.
+The algorithm similarly loops over all feasible configuration pairs and determines the optimal schedule that achieves the speedup or powerup given by the controller.
+% If the constraint is performance, energy is minimized; if the constraint is power, performance is maximized (latency is minimized).
 
 We add the \emph{constraint} type (\variable{PERFORMANCE} or \variable{POWER}) to the initialization function of the POET API.
 If \variable{PERFORMANCE} is specified, Bard meets a performance target and minimizes energy.
-If \variable{POWER} is specified, Bard meets the power target and maximizes performance.
+If \variable{POWER} is specified, Bard meets the power target and maximizes performance (minimizes latency).
 We then add a setter function to support changing the constraint type at runtime.
 
 
@@ -152,12 +146,13 @@ We then add a setter function to support changing the constraint type at runtime
 \end{figure}
 
 We evaluate Bard on the same Vaio tablet as POET, and use a newer ARM big.LITTLE device, an ODROID-XU3, which supports running both the big and LITTLE cluster simultaneously.
-Although Bard is independent of the system-specific configurations, we need a new format to use in our evaluation.
-In the system-specific configuration in \figref{bard-config-examples} contains an identifier, a core mask (instead of core count), and a comma-delimited list of DVFS frequencies to apply (instead of a single frequency).
+Although Bard is independent of the system-specific configurations, we need a slightly different format than in POET to use in our evaluation.
+The new system-specific configuration in \figref{bard-config-examples} contains an identifier, a core mask (instead of core count), and a comma-delimited list of DVFS frequencies to apply (instead of a single frequency).
 A dash indicates that a DVFS frequency does not need to be applied to a core, either because the frequency does not matter or it is already managed through another affected core.
 For example, configuration with $id=7$ assigns cpu0, cpu1, and cpu2 (core mask 0x07) and sets the DVFS frequency on cpu0 to 300 MHz and cpu4 to 200 MHz.
-% On this particular system, cores 0--3 are in one DVFS domain and cores 4--7 are in another.
-% Therefore, applying a DVFS setting of 300 MHz on cpu0 sets the same frequency on cores 1--3, and applying a frequency of 200 MHz on cpu4 sets the same frequency on cores 5--7.
+On this particular system, cores 0--3 are in one DVFS domain and cores 4--7 are in another.
+Therefore, applying a DVFS setting of 300 MHz on cpu0 sets the same frequency on cores 1--3, and applying a frequency of 200 MHz on cpu4 sets the same frequency on cores 5--7.
+Note that configuration with $id=7$ does not use cores 4--7, but the DVFS frequency is set anyway (to its lowest value to save energy).
 % We specify a dash for cores 1--3 and 5--7 to prevent setting their frequencies explicitly which could result in unnecessary overhead.
 % Although cores 4--7 are not assigned, forcing a low DVFS setting reduces their power consumption while they idle.
 
@@ -186,5 +181,5 @@ Similarly, our oracle computes the minimal-energy schedule, then the maximal-per
 On the Vaio, Bard achieves $1.58\%$ MAPE and $92\%$ efficiency on average.
 On the ODROID, it achieves $1.97\%$ MAPE and $91\%$ efficiency.
 As \figref{bard-perf-pwr-change-pick4} shows, the time taken to switch between the timing and power constraints is quite small---just one period.
-The small fluctuations seen in the first portion of some executions (like x264) are not caused by Bard, but rather by the variability of the application inputs which makes them difficult to control.
+The small fluctuations seen in the first portion of some executions (like \app{x264}) are not caused by Bard, but rather by the variability of the application inputs which makes them difficult to control.
 These results demonstrate that Bard achieves its design goal of providing a single, portable framework for meeting either timing or power constraints and dynamically switching between the two.

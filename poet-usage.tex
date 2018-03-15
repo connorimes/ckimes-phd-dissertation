@@ -15,19 +15,20 @@ Bodytrack and x264 process video input and could be required to match the frame 
 Ferret is a toolkit for content-based similarity search of non-text data and should satisfy a latency requirement on how fast results are returned to users.
 Facesim creates realistic animations of a human face from a model and time sequence of muscle movements, and must maintain a real-time frame rate.
 The sixth and seventh applications are \app{dijkstra} and \app{sha}, from the ParMiBench benchmark suite~\cite{parmibench}.
-Dijkstra\footnote{We use the parallelized multiple queue implementation provided with the ParMiBench benchmark suite.} computes single-source shortest paths in a graph.
+Dijkstra computes single-source shortest paths in a graph (we use the parallelized multiple queue implementation).
 SHA (Secure Hash Algorithm) is used for secure storage and transmission of data and must maintain response time to ensure timely communication.
 The last application is \app{STREAM}~\cite{stream}, a synthetic benchmark for measuring sustainable memory bandwidth, representing a variety of memory-bound applications.
 
 All benchmarks are modified as discussed in~\secref{poet-implementation}, adding Heartbeats and POET calls.
 All application inputs used are packaged with the original benchmarks, with the exception of the x264 input which comes from a set of standard test sequences.
-Recall that these applications were not originally designed to provide predictable timing.
+% Recall that these applications were not originally designed to provide predictable timing.
 
 
 \subsection{Evaluation Platforms}
 
-The evaluation is broken down into two categories.
-In the first part of the evaluation, we use two modern embedded devices with different hardware---a Sony VAIO SVT11226CXB tablet PC with a mobile Intel Haswell processor, and a Hardkernel ODROID-XU+E ARM big.LITTLE development platform.
+The evaluation is broken down into two categories: an embedded systems evaluation and a server-class system evaluation.
+
+The first part of the evaluation uses two modern embedded devices with different hardware---a Sony VAIO SVT11226CXB tablet PC with a mobile Intel Haswell processor, and a Hardkernel ODROID-XU+E ARM big.LITTLE development platform.
 We selected these two platforms because prior work has shown that they expose different timing and energy tradeoffs~\cite{Imes2014}.
 % \tblref{poet-embedded-systemknobs} shows the hardware details for both, highlighting the configurable resources, the cardinality of the set of alternatives for each, and the maximum speedup achievable by manipulating that resource alone.
 Both platforms run Ubuntu Linux 14.04 LTS.
@@ -58,7 +59,7 @@ The Vaio uses kernel 3.13.0, while the ODROID runs kernel 3.4.104.
 % \end{table}
 
 The second part of the evaluation uses a dual-socket server system, where each socket contains 8 cores.
-With hyperthreading, the system exposes 32 virtual cores.
+With Hyperthreading, the system exposes 32 virtual cores.
 There are 16 DVFS settings available, including TurboBoost.
 The server system also runs Ubuntu 14.04 LTS with Linux kernel 3.13.0.
 
@@ -69,7 +70,7 @@ Thus, we allow only configurations where all cores are set to the same frequency
 The ODROID's version of the Exynos5 Octa does not support executing on the big and LITTLE clusters simultaneously, and all cores in a cluster must operate at the same frequency.
 We use a mainline Linux kernel with the default In Kernel Switcher for managing cluster migration.
 %IKS maintains compatibility with existing schedulers by modifying existing DVFS systems, but at a cost of supporting execution on only one cluster at a time. This is achieved on the ODROID by using dummy frequency values for the LITTLE cores so as not to overlap with the frequencies provided by the big cores.
-On the server system, we set the DVFS frequency on all cores, regardless if a particular core is being used.
+On the server system, we set the DVFS frequency on all cores, like on the Vaio.
 
 \begin{table}[t]
 % \vskip -1.5em
@@ -89,10 +90,10 @@ On the server system, we set the DVFS frequency on all cores, regardless if a pa
 \label{tbl:poet-power}
 \end{table}
 
-To capture power measurements on the Vaio and the server system, we use the Model-Specific Register (MSR) of the Haswell processor~\cite{SandyBridge}.
-On the ODROIDs, we poll INA-231 power sensors~\cite{ina231} to capture power data for the A15 and A7 clusters as well as for the DRAM and for the GPU.
-Basic power figures of the three platforms are shown in~\tblref{poet-power}.
-Capturing these metrics naturally requires hardware resources that expose power or energy data to software.
+Capturing power/energy metrics naturally requires hardware resources that expose power or energy data to software.
+To capture power measurements on the Vaio and the server system, we use the Model-Specific Registers (MSRs) provided by Intel~\cite{SandyBridge}.
+On the ODROID, we poll INA-231 power sensors to capture power data for the A15 and A7 clusters as well as for the DRAM and for the GPU~\cite{ina231}.
+Basic power figures for the three platforms are shown in~\tblref{poet-power}.
 The modified version of Heartbeats includes energy readers for some common hardware (\eg the MSR) and exposes a simple interface for extending to new hardware.
 Collecting power data on new platforms with different power or energy monitors is easy and does not require any modifications to POET.
 
@@ -125,16 +126,16 @@ Collecting power data on new platforms with different power or energy monitors i
   \label{fig:poet-embedded-variation}
 \end{figure}
 
-\tblref{poet-embedded-inputs} shows the inputs used for each of the applications on these embedded platforms.
-We quantify this inherent unpredictability by measuring the latency of each job and computing the standard deviation and mean over all jobs in an application.
-\figref{poet-embedded-variation} shows the ratio of standard deviation to mean for each application when running without POET.
+\tblref{poet-embedded-inputs} shows the inputs used for each of the applications on the embedded platforms.
+We quantify this inherent unpredictability by measuring the latency of each job and computing the coefficient of variation over all jobs in an application.
+\figref{poet-embedded-variation} demonstrates this unpredictability for each application when running without POET.
 The figure shows that our applications have a range of natural behavior from low variance (implying natural predictability, \eg blackscholes) to high variance (meaning that the application naturally has widely distributed latencies, \eg x264).
 The variability in the applications is largely the same across platforms, indicating that it is a fundamental property of the applications and not the devices.
 
 \begin{table}[t]
 \small
 \centering
-\caption{Server-class system inputs and configuration details.}
+\caption{Server-class system evaluation inputs and configuration details.}
 \begin{tabular}{cccc}
   \textbf{Application} & \textbf{Input} & \textbf{Jobs} & \textbf{Window Size} \\
   \hline
@@ -163,4 +164,5 @@ The variability in the applications is largely the same across platforms, indica
 The server-class system is significantly more powerful than the embedded systems.
 The overhead of changing resource allocations is also higher due to the larger core count.
 As a result, we increased both the size or length of some inputs and the window period size.
-Again, we quantify the variability in the applications and present the results in \figref{poet-server-variation} and find the results are similar to those from the embedded systems.
+Again, we quantify the variability in the applications and present the results in \figref{poet-server-variation}.
+As expected, they are similar to those from the embedded systems.

@@ -39,14 +39,14 @@ yticklabels={,0.8,1.0,1.2,1.4},
 yticklabel style={font=\footnotesize},
 ymin=.6,
 ymax=1.4,
-legend entries={{Vaio},{ODROID-XU+E}},
+legend entries={{Vaio},{ODROID}},
 legend style={draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,line width=5pt,font=\footnotesize},
 ]
 \addplot[thick, solid, color=s1] table[x index=0,y index=1,col sep=tab] {img/poet/x264-phases-poet-vaio.txt};
 \addplot[thick, solid, color=s3] table[x index=0,y index=1,col sep=tab] {img/poet/x264-phases-poet-odroid.txt};
 \addplot[thick, solid, black] coordinates {(0, 1) (1500, 1)};
-\addplot[thick, dashed, black] coordinates {(500,0) (500, 1.2)};
-\addplot[thick, dashed, black] coordinates {(1000,0) (1000, 1.2)};
+\addplot[thick, dashed, black] coordinates {(500,0) (500, 1.4)};
+\addplot[thick, dashed, black] coordinates {(1000,0) (1000, 1.4)};
 
 
 \nextgroupplot[ylabel={\footnotesize Power \\ (Watts)}, % Power

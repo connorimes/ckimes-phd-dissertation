@@ -1,8 +1,8 @@
 \section{Embedded Systems Evaluation}
 \label{sec:poet-embedded-evaluation}
 
-This chapter describes POET's evaluation on embedded systems, which is divided into five parts.
-First, we demonstrate POET's ability to meet the latency requirements.
+This chapter describes POET's evaluation on embedded systems---the Vaio and the ODROID-XU+E (henceforth referred to simply as the ODROID)---and is divided into five parts.
+First, we demonstrate POET's ability to meet performance goals, formulated as job latency requirements.
 Next, we quantify the energy consumption of the resulting system, then compare the energy of POET's general approach to one that controls latency and energy tradeoffs using just DVFS.
 We then evaluate POET's ability to adapt to input with multiple phases, and finally, its ability to run subject to the interference of other applications.
 
@@ -10,12 +10,12 @@ We then evaluate POET's ability to adapt to input with multiple phases, and fina
 \subsection{Meeting Latency Targets}
 \label{sec:poet-eval-embedded-performance}
 
-To test POET's ability to meet latency targets, we first \emph{characterize} each application $i$ by executing in all possible configurations on both systems to determine the minimum average latency $m_i$ and derive an oracle to be used for our analysis.
+To test POET's ability to meet latency targets, we first \emph{characterize} each application $i$ by executing in all possible configurations on both systems to determine the minimum average latency $m_i$ and derive an \emph{oracle} to be used for our analysis.
 This oracle determines an optimal resource schedule for each target without missing any deadlines, and has no computation or configuration switching overhead.
 For each application, we impose four latency targets.
 The targets cover a wide range of achievable goals, from 25\% to 95\% of each system's performance capacity, \ie a 25\% goal means that the target is set to $4 \times m_i$.
 Applications are launched in the maximum-resource configuration (configuration $C-1$ as described in \secref{poet-optimizer}).
-POET observes application behavior during the first window period, then begins applying system changes.
+POET observes application behavior during the first window period, then begins adapting the system to meet the latency goals while minimizing energy consumption.
 
 We quantify POET's ability to meet the latency goals by measuring each job's latency and comparing it to the goal.
 We then compute the Mean Absolute Percentage Error (MAPE), a standard metric in control theory to evaluate the behavior of controllers~\cite{ICSE2014}.
@@ -24,7 +24,7 @@ For an application composed of $n$ jobs:
 MAPE = 100\% \cdot \frac{1}{n} \sum\limits_{i=1}^{n} 
 \left \{
 \begin{array}{ll}
-d_m(i) > d_{r}  :& \left|\frac{d_m(i) - d_{r}}{d_r} \right| \\
+d_m(i) > d_{r}  :& \frac{d_m(i) - d_{r}}{d_r} \\
 d_m(i) \le d_{r}  :& 0
 \end{array} \right.
  \label{eqn:poet-mape}
@@ -93,15 +93,15 @@ The next section highlights the benefits of this generality.
 
 Several energy management approaches have been proposed that optimally tune DVFS settings to meet timing constraints while reducing energy consumption \cite{Albers}.
 In this section, we compare POET's energy consumption to an approach which only uses DVFS.
-Specifically, we develop system configuration files that only specify changes in DVFS settings and deploy POET on both hardware platforms with these configurations.
+To do so, we develop system configuration files that only specify changes in DVFS settings and deploy POET on both embedded platforms with these configurations.
 We compare this \emph{DVFS-only} approach to POET's more general approach which coordinates multiple resource types and uses different resources on different platforms.
 
 \figref{poet-embedded-dvfs-compare} summarizes the data comparing a DVFS-only approach to POET.
 The charts show latency targets on the x-axes and energy consumption normalized to optimal on the y-axes (for POET, this is the same data shown in \figref{poet-embedded-ee}).
-For each latency target, the figure shows the average (across all benchmarks) energy over optimal for both DVFS-only and POET on both platforms.
+For each latency target, the figure shows the average energy over optimal (across all benchmarks) for both DVFS-only and POET on both platforms.
 At the higher latency (lower performance, \eg 25\%) targets, POET saves substantial energy.
 The energy savings are especially high on the ODROID as POET is able to take advantage of cluster migration and the low-power LITTLE cores, whereas a DVFS-only approach cannot exploit this feature.
-This data clearly demonstrates that systems that are provisioned for a rarely seen worst case latency can greatly benefit from POET's generalized approach.
+This data clearly demonstrates that systems provisioned for a rarely-seen, worst-case latency can greatly benefit from POET's generalized approach.
 This is also further confirmation of prior studies showing that DVFS by itself is not optimal \cite{Hoffmann2012,MeisnerISCA2011}.
 
 
@@ -110,10 +110,10 @@ This is also further confirmation of prior studies showing that DVFS by itself i
 In this test, we examine POET's ability to cope with input whose workload varies with time.
 We execute the \app{x264} application using an input that is a combination of three videos of varying difficulty.
 The input thus has three distinct phases, each composed of 500 jobs (frames).
-\figref{poet-embedded-phases-default} shows time series data for both latency and power for the Vaio and the ODROID when they run without POET in their highest performing configurations.
-Latency is normalized to the maximum latency measured for any iteration (\ie the empirically determined worst case).
+\figref{poet-embedded-phases-default} shows time series data for both job latency and power on the Vaio and the ODROID when they run without POET in their highest-performing configurations.
+Latency is normalized to the maximum latency measured for any job, \ie the empirically determined worst case.
 We use this worst case result to derive the latency target for the POET tests.
-Frames that take less time are easier to encode, and require fewer system resources to meet a latency goal compared to the frame that takes the most time, presenting opportunities to save energy.
+Frames that take less time are easier to encode and require fewer system resources to meet a latency goal compared to the frame that takes the most time, presenting opportunities to save energy.
 We present the raw data for power; energy is the integral of those curves.
 
 \begin{figure}[t]
@@ -130,15 +130,14 @@ We present the raw data for power; energy is the integral of those curves.
 \end{figure}
 
 The phases are clearly distinguishable by the change in latency at frames 500 and 1000.
-The two systems do not process each phase with the same relative latency.
+The two embedded systems do not process each phase with the same relative latency.
 The first phase is the most difficult (highest latency) for both systems, but the second phase is the easiest (lowest latency) for the Vaio, while the third one is the easiest for the ODROID.
 
 We enable POET using the maximum measured latency identified in the first experiment as the target.
-The results of the executions are shown in \figref{poet-embedded-phases-x264}.
-POET is able to meet the latency target on both systems.
-Dips and spikes are visible at the beginning of each phase, showing the change in behavior of the input and POET adapting to the change.
+\figref{poet-embedded-phases-x264} demonstrates that POET is able to meet the latency target on both systems.
+Dips and spikes are visible at the beginning of each phase, showing the change in input behavior and POET adapting to the change.
 Despite these variations, latency goals are respected: MAPE is 2.2\% on the Vaio and 2.0\% on the ODROID.
-At the same time, energy is near minimal over the course of execution: energy is 1.7\% greater than optimal on the Vaio and 3.6\% over optimal on the ODROID.
+At the same time, energy is near-minimal over the course of execution: energy is 1.7\% greater than optimal on the Vaio and 3.6\% over optimal on the ODROID.
 
 
 \subsection{Adapting to Other Applications}
@@ -150,17 +149,15 @@ At the same time, energy is near minimal over the course of execution: energy is
   \label{fig:poet-embedded-multiapp}
 \end{figure}
 
-This test shows POET's behavior when other applications are present in the system.
-This external load is not under the direct control of POET.
+This test evaluates POET's behavior when other applications are present in the system, using an external load that is not under POET's direct control.
 We launch a POET-enabled application (\app{bodytrack}) with a target latency, then halfway through its execution, we launch another application.
 This second application consumes resources, slowing down the POET-enabled application.
 POET then assigns more resources to its own application so that it continues to meet its latency target.
 
-\figref{poet-embedded-multiapp} shows POET's behavior, the top half displaying the Vaio and the bottom half the ODROID.
-The thick vertical lines show when the second application was launched.
-In both cases, we see the latency temporarily increase before POET adjusts the resource allocation.
-To show the benefits of POET, the charts also show a statically managed system that just selects the resources to be given to the application at the beginning of its execution.
-In the static case, the introduction of the new application dramatically increases the job latency.
-To quantify this effect, we compute the MAPE metric for both the static allocation and with POET.
+\figref{poet-embedded-multiapp} demonstrates POET's behavior on the two embedded platforms.
+The thick vertical lines indicate when the second application is launched.
+On both systems, we see the latency temporarily increase before POET adjusts the resource allocation.
+The charts also show a static resource scheduling approach that selects the application's system resources at the beginning of the execution.
+In the static case, the introduction of the new application dramatically increases the job latency, but it is not able to adapt like POET.
 On the Vaio, POET's MAPE is 2.3\% over the entire execution (including the period of adjustment to the new load), while the static case has a MAPE of 16\%.
-On the ODROID, POET's MAPE is 2.4\%, while the static case achieves 12\%.
+On the ODROID, POET achieves 2.4\% MAPE, while the static case is 12\%.

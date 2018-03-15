@@ -2,9 +2,13 @@
 \label{sec:poet-motivation}
 
 To motivate the need for POET, we summarize prior work \cite{Imes2014}.
-We evaluate the timing and energy tradeoffs of a video encoder on two embedded platforms, a Sony Vaio tablet and an ODROID development board.
-The two platforms not only have different resources for management, but also have latency and energy tradeoffs with different topologies.
-Thus, resource allocation strategies that save energy on one are wasteful on the other.
+We evaluate timing and energy tradeoffs on two embedded platforms: a Sony Vaio SVT11226CXB tablet system with an Intel Haswell processor and an ODROID-XU+E ARM big.LITTLE development board.
+The two platforms have 1) different configurable resources for performance/power management, and 2) timing/energy tradeoffs with different topologies.
+Resource allocation strategies that save energy on one are wasteful on the other.
+
+\tblref{poet-machines} presents each system's configurable resources.
+The Vaio allows configuring the number of active cores, the use of hyperthreads, processor clock speed, and the use of TurboBoost.
+The ODROID supports configuring the number of active cores, whether the application uses the ``big'' (Cortex-A15 high-performance, high-power) or ``LITTLE'' (Cortex-A7 low-performance, low-power) cores, and the independent clock speeds of the big and LITTLE clusters.
 
 \begin{table}[t]
 \caption{Two embedded platforms with different configurable components.}
@@ -32,44 +36,40 @@ Thus, resource allocation strategies that save energy on one are wasteful on the
 \end{table}
 
 Our example features a video encoder, composed of jobs, where each job encodes a frame.
-We instrument the encoder to report job latency and we measure the platform's energy consumption over time.
-The two platforms have different configurable resources, shown in \tblref{poet-machines}.
-The Vaio allows configuration of the number of active cores, the number of hyperthreads per core, the speed of the processors, and the use of TurboBoost.
-The ODROID, supports configuration of the number of active cores, their clock speed, and whether the application uses the ``big'' (Cortex-A15 high performance, high power) or ``LITTLE'' (Cortex-A7 low performance, low power) cores.
-
-\figref{poet-x264-motivation-tradeoffs} shows the tradeoffs between energy consumption and latency.
-The x-axis shows the average latency (normalized to 1---the empirically determined worst case).
-The y-axis shows energy (normalized to 1---the highest measured energy).
-The two plots show the very different tradeoffs for the Vaio and the ODROID with each point representing a different configuration.
+We instrument the encoder to report the latency and platform energy consumption for each job.
+\figref{poet-x264-motivation-tradeoffs} shows the tradeoffs between job latency and system energy consumption for each platform, where each point represents the average behavior of a different configuration.
+The x-axis shows latency, normalized to 1---the empirically determined worst case.
+The y-axis shows energy, normalized to 1---the highest measured energy.
+The tradeoffs are obviously very different for the Vaio and the ODROID.
 For the Vaio, energy increases as frame latency increases; \ie a slower job wastes energy.
 For the ODROID, energy decreases as frame latency increases; \ie slower encodings save energy.
 
 \begin{figure}[t]
   % \vskip -1.8em
   \centering
-  \subfloat[Energy/Latency Tradeoffs]%
+  \subfloat[Latency/Energy tradeoffs.]%
   {\input{img/poet/tradeoffs.tex}%
   \label{fig:poet-x264-motivation-tradeoffs}}
-  \subfloat[Energy Consumption]%
+  \subfloat[Heuristic energy consumption.]%
   {\input{img/poet/heuristics.tex}%
   \label{fig:poet-x264-motivation-heuristics}}
-  \caption{Energy/latency tradeoffs.}
+  \caption{Timing and energy behavior for encoding video on the Vaio and ODROID.}
   \label{fig:poet-x264-motivation}
 \end{figure}
 
 The different shapes of these tradeoff spaces lead to different optimal resource allocation strategies.
-Empirical studies show that the \emph{race-to-idle} heuristic, which makes all resources available and then idles after completing a job, is near optimal on systems like the Vaio~\cite{PowerSlope,Hoelzle2009,google,Imes2014,HotPower}.
-On systems like the ODROID, recent approaches save energy by keeping the system constantly busy and \emph{never-idle}~\cite{Carroll13,LeSueur11,Lin2010,Imes2014,HotPower}.
+Empirical studies show that the \emph{race-to-idle} heuristic, which makes all resources available and then idles after completing a job, is near-optimal on systems like the Vaio~\cite{google,Hoelzle2009,HotPower,Imes2014,PowerSlope}.
+On systems like the ODROID, recent approaches save energy by keeping the system constantly busy, like the \emph{never-idle} heuristic~\cite{Carroll13,HotPower,Imes2014,LeSueur11,Lin2010}.
 
-To demonstrate the importance of choosing the right strategy, we analyze the two heuristics on both platforms and compare their energy consumption to optimal.
+To demonstrate the importance of choosing the right strategy, we analyze the two heuristics on both platforms and compare their energy consumption to optimal (found by measuring every possible resource configuration).
 We set a latency target equal to twice the minimum latency and measure the energy consumption of encoding 500 video frames using each heuristic.
-\figref{poet-x264-motivation-heuristics} shows the results, normalized to the optimal energy found by measuring every possible resource configuration.
+\figref{poet-x264-motivation-heuristics} shows the results, normalized to optimal.
 Both heuristics meet the latency target, but their energy consumptions vary tremendously.
-On the Vaio, \emph{race-to-idle} is near optimal, but \emph{never-idle} consumes 13\% more energy.
-Conversely, \emph{never-idle} is near optimal for the ODROID, but \emph{race-to-idle} consumes $2 \times$ more energy.
+On the Vaio, \emph{race-to-idle} is near-optimal, but \emph{never-idle} consumes 13\% more energy.
+Conversely, \emph{never-idle} is near-optimal for the ODROID, but \emph{race-to-idle} consumes $2 \times$ more energy.
 
-These results demonstrate that resource allocation strategy greatly affects energy consumption, and more importantly, that heuristic solutions are \textbf{not portable} across devices.
-These two points motivate the need for an approach like POET, which provides near optimal resource allocation while remaining platform-independent.
-POET's runtime uses control theory to meet timing constraints and linear programming to minimize energy consumption.
-A POET user does not need to be a control or optimization expert, but simply make small changes to their application code.
-POET makes it easy for embedded developers to write portable applications providing predictable timing and minimal energy across a range of devices.
+These results demonstrate that resource allocation strategy greatly affects energy consumption, and more importantly, that heuristic solutions are not portable across systems.
+These two points motivate the need for an approach like POET, which provides near-optimal resource allocation while remaining platform-independent.
+% POET's runtime uses control theory to meet timing constraints and linear programming to minimize energy consumption.
+% A POET user does not need to be a control or optimization expert, but simply make small changes to their application code.
+% POET makes it easy for embedded developers to write portable applications providing predictable timing and minimal energy across a range of devices.

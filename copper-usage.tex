@@ -11,7 +11,7 @@ We evaluate CoPPer using a server-class system with dual Xeon E5-2690 processors
 Each processor socket has its own memory controller and supports 8 physical cores and 8 Hyperthreads, for a total of 32 virtual cores in the system.
 The processors support 15 DVFS settings, 1.2--2.9 \GHz, plus TurboBoost up to 3.3 \GHz.
 We bind applications to all 32 virtual cores and interleave with both memory controllers using \app{numactl}.
-To record runtime power behavior, we read energy from each socket's Model-Specific Register using the EnergyMon API and sum the two values \cite{energymon,SandyBridge}.
+To record runtime power behavior, we read energy from each socket's Model-Specific Register using the EnergyMon API and sum the two values \cite{energymon,SandyBridge} (see also \appref{energymon}).
 Energy measurements are only used to evaluate CoPPer, they are \emph{not} required in practice.
 
 RAPL supports a variety of zones, otherwise known as power planes, for controlling the power limits on different hardware components.
@@ -29,7 +29,7 @@ RAPL specifies a maximum of 215 W per socket, and although this is far more than
 Therefore, we specify a 50 W lower bound and a 430 W upper bound to be split evenly between the sockets, \eg a system power cap of 200 W sets a 100 W limit on each socket.
 A more complex power partitioning scheme could conceivably be applied to systems with heterogeneous architectures or otherwise unbalanced behavior between power capped components, but that is beyond the scope of this work.
 
-To apply RAPL power caps, we provide an easy-to-use tool called \app{RAPLCap}, but we stress again that power capping implementations are independent of CoPPer.
+To apply RAPL power caps, we provide an easy-to-use tool called \app{RAPLCap} (see \appref{powercap}), but we stress again that power capping implementations are independent of CoPPer.
 For example, the \function{apply\_powercap} function used in \lstref{example-copper} might be:
 \lstset{emph={%  
     raplcap_get_num_sockets, raplcap_set_limits%

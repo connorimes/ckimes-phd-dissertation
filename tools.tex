@@ -10,6 +10,7 @@ While core material in this thesis focuses on the \emph{decide} phase, the tools
 
 
 \section{Profiling}
+\label{app:profiling}
 
 The control-theory based projects presented in this thesis (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
 For applications to capture performance and power/energy data, they need a mechanism to capture and record metrics.
@@ -27,6 +28,7 @@ This interface benefits from the simplicity of the original Heartbeats design, a
 
 
 \section{Portable Power/Energy Readings with EnergyMon}
+\label{app:energymon}
 
 There is a growing need for software to access power and energy data in-situ, like for the projects in this thesis.
 Designing and evaluating POET and Bard led us to conclude that a portable software interface for accessing energy metrics at runtime is necessary.
@@ -128,6 +130,7 @@ EnergyMon is also used CoPPer's evaluation, as well other research projects not 
 
 
 \section{Power Capping}
+\label{app:powercap}
 
 Evaluating Intel RAPL \cite{RAPL} ultimately led to the design and evaluation of the CoPPer project.
 Again, we found a distinct lack of tools to aid us---most material we found used low-level approaches for interfacing with RAPL that were hardware-dependent and required detailed understanding of RAPL as defined in Intel's software developer's manuals \cite{intel-sdm}.

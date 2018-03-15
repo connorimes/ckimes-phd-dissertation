@@ -10,7 +10,7 @@ We tackle the problem of providing predictable timing using control theory by co
 Using the computed control signal, we then solve the energy minimization problem using mathematical optimization.
 
 \figref{poet-runtime} illustrates our approach.
-The application informs the runtime of its job \emph{performance goal}.
+The \textbf{application} informs the runtime of its job \emph{performance goal}.
 Measuring each job start and completion time (\emph{performance feedback}), POET's runtime computes the \emph{performance error} and passes it to the \textbf{controller}.
 The controller uses the error to calculate a \emph{generic control signal}, indicating how much the application speed should be altered.
 This signal is used by the \textbf{optimizer}, together with the \textbf{resource specification}, to produce a \emph{resource schedule} that achieves the desired performance goal while minimizing energy consumption.

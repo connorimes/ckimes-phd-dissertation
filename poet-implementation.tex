@@ -80,7 +80,7 @@ Performance goals can change during runtime, and POET automatically adapts.
 \subsection{Software Interface}
 \label{sec:poet-interface}
 
-Note that this interface described here has changed slightly from the original POET publication \cite{POET}.
+Note that this interface described here has changed slightly from the original POET publication, primarily to decouple POET and the Heartbeats API \cite{POET}.
 Users typically interact with only three POET functions.
 \function{poet\_init} initializes POET and returns a \struct{poet\_state} data structure reference, which stores the control state required to implement the framework described in \secref{poet-framework}.
 \function{poet\_apply\_control} executes the controller, runs \algoref{poet-optimal}, and configures the platform.

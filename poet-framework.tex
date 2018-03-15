@@ -124,25 +124,19 @@ Thus, linear programming theory states an optimal solution exists for this probl
   \begin{algorithmic}
     \footnotesize
     \Require $C$ \Comment{system configurations, given by user}
+    \Require $\omega$ \Comment{discrete work units, given by application}
     \Require $s(t)$ \Comment{speedup, given by \eqnref{poet-control}}
-    %\Require $b(t)$ \Comment{base application speed, given by \eqnref{kalman-filter}}
-    %\Require $r_d$ \Comment{desired performance, given by application}
-  \Require $\omega$ \Comment{discrete work units, given by application}
     \State $U = \{c \mid s_c \le s(t) \}$
-  \State $O = \{c \mid s_c > s(t)\}$
+    \State $O = \{c \mid s_c > s(t)\}$
     \State $candidates = U \times O = \{\langle u, o \rangle \mid u \in U, o \in O\}$
     \State $energy = \infty$
     \State $optimal = \langle -1, -1 \rangle$
     \State $schedule = \langle -1, -1 \rangle$ \newline
     \For {$\langle u, o \rangle \in candidates$} \Comment{loop over all pairs}
-  \State $\omega_u = \left\lfloor \omega \cdot \frac{s_o \cdot (s_u - s(t))}{s(t) \cdot (s_u - s_o)} \right\rfloor$
-    % \State $\omega_u = \frac{\omega \cdot s(t) - \omega \cdot s_o}{s_u -s_o}$
-  \Comment{compute the work units to spend in each configuration in pair}
+    \State $\omega_u = \omega \cdot \frac{s_u \cdot (s_o - s(t))}{s(t) \cdot (s_o - s_u)}$ \Comment{compute the work units to spend in each configuration in pair}
     \State $\omega_o = \omega - \omega_u$
-    \State $newEnergy = \omega_u \cdot p_u + \omega_o \cdot p_o$
-  \Comment{compute energy of this pair}
-    \If {$newEnergy < energy$}
-  \Comment{compare energy to best found so far}
+    \State $newEnergy = \omega_u \cdot p_u + \omega_o \cdot p_o$ \Comment{compute energy of this pair}
+    \If {$newEnergy < energy$} \Comment{compare energy to best found so far}
     \State $energy = newEnergy$
     \State $optimal = \langle u, o \rangle$
     \State $schedule = \langle \omega_u,\omega_o \rangle$
@@ -158,7 +152,6 @@ Thus, linear programming theory states an optimal solution exists for this probl
 It then divides the configurations in two distinct sets.
 The first set, $\omega_u$, contains all configurations with a speedup less than or equal to the target.
 The second, $\omega_o$, contains the remaining configurations, \ie those with speedups greater than required.
-Note that the algorithm takes the floor of the value computed for the first configuration set---since the value must be a whole number, this ensures that the actual speedup is not less than the target.
 Subsequently, \algoref{poet-optimal} loops over all possible pairs of configurations, with one from each set, to determine how much time should be spent in each configuration given speedup constraint.
 If the energy of the pair is lower than any previous energy, the algorithm stores the current best pair, its energy, and its schedule.
 When the algorithm terminates, its output is the pair of chosen configurations and their assigned times.

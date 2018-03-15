@@ -51,26 +51,21 @@ To meet a power goal $P_r$ and maximize performance, the problem becomes:
     \Require $\omega$ \Comment{discrete work units, given by application}
     \Require $constraint$ \Comment{PERFORMANCE or POWER, given by user or application}
     \Require $x(t)$ \Comment{speedup/powerup, depending on $constraint$, given by \eqnref{bard-xup-control}}
-  \State $U = \{c \mid x_c \le x(t) \}$
+    \State $U = \{c \mid x_c \le x(t) \}$
     \State $O = \{c \mid x_c > x(t)\}$
     \State $candidates = U \times O = \{\langle u,o \rangle \mid u \in U, o \in O\}$
     \State $cost = \infty$
     \State $optimal = \langle -1,-1 \rangle$
     \State $schedule = \langle -1,-1 \rangle$ \newline
     \For {$\langle u,o \rangle \in candidates$} \Comment{loop over all pairs}
-    \State $\omega_u = \omega \cdot \frac{x_u \cdot (x_o - x(t))}{x(t) \cdot (x_o - x_u)}$
-  \Comment{compute the work units to spend in each configuration in pair}
+    \State $\omega_u = \omega \cdot \frac{x_u \cdot (x_o - x(t))}{x(t) \cdot (x_o - x_u)}$ \Comment{compute the work units to spend in each configuration in pair}
     \State $\omega_o = \omega - \omega_u$
-  \If {$constraint = POWER$}
-  \Comment{cost of this pair}
-  \State $newCost = \frac{\omega}{\omega_u \cdot s_u + \omega_o \cdot s_o}$
-  \Comment{normalized latency}
-  \Else
-  \State $newCost = \frac{\omega_u \cdot p_u + \omega_o \cdot p_o}{\omega}$
-  \Comment{normalized energy}
-  \EndIf
-    \If {$newCost < cost$}
-  \Comment{compare cost to best found so far}
+    \If {$constraint = POWER$} \Comment{compute cost of this pair}
+    \State $newCost = \frac{\omega}{\omega_u \cdot s_u + \omega_o \cdot s_o}$ \Comment{normalized latency}
+    \Else
+    \State $newCost = \frac{\omega_u \cdot p_u + \omega_o \cdot p_o}{\omega}$ \Comment{normalized energy}
+    \EndIf
+    \If {$newCost < cost$} \Comment{compare cost to best found so far}
     \State $cost = newCost$
     \State $optimal = \langle u,o \rangle$
     \State $schedule = \langle \omega_u,\omega_o \rangle$
@@ -87,10 +82,10 @@ It takes as input the configuration set $C$, workload size $\omega$, the $constr
 The algorithm similarly loops over all feasible configuration pairs and determines the optimal schedule that achieves the speedup or powerup given by the controller.
 % If the constraint is performance, energy is minimized; if the constraint is power, performance is maximized (latency is minimized).
 
-We add the \emph{constraint} type (\variable{PERFORMANCE} or \variable{POWER}) to the initialization function of the POET API.
+We add the \variable{constraint} type enumeration (\variable{PERFORMANCE} or \variable{POWER}) to the POET API initialization function.
 If \variable{PERFORMANCE} is specified, Bard meets a performance target and minimizes energy.
 If \variable{POWER} is specified, Bard meets the power target and maximizes performance (minimizes latency).
-We then add a setter function to support changing the constraint type at runtime.
+We then replace the setter function \function{poet\_set\_performance\_goal} with \function{poet\_set\_constraint\_type} to support changing the constraint type and goal at runtime.
 
 
 \subsection{Evaluation}

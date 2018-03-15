@@ -34,16 +34,18 @@ xticklabel shift={-5pt},
 yticklabel shift={-5pt},
 ylabel shift={-2pt},
 ylabel style={align=center},
+legend cell align=left,
+legend style={ column sep=1ex },
 unbounded coords=jump,
 ]
 
 \nextgroupplot[ylabel={},
 yticklabel style={font=\footnotesize},
-xlabel={\footnotesize Time (s)},
+xlabel={\footnotesize $time$ [seconds]},
 xlabel near ticks,
 xticklabels={0,500,1000,1500,2000,2500,3000,3500},
 xticklabel style={font=\footnotesize},
-legend entries={{Power},{EE},{Cum.~Energy}},
+legend entries={{Power},{EE},{Cumulative.~Energy}},
 legend style={draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,line width=5pt},
 ]
 \addplot[thick, solid, color=s2] table[x index=0,y index=1,col sep=comma] {img/classifiers/ts_hipmer/ts_hipmer_et_pca4.csv};

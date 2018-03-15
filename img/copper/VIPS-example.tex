@@ -29,6 +29,8 @@ xticklabel shift={-5pt},
 yticklabel shift={-5pt},
 ylabel shift={-2pt},
 ylabel style={align=center},
+legend cell align=left,
+legend style={ column sep=1ex },
 unbounded coords=jump,
 ]
 
@@ -44,7 +46,7 @@ xmin=0,
 xmax=30,
 ymin=.75,
 ymax=1.25,
-legend entries={{Performance~Requirement},{DVFS},{Conservative~Power~Cap}, {Aggressive~Power~Cap}},
+legend entries={{Performance~Goal},{DVFS},{Conservative~Power~Cap}, {Aggressive~Power~Cap}},
 legend style={fill=none,draw=none,at={(0.5,1.5)},anchor=north,legend columns=4,
 line width=5pt,font=\footnotesize},
 ]

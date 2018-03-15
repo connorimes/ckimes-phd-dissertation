@@ -6,36 +6,36 @@ The projects in this dissertation led to the development of a handful of portabl
 Links to published code are available in \appref{urls}.
 
 In \secref{intro-description}, we described the \emph{observe}, \emph{decide}, and \emph{act} framework that Hoffmann proposed in his ``self-aware'' computing model \cite{HoffmannPhD}.
-While core material in this thesis focuses on the \emph{decide} phase, the tools described here are relevant to the \emph{observe} and \emph{act} phases.
+While the core research in this dissertation focuses on the \emph{decide} phase, the tools described in this chapter are relevant to the \emph{observe} and \emph{act} phases.
 
 
 \section{Profiling}
 \label{app:profiling}
 
-The control-theory based projects presented in this thesis (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
+The control-theory based projects presented in this dissertation (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
 For applications to capture performance and power/energy data, they need a mechanism to capture and record metrics.
-Application developers often develop their own profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
+Application developers often create their own profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
 Hoffmann \etal proposed \interface{Heartbeats} to specify and record performance goals for self-aware applications \cite{icac2010heartbeats}.
-We extended this work in POET and Bard and released \interface{Heartbeats 2.0}, which included a primitive interface for portably capturing energy metrics.
+We extended this work in POET and Bard and released \interface{Heartbeats 2.0}, which includes a primitive interface for portably capturing energy metrics.
 
-Later we developed a simplified profiling interface, aptly called \interface{Simple Heartbeats}, which allows more flexibility in recording application behavior.
+We later developed a simplified profiling interface, aptly called \interface{Simple Heartbeats}, which allows more flexibility in recording application behavior.
 For example, it can record performance and power behavior for discontinuous loops or separate application code phases and is more portable across operating systems.
 Java and Rust language bindings and abstractions are also available for Simple Heartbeats, some of which are integrated with Servo, Mozilla's parallel web browsing engine \cite{servo}.
-These code bases are also used in other projects not described in this thesis.
+These code bases are also used in other projects not described in this dissertation.
 
 We also created \interface{Heartbeats Simple Classic} which wraps Simple Heartbeats and EnergyMon (described in the next section) while behaving more like Heartbeats 2.0.
-This interface benefits from the simplicity of the original Heartbeats design, and is used in CoPPer's evaluation.
+This interface benefits from the simplicity of the original Heartbeats design while maintaining portability, and is used in CoPPer's evaluation.
 
 
 \section{Portable Power/Energy Readings with EnergyMon}
 \label{app:energymon}
 
-There is a growing need for software to access power and energy data in-situ, like for the projects in this thesis.
+There is a growing need for software to access power and energy data in-situ, like for the projects in this dissertation.
 Designing and evaluating POET and Bard led us to conclude that a portable software interface for accessing energy metrics at runtime is necessary.
-The primitive interface we implemented in Heartbeats 2.0 was not as portable as needed, and did not allow capturing power/energy data in isolation.
+The primitive interface in Heartbeats 2.0 is not as portable as needed and does not allow capturing power/energy data in isolation.
 In response, we designed \interface{EnergyMon}.
 
-Accessing power/energy data requires writing system-specific code which is challenging for engineers and results in applications that are not portable across platforms.
+Accessing power/energy data requires writing system-specific code which is challenging for researchers and engineers, and results in applications that are not portable across platforms.
 The diversity in sensor properties and current ad-hoc approaches for using them presents a significant challenge.
 The problem is more complex than simply locating and reading the correct files, hardware registers, or memory addresses.
 A portable interface must account for other factors:
@@ -84,7 +84,7 @@ For any time $\tau$, where $\tau=0$ is the energy monitor's initialization, the 
 \end{eqnarray}
 \eqnref{energy-monotonic} states that for any time at or after initialization, energy is always non-negative and monotonically increasing.
 \eqnref{energy-time-zero} states that the initial value does not have to be zero (could be larger).
-The following example of the EnergyMon C interface demonstrates computing the average power of a worker function:
+The following example of the EnergyMon C interface demonstrates computing the average power of a worker function (error checking excluded):
 \lstset{emph={%  
     energymon, energymon_get_default, finit, fread, ffinish%
     },emphstyle={\color{black}\bfseries\underbar}%
@@ -126,7 +126,7 @@ For example, applications can use the name provided by \variable{fsource} for de
 
 EnergyMon was integrated with Servo, Mozilla's parallel web browsing engine \cite{servo}.
 A complete design and evaluation is available in the original publication \cite{energymon} and an extended technical report \cite{EnergyMonTR}.
-EnergyMon is also used CoPPer's evaluation, as well other research projects not described in this thesis, \eg the ongoing development of the FAST language described in \secref{intro-ee}.
+EnergyMon is also used in CoPPer's evaluation, as well other research projects not described in this dissertation, \eg the ongoing development of the FAST language described in \secref{intro-ee}.
 
 
 \section{Power Capping}
@@ -174,7 +174,7 @@ free(pkgs);
 Command-line utilities, not described further here, also make integration with scripts easy.
 
 While the powercap interface is sufficient for many use cases, it has some limitations.
-First, the configuration is not as fine-grained as it could be due to the kernel developers' data units choice (microjoules and microseconds).
+First, the configuration is not as fine-grained as it could be due to the kernel developers' choice of data units (microjoules, microwatts, and microseconds).
 Second, it is only useful on systems running the Linux kernel.
 We address these limitations with \interface{RAPLCap}, a more general interface for accessing RAPL that provides multiple implementations.
 The two primary implementations are for Linux---the first wraps the Linux powercap bindings library; the second accesses the system model-specific registers which allows more fine-grained configuration, but must be updated as new hardware becomes available.
@@ -211,5 +211,6 @@ for (i = 0; i < nsockets; i++) {
 // cleanup
 raplcap_destroy(&rc);
 \end{lstlisting}
-RAPLCap also comes with command-line utilities, which are not described further here.
+Using a common interface allows software to link against different library implementations, depending on the target hardware platform or operating system, without requiring changes to application code.
 Work is ongoing to implement RAPLCap on other operating systems like Apple OSX and Microsoft Windows, which expose different methods for configuring RAPL.
+RAPLCap also comes with command-line utilities, which are not described further here.

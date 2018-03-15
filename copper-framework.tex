@@ -35,7 +35,7 @@ It then computes a \emph{speedup} value as:
 where $s(t-1)$ is the speedup signal generated in the previous iteration, $b(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
 The gain is described in more detail shortly (\secref{copper-framework-gain}).
 Other feedback controllers use similar formulations, but without the gain~\cite{Bard,POET}.
-Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $P_{ref}$ is sometimes unachievable.\footnote{In control terminology, this is an \emph{anti-windup} mechanism.}
+Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $P_{ref}$ is sometimes unachievable (in control terminology, this is an \emph{anti-windup} mechanism).
 Finally, the new \emph{power cap} to be applied is computed as:
 
 \begin{eqnarray}

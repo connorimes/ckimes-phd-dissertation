@@ -1,6 +1,14 @@
 \section{A General Power Capping Design}
 \label{sec:copper-framework}
 
+CoPPer's goal is to provide soft performance guarantees, with the competing goal of keeping the power as low as possible.
+To achieve the best energy consumption, a power capping framework for meeting performance targets must not allocate more power than is actually needed by an application.
+CoPPer uses an adaptive control-theoretic approach to meet soft real-time performance constraints, and employs a \emph{gain limit} to proactively reduce power consumption when it determines that power is over-allocated.
+For maximum portability, CoPPer is independent of any particular system, application, and power capping implementation.
+
+
+\subsection{Adaptive Controller Formulation}
+
 \begin{figure}[t]
   \centering
   \input{img/copper/scheme.tex}
@@ -8,21 +16,13 @@
   \label{fig:copper-runtime}
 \end{figure}
 
-CoPPer's goal is to provide soft performance guarantees, with the competing goal of keeping the power as low as possible.
-To achieve the best energy efficiency, a power capping framework for meeting performance targets must not allocate more power than is actually needed by an application.
-CoPPer uses an adaptive control-theoretic approach to meet soft real-time performance constraints, and employs a \emph{gain limit} to proactively reduce power consumption when it determines that power is over-allocated.
-For maximum portability, CoPPer is independent of any particular system, application, and power capping implementation.
-
-
-\subsection{Adaptive Controller Formulation}
-
 \figref{copper-runtime} presents CoPPer's feedback control design.
-CoPPer requires three pieces of information at runtime: (1) the soft \textbf{performance goal}, (2) \textbf{performance feedback}, and (3) the \textbf{minimum and maximum power} that the system allows.
+CoPPer requires three pieces of information at runtime: (1) the soft \emph{performance goal}, (2) \emph{performance feedback}, and (3) the \textbf{minimum and maximum power} that the system allows.
 A user provides CoPPer with the performance goal, $P_{ref}$.
 At runtime, the application measures its own performance, $p_m(t)$, which it provides to CoPPer.
 The minimum and maximum power caps, $U_{min}$ and $U_{max}$, are system properties.
 
-The \textbf{controller} first computes the \textbf{performance error}, $e(t)$, between the desired and measured performance:
+The \textbf{controller} first computes the \emph{performance error}, $e(t)$, between the desired and measured performance:
 \begin{eqnarray}
   e(t) = P_{ref} - p_m(t)
   \label{eqn:copper-error}
@@ -34,9 +34,9 @@ It then computes a \emph{speedup} value as:
 \end{eqnarray}
 where $s(t-1)$ is the speedup signal generated in the previous iteration, $b(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
 The gain is described in more detail shortly (\secref{copper-framework-gain}).
-Other feedback controllers use similar formulations, but without the gain~\cite{POET,Bard}.
+Other feedback controllers use similar formulations, but without the gain~\cite{Bard,POET}.
 Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $P_{ref}$ is sometimes unachievable.\footnote{In control terminology, this is an \emph{anti-windup} mechanism.}
-Finally, the new \textbf{power cap} to be applied is computed as:
+Finally, the new \emph{power cap} to be applied is computed as:
 
 \begin{eqnarray}
   u(t) = U_{min} \cdot s(t)
@@ -136,7 +136,7 @@ Normally, this would be undesirable behavior, but this is exactly the behavior w
 Application-level feedback provides high-level metrics that are conducive to goal-oriented software and has been shown to provide a more reliable measure of application progress than low-level metrics like performance counters or memory bandwidth \cite{PTRADE}.
 Many applications that are subject to performance constraints already measure performance and integrate with runtime DVFS controllers to meet performance targets.
 A performance target is any positive real value that make sense for the application, and can conceivably be configured from any number of sources, \eg a command line parameter, a configuration file, or dynamically via a software interface.
-At desired time or work intervals called \emph{window periods} (described further in \secref{copper-inputs}), the application measures its performance and calls the controller.
+At desired time or work intervals called \emph{window periods}, the application measures its performance and calls the controller.
 Developers for this class of applications already perform these tasks, so all that remains is to replace function calls to an existing DVFS controller with those for CoPPer.
 
 CoPPer is designed to be independent of any particular system, application, and power capping implementation.

@@ -82,7 +82,7 @@ Compared to the sophisticated DVFS controller, CoPPer is on average 3\% more ene
 \tblref{copper-summary} shows the average energy efficiency gains of CoPPer compared to the sophisticated DVFS controller for different performance goals.
 Note that CoPPer's energy efficiency gains increase as the performance goal increases.
 For high goals, the DVFS approach must use TurboBoost, which is inefficient.
-CoPPer however, can set a power cap that allows the performance goal to be met and leave the decision to Turbo or not to hardware, which has more information about whether that choice is appropriate---exactly the motivation to move DVFS control to hardware and allow software to simply cap power.
+CoPPer, however, can set a power cap that allows the performance goal to be met and leave the decision to Turbo or not to hardware, which has more information about whether that choice is appropriate---exactly the motivation to move DVFS control to hardware and allow software to cap power instead.
 
 \begin{figure}[t]
   \centering
@@ -105,12 +105,12 @@ This behavior is quantified by its high job variability as shown in \figref{copp
 In fact, its performance degrades dramatically as resource allocation increases.
 Even CoPPer's gain limit cannot adapt since it detects a change in performance when trying to reduce the power cap.
 The ideal \emph{performance} DVFS governor (the oracle) knows not to allocate higher frequencies since it has access to the application-specific characterizations, but our runtime controllers do not have this information.
-If we were to specify \app{streamcluster}-specific power cap ranges for CoPPer, the results would be similar to the other applications; the DVFS controllers, however, would need whole new models.
+If we were to specify \app{streamcluster}-specific power cap ranges for CoPPer, the results would be similar to the other applications; the DVFS controllers, however, would need entirely new models.
 
 
 \subsection{Controlling Memory-bound Applications}
 
-Our benchmark set contains 6 memory-bound applications: \app{kmeans}, \app{kmeans-fuzzy}, \app{ScalParC}, \app{stream}, \app{streamcluster}, and \app{SVM-RFE}.
+Our benchmark set contains 6 memory-bound applications: \app{kmeans}, \app{kmeans-fuzzy}, \app{ScalParC}, \app{STREAM}, \app{streamcluster}, and \app{SVM-RFE}.
 CoPPer achieves noticeably higher energy efficiency for these applications than with DVFS.
 \tblref{copper-mem} summarizes the average ratio of energy efficiencies across all performance targets for these, comparing CoPPer with and without a gain limit to the sophisticated DVFS controller.
 
@@ -158,7 +158,7 @@ For this experiment, we use a more reasonable (and safer) maximum power limit, t
 % \vskip -1.5em
 \small
 \centering
-\caption{Average runtime and energy efficiency for unachievable performance targets, normalized to the sophisticated DVFS controller.}
+\caption{Average energy efficiency for unachievable performance targets, normalized to the sophisticated DVFS controller.}
 \begin{tabular}{cc}
   \textbf{Controller} & \textbf{Energy Efficiency} \\
   \hline
@@ -265,14 +265,14 @@ For this execution, energy efficiency is 1.25 compared to the ideal \emph{perfor
 
 This section evaluates CoPPer's resilience to interference from
 another application.
-Existing work in the literature addresses the problems of co-scheduling resources like cores and memory channels for applications \cite{Callisto,Pandia}, but that is beyond the scope of CoPPer.
+% Existing work in the literature addresses the problems of co-scheduling resources like cores and memory channels for applications \cite{Pandia,Callisto}, but that is beyond the scope of CoPPer.
 We begin the experiment by launching each application with a performance target.
 Roughly halfway through each execution, we launch a second application which was randomly selected from the PARSEC benchmark suite.
 The second application does not perform any DVFS or power control, but introduces interference into the system by consuming resources.
 
 \figsref{copper-multi-ee}{copper-multi-mape} present the energy efficiency and MAPE results for each application.
 As should be expected, MAPE is higher than in previous experiments given that there is significant disturbance to system resources, which also makes the application more difficult to control even when the controller recognizes the disturbance and adapts to it.
-Some applications (\eg \app{facesim}, \app{canneal}, \app{dedup}, \app{streamcluster}, \app{stream}, and \app{SVM\_RFE}) were not able to achieve the performance target after the second application is started, simply because there were not sufficient resources remaining in the system.
+Some applications (\eg \app{facesim}, \app{canneal}, \app{dedup}, \app{streamcluster}, \app{STREAM}, and \app{SVM-RFE}) were not able to achieve the performance target after the second application is started, simply because there were not sufficient resources remaining in the system.
 Instead, the controller makes a best effort.
 These applications drag down the average energy efficiency, which otherwise remains high like in the single application analysis (\eg \app{kmeans and \app{ScalParC}}).
 Still, the average across all applications is nearly as good as the ideal \emph{performance} governor would achieve in the absence of interference.
@@ -297,7 +297,7 @@ We compare the overhead of power capping and setting DVFS frequencies on our eva
 Each test is run one million times, with the average of 5 runs presented.
 Power capping alternates between applying the lowest and highest power caps (50 and 430 W, split between the two processor sockets) in each iteration, and achieves an average iteration time of \textbf{15.6\us}.
 DVFS alternates between setting the minimum and maximum frequencies (1.2 GHz and TurboBoost) on all 16 physical cores, achieving an average iteration time of \textbf{118.5\us}.
-As noted in \secref{copper-analysis}, our experiments use a better actuation function than the sophisticated DVFS controller comes with -- this average overhead is much improved over the double-digit millisecond overhead the controller previously achieved~\cite{POETMCSoC}.
+As noted in \secref{copper-analysis}, our experiments use a better actuation function than the sophisticated DVFS controller comes with, so this average overhead is much improved over the double-digit millisecond overhead the controller previously achieved~\cite{POETMCSoC}.
 Yet, the overhead imposed by power capping is still another order of magnitude lower than the improved DVFS overhead.
 Limiting software to coarse-grained power management at a socket level provides clear runtime benefits over more fine-grained DVFS management.
 

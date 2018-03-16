@@ -7,7 +7,7 @@ We then illustrate how the simple linear models that work well for meeting perfo
 
 \subsection{The Future of Software DVFS}
 There are strong indications that DVFS will not be directly controllable by software in future processors.
-Since SandyBridge, Intel processors take software DVFS settings as suggestions, and hardware has been free to dynamically alter the actual clockspeed and voltage independently from the software-specified setting \cite{lwn602479,KernelPstate}.
+Since SandyBridge, Intel processors take software DVFS settings as suggestions, and hardware has been free to dynamically alter the actual clock speed and voltage independently from the software-specified setting \cite{lwn602479,KernelPstate}.
 With the Skylake architecture, Intel has been actively campaigning to move DVFS management wholly to hardware and instead have software specify power.
 The hardware is then free to rapidly change DVFS settings to achieve better performance while still respecting those power limits \cite{SpeedShift}.
 For example, if software sets power limits requiring any 50 ms time window to average 100 W, hardware is free to use turbo mode to speed up the processing of any bursty work within that 50 ms, as long as it compensates by running in a low-power state for some of that time.

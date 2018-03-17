@@ -14,7 +14,7 @@
         xticklabels at=edge bottom,
         vertical sep=5pt
     },
-height=3.3cm,
+height=3.5cm,
 width=0.95\columnwidth,
 xmajorgrids,
 ymajorgrids,
@@ -35,23 +35,22 @@ unbounded coords=jump,
 ]
 
 \nextgroupplot[ylabel={\footnotesize Performance \\ \footnotesize (Normalized)}, % Performance
-%xtick={0,500,1000,1500,2000,2500,3000,3500,4000,4500},
-ytick={0.0,0.5,0.75,0.875, 1.0,1.125,1.25,1.5,2.0},
-yticklabels={,0.5,0.75,,1.0,,1.25,1.5,2.0},
 %xtick={90,95,100,105,110},
 %xticklabels={90,95,100,105,110},
+ytick={0.0,0.5,0.75,0.875,1.0,1.125,1.25,1.5,2.0},
+yticklabels={,0.5,0.75,,1.0,,1.25,1.5,2.0},
 %yticklabel style={font=\footnotesize},
-xlabel={\footnotesize Control Period},
+xlabel={\footnotesize $time$ [control period]},
 xmin=0,
 xmax=30,
-ymin=.75,
-ymax=1.25,
+ymin=.7,
+ymax=1.3,
 legend entries={{Performance~Goal},{DVFS},{Conservative~Power~Cap}, {Aggressive~Power~Cap}},
-legend style={fill=none,draw=none,at={(0.5,1.5)},anchor=north,legend columns=4,
+legend style={fill=none,draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,
 line width=5pt,font=\footnotesize},
 ]
 
-\addplot[thick, dashed, black] coordinates {(0,1) (399,1)};
+\addplot[thick, solid, black] coordinates {(0,1) (399,1)};
 \addplot[thick, solid, color=s4, mark=o] table[x index=0,y index=1,col sep=tab] {img/copper/VIPS-example.txt};
 \addplot[thick, solid, color=s5, mark=square] table[x index=0,y index=2,col sep=tab] {img/copper/VIPS-example.txt};
 \addplot[thick, solid, color=s3, mark=triangle] table[x index=0,y index=2,col sep=tab] {img/copper/VIPS-example-oscillate.txt};

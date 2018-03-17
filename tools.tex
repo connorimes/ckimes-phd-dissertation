@@ -9,16 +9,16 @@ In \secref{intro-description}, we described the \emph{observe}, \emph{decide}, a
 While the core research in this dissertation focuses on the \emph{decide} phase, the tools described in this chapter are relevant to the \emph{observe} and \emph{act} phases.
 
 
-\section{Profiling}
+\section{Runtime Instrumentation and Profiling}
 \label{app:profiling}
 
 The control-theory based projects presented in this dissertation (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
 For applications to capture performance and power/energy data, they need a mechanism to capture and record metrics.
-Application developers often create their own profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
+Application developers often create their own instrumentation and profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
 Hoffmann \etal proposed \interface{Heartbeats} to specify and record performance goals for self-aware applications \cite{icac2010heartbeats}.
 We extended this work in POET and Bard and released \interface{Heartbeats 2.0}, which includes a primitive interface for portably capturing energy metrics.
 
-We later developed a simplified profiling interface, aptly called \interface{Simple Heartbeats}, which allows more flexibility in recording application behavior.
+We later developed a simplified interface, aptly called \interface{Simple Heartbeats}, which allows more flexibility in recording application behavior.
 For example, it can record performance and power behavior for discontinuous loops or separate application code phases and is more portable across operating systems.
 Java and Rust language bindings and abstractions are also available for Simple Heartbeats, some of which are integrated with Servo, Mozilla's parallel web browsing engine \cite{servo}.
 These code bases are also used in other projects not described in this dissertation.
@@ -27,7 +27,7 @@ We also created \interface{Heartbeats Simple Classic} which wraps Simple Heartbe
 This interface benefits from the simplicity of the original Heartbeats design while maintaining portability, and is used in CoPPer's evaluation.
 
 
-\section{Portable Power/Energy Readings with EnergyMon}
+\section{EnergyMon: A Portable Interface for Runtime Energy Monitoring}
 \label{app:energymon}
 
 There is a growing need for software to access power and energy data in-situ, like for the projects in this dissertation.

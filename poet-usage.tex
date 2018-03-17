@@ -1,7 +1,8 @@
-\section{Experimental Setup}
+\section{Experimental Design}
 \label{sec:poet-usage}
 
 This section details the applications used to evaluate POET and the different evaluation platforms.
+The evaluation is broken down into two categories: an embedded systems evaluation and a server-class system evaluation.
 
 
 \subsection{Applications}
@@ -21,12 +22,9 @@ The last application is \app{STREAM}~\cite{stream}, a synthetic benchmark for me
 
 All benchmarks are modified as discussed in~\secref{poet-implementation}, adding Heartbeats and POET calls.
 All application inputs used are packaged with the original benchmarks, with the exception of the \app{x264} input which comes from a set of standard test sequences.
-% Recall that these applications were not originally designed to provide predictable timing.
 
 
 \subsection{Evaluation Platforms}
-
-The evaluation is broken down into two categories: an embedded systems evaluation and a server-class system evaluation.
 
 The first part of the evaluation uses two modern embedded devices with different hardware---a Sony VAIO SVT11226CXB tablet PC with a mobile Intel Haswell processor, and a Hardkernel ODROID-XU+E ARM big.LITTLE development platform.
 We selected these two platforms because prior work has shown that they expose different timing and energy tradeoffs~\cite{Imes2014}.

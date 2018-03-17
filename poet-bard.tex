@@ -34,11 +34,11 @@ The Bard controller generates its \emph{generic control signal}, $x(t)$, which i
 Here $b_x(t)$ represents either base speed or base power, depending on the constraint, both of which are continually estimated by a Kalman filter \cite{welch2006kalman}.
 
 The constrained optimization problem for meeting a performance goal and minimizing energy consumption remains the same as in POET (\eqnrref{poet-power}{poet-time}).
-To meet a power goal $P_r$ and maximize performance, the problem becomes:
+To meet a power goal $P_{ref}$ and maximize performance, the problem becomes:
 \begin{eqnarray}
-  \maximize && \sum_{c=0}^{C-1} \tau_c \cdot r_c \label{eqn:bard-timing} \\
+  \maximize && \sum_{c=0}^{C-1} \tau_c \cdot s_c \label{eqn:bard-timing} \\
   \st %&& \nonumber\\
-  && \sum_{c=0}^{C-1} \tau_c \cdot p_c \le P_r \label{eqn:bard-power} \\
+  && \sum_{c=0}^{C-1} \tau_c \cdot p_c \cdot b_p(t) \le P_{ref} \label{eqn:bard-power} \\
   && \sum_{c=0}^{C-1} \tau_c = 1 \label{eqn:work} \\
   && \tau_c \ge 0, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:bard-time}
 \end{eqnarray}

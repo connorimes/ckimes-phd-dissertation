@@ -50,7 +50,7 @@ On the resource-constrained embedded systems, the overhead of changing resource 
 The overhead of computing the resource schedule is dwarfed by the cost of applying DVFS settings to 32 cores and sometimes switching application core assignments between one and two processor sockets (more on this in \secref{poet-server-eval-overhead}).
 Despite this challenge, POET still achieves near-optimal energy consumption.
 
-The 25\% target is clearly the most inefficient, and in fact is not actually achievable for STREAM without idling, which POET does not support.  
+The 25\% target is clearly the most inefficient, and in fact is not actually achievable for \app{STREAM} without idling, which POET does not support.
 \app{Ferret} and \app{x264} appear to be efficient at the 25\% target, but this is just a side effect of their high MAPE.
 These observations are consistent with studies on server-class systems that demonstrate how inefficient these machines are when running at low utilizations \cite{google,pupil}.
 
@@ -70,13 +70,13 @@ Now on our server system we find that the first and third phases are just about 
 \begin{figure}[t]
   \centering
   \input{img/poet/server/x264-phases-default.tex}
-  \caption{Processing x264 input with distinct phases on a server system.}
+  \caption{Processing \app{x264} input with distinct phases on a server system.}
   \label{fig:poet-server-phases-default}
 \end{figure}
 \begin{figure}[t]
   \centering
   \input{img/poet/server/x264-phases-poet-clover.tex}    
-  \caption{Processing x264 input with distinct phases using POET on a server system.}
+  \caption{POET behavior for \app{x264} input with distinct phases on a server system.}
   \label{fig:poet-server-phases-x264}
 \end{figure}
 

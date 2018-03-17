@@ -18,24 +18,24 @@ For maximum portability, CoPPer is independent of any particular system, applica
 
 \figref{copper-runtime} presents CoPPer's feedback control design.
 CoPPer requires three pieces of information at runtime: (1) the soft \emph{performance goal}, (2) \emph{performance feedback}, and (3) the \textbf{minimum and maximum power} that the \textbf{system} allows.
-A user provides CoPPer with the performance goal, $P_{ref}$.
-At runtime, the application measures its own performance, $p_m(t)$, which it provides to CoPPer.
+A user provides CoPPer with the performance goal, $R_{ref}$.
+At runtime, the application measures its own performance, $r_m(t)$, which it provides to CoPPer.
 The minimum and maximum power caps, $U_{min}$ and $U_{max}$, are system properties.
 
-The \textbf{controller} first computes the \emph{performance error}, $e(t)$, between the desired and measured performance:
+The \textbf{controller} first computes the \emph{performance error}, $e_r(t)$, between the desired and measured performance:
 \begin{eqnarray}
-  e(t) = P_{ref} - p_m(t)
+  e_r(t) = R_{ref} - r_m(t)
   \label{eqn:copper-error}
 \end{eqnarray}
 It then computes a \emph{speedup} value as:
 \begin{eqnarray}
-  s(t) = max\left(1, gain(t) \cdot min\left(s(t-1) + \frac{e(t)}{b(t)}, \frac{U_{max}}{U_{min}}\right)\right)
+  s(t) = max\left(1, gain(t) \cdot min\left(s(t-1) + \frac{e_r(t)}{b_r(t)}, \frac{U_{max}}{U_{min}}\right)\right)
   \label{eqn:copper-speedup-control}
 \end{eqnarray}
-where $s(t-1)$ is the speedup signal generated in the previous iteration, $b(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
+where $s(t-1)$ is the speedup signal generated in the previous iteration, $b_r(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
 The gain is described in more detail shortly (\secref{copper-framework-gain}).
 Other feedback controllers use similar formulations, but without the gain~\cite{Bard,POET}.
-Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $P_{ref}$ is sometimes unachievable (in control terminology, this is an \emph{anti-windup} mechanism).
+Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $R_{ref}$ is sometimes unachievable (in control terminology, this is an \emph{anti-windup} mechanism).
 Finally, the new \emph{power cap} to be applied is computed as:
 
 \begin{eqnarray}
@@ -45,8 +45,8 @@ Finally, the new \emph{power cap} to be applied is computed as:
 
 In \secref{copper-motivation-power}, \figref{copper-tradeoffs-vips-pwr} shows that, unlike with DVFS frequencies, a scalable compute-bound application's speedup is a non-linear function of the power cap.
 \figref{copper-vips-example} then illustrates how formulating a controller based on a linear model can cause the controller to converge very slowly, or to not converge at all.
-CoPPer overcomes this limitation by treating the application's base speed, $b(t)$, as a time-varying value and estimating it with a Kalman filter.
-In practice, this approach is analogous to estimating a non-linear curve with a series of tangent lines, each with slope $b(t)$.
+CoPPer overcomes this limitation by treating the application's base speed, $b_r(t)$, as a time-varying value and estimating it with a Kalman filter.
+In practice, this approach is analogous to estimating a non-linear curve with a series of tangent lines, each with slope $b_r(t)$.
 Thus, CoPPer's use of the Kalman filter allows it to overcome the problematic non-linear relationship between performance and power caps.
 
 
@@ -96,7 +96,7 @@ Speedup is reduced by setting gain to:
 \end{eqnarray}
 where $\alpha_c$ ($0 \le \alpha_c < 1$) is the \emph{gain limit}, a constant that controls how low the gain can go, and:
 \begin{eqnarray}
-  e_n(t) = \frac{|e(t)|}{P_{ref}}
+  e_n(t) = \frac{|e_r(t)|}{R_{ref}}
   \label{eqn:en} \\
   \Delta e_n(t) = \left| e_n(t-1) - e_n(t) \right|
   \label{eqn:den} \\
@@ -105,7 +105,7 @@ where $\alpha_c$ ($0 \le \alpha_c < 1$) is the \emph{gain limit}, a constant tha
   \Delta e_{ns}(t) = \frac{1}{\Delta e_{n}(t)+1}
   \label{eqn:dens}
 \end{eqnarray}
-Since $P_{ref}$ is the performance target, $e_n(t)$ is the absolute normalized performance error.
+Since $R_{ref}$ is the performance target, $e_n(t)$ is the absolute normalized performance error.
 $\Delta e_n(t)$ in \eqnref{den} is the absolute change in $e_n(t)$ since the previous iteration.
 \eqnsref{ens}{dens} compute values $e_{ns}(t)$ and $\Delta e_{ns}(t)$, which determine how much impact $e_n(t)$ and $\Delta e_{n}(t)$ have on reducing the speedup.
 Both $e_{ns}(t)$ and $\Delta e_{ns}(t)$ lay in the unit circle.

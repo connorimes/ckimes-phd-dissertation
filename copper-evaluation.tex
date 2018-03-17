@@ -27,16 +27,16 @@ We quantify the ability to meet performance goals with low energy with two metri
 \item \emph{Energy efficiency} is the ratio of the ideal \emph{performance} governor's energy consumption (as computed by the oracle) to the actual energy consumption achieved.  
 \item \emph{Mean Absolute Percentage Error} (MAPE) quantifies the error between the desired performance and the achieved performance; it is a standard metric for evaluating control systems~\cite{ICSE2014}.  
 \end{itemize}
-MAPE computes the performance error for an application with $n$ jobs and a performance goal of $P_{ref}$ as:
+MAPE computes the performance error for an application with $n$ jobs and a performance goal of $R_{ref}$ as:
 \begin{equation}
-MAPE = 100\% \cdot \frac{1}{n} \sum\limits_{i=1}^{n} 
+\text{MAPE} = 100\% \cdot \frac{1}{n} \sum\limits_{i=1}^{n}
 \left \{
 \begin{array}{ll}
-p_m(i) < P_{ref}  :& \frac{P_{ref} - p_m(i)}{P_{ref}} \\
-p_m(i) \ge P_{ref}  :& 0
+r_m(i) < R_{ref}  :& \frac{R_{ref} - r_m(i)}{R_{ref}} \\
+r_m(i) \ge R_{ref}  :& 0
 \end{array} \right.
 \end{equation}
-where $p_m(i)$ is the achieved performance for the $i$-th job.
+where $r_m(i)$ is the achieved performance for the $i$-th job.
 Each failure to achieve the performance target increases MAPE by an amount relative to how badly the target was missed.
 
 \begin{figure}[t]
@@ -110,7 +110,7 @@ If we were to specify \app{streamcluster}-specific power cap ranges for CoPPer, 
 
 \subsection{Controlling Memory-bound Applications}
 
-Our benchmark set contains 6 memory-bound applications: \app{kmeans}, \app{kmeans-fuzzy}, \app{ScalParC}, \app{STREAM}, \app{streamcluster}, and \app{SVM-RFE}.
+Our benchmark set contains 6 memory-bound applications: \app{KMeans}, \app{KMeans-Fuzzy}, \app{ScalParC}, \app{STREAM}, \app{streamcluster}, and \app{SVM-RFE}.
 CoPPer achieves noticeably higher energy efficiency for these applications than with DVFS.
 \tblref{copper-mem} summarizes the average ratio of energy efficiencies across all performance targets for these, comparing CoPPer with and without a gain limit to the sophisticated DVFS controller.
 
@@ -220,7 +220,7 @@ For unachievable targets, it can greatly improve energy efficiency over the soph
   \subfloat[Meeting a performance target with CoPPer.]%
   {\input{img/copper/x264-phases.tex}%
   \label{fig:copper-phases-x264}}
-  \caption{An \app{x264} input with distinct phases.}
+  \caption{Processing \app{x264} input with distinct phases.}
   \label{fig:copper-phases}
 \end{figure}
 
@@ -274,7 +274,7 @@ The second application does not perform any DVFS or power control, but introduce
 As should be expected, MAPE is higher than in previous experiments given that there is significant disturbance to system resources, which also makes the application more difficult to control even when the controller recognizes the disturbance and adapts to it.
 Some applications (\eg \app{facesim}, \app{canneal}, \app{dedup}, \app{streamcluster}, \app{STREAM}, and \app{SVM-RFE}) were not able to achieve the performance target after the second application is started, simply because there were not sufficient resources remaining in the system.
 Instead, the controller makes a best effort.
-These applications drag down the average energy efficiency, which otherwise remains high like in the single application analysis (\eg \app{kmeans and \app{ScalParC}}).
+These applications drag down the average energy efficiency, which otherwise remains high like in the single application analysis (\eg \app{KMeans and \app{ScalParC}}).
 Still, the average across all applications is nearly as good as the ideal \emph{performance} governor would achieve in the absence of interference.
 
 

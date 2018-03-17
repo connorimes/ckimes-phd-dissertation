@@ -21,15 +21,15 @@ We quantify POET's ability to meet the latency goals by measuring each job's lat
 We then compute the Mean Absolute Percentage Error (MAPE), a standard metric in control theory to evaluate the behavior of controllers~\cite{ICSE2014}.
 For an application composed of $n$ jobs:
 \begin{equation}
-MAPE = 100\% \cdot \frac{1}{n} \sum\limits_{i=1}^{n} 
+\text{MAPE} = 100\% \cdot \frac{1}{n} \sum\limits_{i=1}^{n}
 \left \{
 \begin{array}{ll}
-d_m(i) > d_{r}  :& \frac{d_m(i) - d_{r}}{d_r} \\
-d_m(i) \le d_{r}  :& 0
+d_m(i) > D_{ref}  :& \frac{d_m(i) - D_{ref}}{D_{ref}} \\
+d_m(i) \le D_{ref}  :& 0
 \end{array} \right.
  \label{eqn:poet-mape}
 \end{equation}
-where $d_r$ is the specified latency requirement and $d_m(i)$ is the measured latency for the $i$-th job.
+where $D_{ref}$ is the specified job latency requirement (deadline) and $d_m(i)$ is the measured latency for the $i$-th job.
 In other words, for each missed deadline we add a term that depends on the relative tardiness between the target and measured latency.
 
 \begin{figure}[t]
@@ -119,13 +119,13 @@ We present the raw data for power; energy is the integral of those curves.
 \begin{figure}[t]
   \centering
   \input{img/poet/x264-phases-default.tex}
-  \caption{x264 processing of input with distinct phases on embedded systems.}
+  \caption{Processing \app{x264} input with distinct phases on a embedded systems.}
   \label{fig:poet-embedded-phases-default}
 \end{figure}
 \begin{figure}[t]
   \centering
   \input{img/poet/x264-phases-poet.tex}    
-  \caption{POET behavior for x264 input with distinct phases on embedded systems.}
+  \caption{POET behavior for \app{x264} input with distinct phases on embedded systems.}
   \label{fig:poet-embedded-phases-x264}
 \end{figure}
 

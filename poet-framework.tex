@@ -30,24 +30,24 @@ The only assumption made is that applications are composed of repeated jobs with
 
 \subsection{Controller}
 
-The application provides a \emph{performance goal}, or work rate, $r_d$ which is easily computed from a known workload size $\omega$ and desired latency goal (deadline) $\tau$:
+The application provides a \emph{performance goal} (work rate) $R_{ref}$, which is easily computed from a workload size (number of jobs) $\omega$ and desired latency goal (deadline) $\tau$ for those $\omega$ jobs:
 \begin{equation}
-  r_d = \frac{\omega}{\tau}
+  R_{ref} = \frac{\omega}{\tau}
   \label{eqn:poet-latency-to-performance}
 \end{equation}
-The controller cancels the error between the desired performance, $r_d$, and the measured performance, $r_m(t)$, which it models as:
+The controller cancels the error between the desired performance, $R_{ref}$, and the measured performance, $r_m(t)$, which it models as:
 \begin{equation}
-r_m(t) = s(t-1) \cdot b(t-1)
+r_m(t) = s(t-1) \cdot b_r(t-1)
 \label{eqn:poet-performance}
 \end{equation}
-The error $e(t)$ is then easily computed as:
+The error $e_r(t)$ is then easily computed as:
 \begin{equation}
-e(t) = r_d - r_m(t)
+e_r(t) = R_{ref} - r_m(t)
 \label{eqn:poet-error}
 \end{equation}
 The controller performs its calculations at discrete work (job) intervals to produce a new desired speedup, $s(t)$, implementing the \emph{integral control law}~\cite{Hellerstein2004a}:
 \begin{equation}
-  s(t) = s(t-1) + (1-\alpha) \cdot \frac{e(t)}{b(t)}
+  s(t) = s(t-1) + (1-\alpha) \cdot \frac{e_r(t)}{b_r(t)}
   \label{eqn:poet-control}
 \end{equation}
 where $\alpha$ is a \emph{pole} of the closed loop characteristic equation~\cite{ICSE2014} such that $\alpha$ lies within the unit circle:
@@ -60,10 +60,10 @@ Small $\alpha$ values make the controller highly reactive, while large values ma
 However, a large $\alpha$ ensures robustness with respect to transient fluctuations and may be beneficial for very noisy systems.
 A small $\alpha$ will cause the controller to react quickly, potentially producing a noisy control signal.
 
-The parameter $b(t)$ represents the application's base speed, which directly influences the controller.
+The parameter $b_r(t)$ represents the application's base speed, which directly influences the controller.
 Different applications will have different base speeds.
 Applications may also experience \emph{phases}, where base speed changes over time.
-To accommodate these situations, POET continually estimates base speed using a Kalman filter~\cite{welch2006kalman}, which adapts $b(t)$ of \eqnref{poet-control} to the current application behavior.
+To accommodate these situations, POET continually estimates base speed using a Kalman filter~\cite{welch2006kalman}, which adapts $b_r(t)$ of \eqnref{poet-control} to the current application behavior.
 Assuming minimal measurement variance (\ie even if an application is noisy, the signaling framework does not add additional noise) and denoting the application timing variance as $q_b(t)$, the Kalman filter formulation is standard:
 \begin{equation}
 \left \lbrace
@@ -84,7 +84,6 @@ e_{b}(t) & = & [1 - k_b(t) \cdot s(t-1)] \, e^{-}_{b}(t)
 This formulates Kalman gain for job latency as $k_b(t)$, the \emph{a priori} and \emph{a posteriori} estimates of the base speed as $\hat{b}^{-}(t)$ and $\hat{b}(t)$, and the \emph{a priori} and \emph{a posteriori} estimates of the error variance as $e^{-}_{b}(t)$ and $e_{b}(t)$.
 The Kalman filter produces a statistically optimal estimate of the system's parameters and is provably exponentially convergent~\cite{CaoSchwartz2003}.
 
-% POET users do not need to understand control theory or Kalman filtering.
 Unlike prior work, the POET controller does not reason about a particular set of resources, but computes a generic control signal $s(t)$.
 The advantage of using the Kalman filter is that POET's formulation is independent of particular applications and systems.
 POET provides formal guarantees about its steady-state convergence and robustness without requiring users to understand control theory or Kalman filtering---$s(t)$ is computed by the controller, $r_m(t)$ and $q_b(t)$ are measured, and all other parameters are derived.
@@ -94,21 +93,19 @@ POET provides formal guarantees about its steady-state convergence and robustnes
 \label{sec:poet-optimizer}
 
 The optimizer turns the generic control signal computed by the controller into a system-specific resource allocation strategy, translating the speedup $s(t)$ computed with \eqnref{poet-control} into a \emph{schedule} for the available resources.
-The \emph{schedule} is computed for the next $\omega$ work units.
-% To meet the performance requirement, POET ensures that the application completes $\omega$ jobs in the next time interval $\tau$, with $\omega = \tau \cdot s(t) \cdot b(t)$.
+The \emph{schedule} is computed for the next $\omega$ work units (jobs).
 
 As shown in \figref{poet-runtime}, the optimizer takes, as input, a resource specification containing the set of available system configurations.
 There are $C$ possible configurations in the system and by convention, we number the configurations from $0$ to $C-1$.
-We use $c = 0$ to indicate the configuration where the least amount of resources is given to the application, corresponding to a low-power idle state or sleep state when available.
+We use $c = 0$ to indicate the configuration where the least amount of resources is given to the application. %, corresponding to a low-power idle state or sleep state when available.
 In contrast, configuration $C-1$ maximizes the resource availability.
-Each configuration $c$ is associated with a power consumption $p_c$ and speedup $s_c$.
+Each configuration $c$ is associated with performance and power values, speedup $s_c$ and powerup $p_c$, respectively, which are normalized to $c = 0$.
 
-% Given this information, POET schedules for each configuration $c$ an execution time $\tau_c$, ensuring that the $\omega$ iterations complete and the total energy consumption is minimized.
 Given this information, POET solves the following optimization problem:
 \begin{eqnarray}
 \minimize && \sum_{c=0}^{C-1} \tau_c \cdot p_c \label{eqn:poet-power} \\
 \st %&& \nonumber\\
-&& \sum_{c=0}^{C-1} \tau_c \cdot r_c =  \omega \label{eqn:poet-work} \\
+&& \sum_{c=0}^{C-1} \tau_c \cdot s_c \cdot b_r(t) =  \omega \label{eqn:poet-work} \\
 && \sum_{c=0}^{C-1} \tau_c =  \tau \label{eqn:poet-deadline} \\
 && 0 \le \tau_c \le \tau, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:poet-time}
 \end{eqnarray}
@@ -149,14 +146,14 @@ Thus, linear programming theory states an optimal solution exists for this probl
 \end{algorithm}
 
 \algoref{poet-optimal} takes the set of configurations $C$, the controller's speedup $s(t)$, and the number of work units $\omega$ in a control period.
-It then divides the configurations in two distinct sets.
-The first set, $\omega_u$, contains all configurations with a speedup less than or equal to the target.
-The second, $\omega_o$, contains the remaining configurations, \ie those with speedups greater than required.
-Subsequently, \algoref{poet-optimal} loops over all possible pairs of configurations, with one from each set, to determine how much time should be spent in each configuration given speedup constraint.
+It then divides the configurations in two distinct subsets.
+The first subset contains all configurations with a speedup less than or equal to the target.
+The second contains the remaining configurations, \ie those with speedups greater than required.
+Subsequently, \algoref{poet-optimal} loops over all feasible pairs of configurations, with one from each subset, to determine how much time should be spent in each configuration given speedup constraint.
 If the energy of the pair is lower than any previous energy, the algorithm stores the current best pair, its energy, and its schedule.
 When the algorithm terminates, its output is the pair of chosen configurations and their assigned times.
-The algorithm tests all possible pairs from the two sets, each of which contains at most $C$ elements, so an upper bound to the algorithm complexity is $O(C^2)$.
-We know that there is an optimal solution to the linear program with at most two non-zero $\tau_c$ (as the dual problem has two dimensions \cite{LP}) and \algoref{poet-optimal} tests all pairs of configurations.
+The algorithm tests all possible pairs from the two subsets, each of which contains at most $C$ elements, so an upper bound to the algorithm complexity is $O(C^2)$.
+We know that there is an optimal solution to the linear program with at most two non-zero $\tau_c$ (as the dual problem has two dimensions \cite{LP}).
 Therefore, \algoref{poet-optimal} will find a minimal-energy schedule.
 
 

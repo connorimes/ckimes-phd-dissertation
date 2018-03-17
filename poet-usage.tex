@@ -11,16 +11,16 @@ We choose applications that do not enforce any timing guarantees to challenge PO
 
 The first five applications are included in the PARSEC benchmark suite~\cite{parsec}.
 Specifically, we use \app{blackscholes}, \app{bodytrack}, \app{facesim}, \app{ferret}, and \app{x264}.
-Bodytrack and x264 process video input and could be required to match the frame rate of a live feed (\eg from an on-board camera).
-Ferret is a toolkit for content-based similarity search of non-text data and should satisfy a latency requirement on how fast results are returned to users.
-Facesim creates realistic animations of a human face from a model and time sequence of muscle movements, and must maintain a real-time frame rate.
+\app{Bodytrack} and \app{x264} process video input and could be required to match the frame rate of a live feed (\eg from an on-board camera).
+\app{Ferret} is a toolkit for content-based similarity search of non-text data and should satisfy a latency requirement on how fast results are returned to users.
+\app{Facesim} creates realistic animations of a human face from a model and time sequence of muscle movements, and must maintain a real-time frame rate.
 The sixth and seventh applications are \app{dijkstra} and \app{sha}, from the ParMiBench benchmark suite~\cite{parmibench}.
-Dijkstra computes single-source shortest paths in a graph (we use the parallelized multiple queue implementation).
-SHA (Secure Hash Algorithm) is used for secure storage and transmission of data and must maintain response time to ensure timely communication.
+\app{Dijkstra} computes single-source shortest paths in a graph (we use the parallelized multiple queue implementation).
+\app{SHA} (Secure Hash Algorithm) is used for secure storage and transmission of data and must maintain response time to ensure timely communication.
 The last application is \app{STREAM}~\cite{stream}, a synthetic benchmark for measuring sustainable memory bandwidth, representing a variety of memory-bound applications.
 
 All benchmarks are modified as discussed in~\secref{poet-implementation}, adding Heartbeats and POET calls.
-All application inputs used are packaged with the original benchmarks, with the exception of the x264 input which comes from a set of standard test sequences.
+All application inputs used are packaged with the original benchmarks, with the exception of the \app{x264} input which comes from a set of standard test sequences.
 % Recall that these applications were not originally designed to provide predictable timing.
 
 
@@ -129,7 +129,7 @@ Collecting power data on new platforms with different power or energy monitors i
 \tblref{poet-embedded-inputs} shows the inputs used for each of the applications on the embedded platforms.
 We quantify this inherent unpredictability by measuring the latency of each job and computing the coefficient of variation over all jobs in an application.
 \figref{poet-embedded-variation} demonstrates this unpredictability for each application when running without POET.
-The figure shows that our applications have a range of natural behavior from low variance (implying natural predictability, \eg blackscholes) to high variance (meaning that the application naturally has widely distributed latencies, \eg x264).
+The figure shows that our applications have a range of natural behavior from low variance (implying natural predictability, \eg \app{blackscholes}) to high variance (meaning that the application naturally has widely distributed latencies, \eg \app{x264}).
 The variability in the applications is largely the same across platforms, indicating that it is a fundamental property of the applications and not the devices.
 
 \begin{table}[t]

@@ -37,9 +37,9 @@
 } 
 
 @INPROCEEDINGS{Sarood2013,
-  author={Sarood, O. and Langer, A. and Kale, L. and Rountree, B. and de Supinski, B.},
+  author={Sarood, Osman and Langer, Akhil and Kale, Laxmikant and Rountree, Barry and de Supinski, Bronis},
   booktitle={CLUSTER},
-  title={Optimizing power allocation to CPU and memory subsystems in overprovisioned HPC systems},
+  title={Optimizing Power Allocation to CPU and Memory Subsystems in Overprovisioned HPC Systems},
   year={2013},
 }
 
@@ -62,17 +62,8 @@
   year = 2016,
 }
 
-@inproceedings{packandcap,
- author = {Cochran, Ryan and Hankendi, Can and Coskun, Ayse K. and Reda, Sherief},
- title = {Pack \& Cap: adaptive DVFS and thread packing under power caps},
- booktitle = {MICRO},
- year = {2011},
-} 
-
 @inproceedings{YDS,
-  author    = {F. Frances Yao and
-               Alan J. Demers and
-               Scott Shenker},
+  author    = {Frances Yao and Alan Demers and Scott Shenker},
   title     = {A Scheduling Model for Reduced CPU Energy},
   booktitle = {FOCS},
   year      = {1995},
@@ -80,63 +71,50 @@
 
 @inproceedings{Rangan2009,
  author = {Rangan, Krishna K. and Wei, Gu-Yeon and Brooks, David},
- title = {Thread motion: fine-grained power management for multi-core systems},
+ title = {Thread Motion: Fine-Grained Power Management for Multi-Core Systems},
  booktitle = {ISCA},
  year = {2009}
 } 
 
 @inproceedings{CoScale,
-  title={Coscale: Coordinating cpu and memory system dvfs in server systems},
+  title={CoScale: Coordinating CPU and Memory System DVFS in Server Systems},
   author={Deng, Qingyuan and Meisner, David and Bhattacharjee, Abhishek and Wenisch, Thomas F and Bianchini, Ricardo},
   booktitle={MICRO},
-  _pages={143--154},
+  removed_pages={143--154},
   year={2012},
-  _organization={IEEE}
+  removed_organization={IEEE}
 }
 
-@article{MemScale,
- author = {Deng, Qingyuan and Meisner, David and Ramos, Luiz and Wenisch, Thomas F. and Bianchini, Ricardo},
- title = {{MemScale}: Active Low-power Modes for Main Memory},
- journal = {SIGPLAN Not.},
- issue_date = {April 2012},
- volume = {47},
- number = {4},
- month = mar,
- year = {2011},
- issn = {0362-1340},
- pages = {225--238},
- numpages = {14},
- url = {http://doi.acm.org/10.1145/2248487.1950392},
- doi = {10.1145/2248487.1950392},
- acmid = {1950392},
- publisher = {ACM},
- address = {New York, NY, USA},
- keywords = {dynamic voltage and frequency scaling, energy conservation, memory subsystem},
-} 
+@inproceedings{MemScale,
+  title={MemScale: active low-power modes for main memory},
+  author={Qingyuan Deng and David Meisner and Luiz E. Ramos and Thomas F. Wenisch and Ricardo Bianchini},
+  booktitle={ASPLOS},
+  year={2011}
+}
 
 @inproceedings{Diniz2007,
  author = {Diniz, Bruno and Guedes, Dorgival and Meira,Jr., Wagner and Bianchini, Ricardo},
- title = {Limiting the power consumption of main memory},
+ title = {Limiting the Power Consumption of Main Memory},
  booktitle = {ISCA},
  year = {2007},
 } 
 
 @inproceedings{packandcap-old,
  author = {Cochran, Ryan and Hankendi, Can and Coskun, Ayse K. and Reda, Sherief},
- title = {Pack \& Cap: adaptive DVFS and thread packing under power caps},
+ title = {Pack \& Cap: Adaptive DVFS and Thread Packing Under Power Caps},
  booktitle = {MICRO},
  year = {2011},
 } 
 
 @inproceedings{Wu2004,
  author = {Wu, Qiang and Juang, Philo and Martonosi, Margaret and Clark, Douglas W.},
- title = {Formal online methods for voltage/frequency control in multiple clock domain microprocessors},
+ title = {Formal Online Methods for Voltage/Frequency Control in Multiple Clock Domain Microprocessors},
  booktitle = {ASPLOS},
  year = {2004},
 } 
 
-@article{SpeedShift,
-  title={{An overview of the 6th generation Intel Core processor (code-named Skylake)}},
+@online{SpeedShift,
+  title={{An overview of the 6th generation Intel\textsuperscript{\textregistered} Core\textsuperscript{TM} processor (code-named Skylake)}},
   author={Meghana R.},
   journal={Intel Developer Zone},
   month=mar,
@@ -162,15 +140,13 @@
 
 @inproceedings{Felter2005,
  author = {Felter, Wes and Rajamani, Karthick and Keller, Tom and Rusu, Cosmin},
- title = {A performance-conserving approach for reducing peak power consumption in server systems},
+ title = {A Performance-Conserving Approach for Reducing Peak Power Consumption in Server Systems},
  booktitle = {ICS},
  year = {2005},
 } 
 
 @article{packandcap-new,
-  author    = {Sherief Reda and
-               Ryan Cochran and
-               Ayse Kivilcim Coskun},
+  author    = {Sherief Reda and Ryan Cochran and Ayse Kivilcim Coskun},
   title     = {Adaptive Power Capping for Servers with Multithreaded Workloads},
   journal   = {{IEEE} Micro},
   journal   = {{IEEE} Micro},
@@ -184,7 +160,7 @@
 
 @article{MittalSurvey,
   author    = {Sparsh Mittal},
-  title     = {A survey of techniques for improving energy efficiency in embedded computing systems},
+  title     = {A Survey of Techniques For Improving Energy Efficiency in Embedded Computing Systems},
   journal   = {{IJCAET}},
   volume    = {6},
   number    = {4},
@@ -212,19 +188,28 @@
 }
 
 @article{lefurgy2008power,
-  title={{Power capping: a prelude to power shifting}},
-  author={Lefurgy, C. and Wang, X. and Ware, M.},
-  journal={Cluster Computing},
-  volume={11},
-  number={2},
-  removed_pages={183--195},
-  year={2008},
-  removed_publisher={Springer}
-}
+ author = {Lefurgy, Charles and Wang, Xiaorui and Ware, Malcolm},
+ title = {Power Capping: A Prelude to Power Shifting},
+ journal = {Cluster Computing},
+ removed_issue_date = {June      2008},
+ volume = {11},
+ number = {2},
+ month = jun,
+ year = {2008},
+ removed_issn = {1386-7857},
+ removed_pages = {183--195},
+ removed_numpages = {13},
+ removed_url = {http://dx.doi.org/10.1007/s10586-007-0045-4},
+ removed_doi = {10.1007/s10586-007-0045-4},
+ removed_acmid = {1355779},
+ removed_publisher = {Kluwer Academic Publishers},
+ removed_address = {Hingham, MA, USA},
+ removed_keywords = {Feedback control, Power budget, Power capping, Power management, Power shifting, Power supplies, Provisioning, Servers},
+} 
 
 @inproceedings{Winter2010,
  author = {Winter, Jonathan A. and Albonesi, David H. and Shoemaker, Christine A.},
- title = {Scalable thread scheduling and global power management for heterogeneous many-core architectures},
+ title = {Scalable Thread Scheduling and Global Power Management for Heterogeneous Many-Core Architectures},
  booktitle = {PACT},
  year = {2010},
 } 
@@ -238,7 +223,7 @@
 
 @inproceedings{Chen2011,
  author = {Chen, Jian and John, Lizy Kurian},
- title = {Predictive coordination of multiple on-chip resources for chip multiprocessors},
+ title = {Predictive Coordination of Multiple On-Chip Resources for Chip Multiprocessors},
  booktitle = {ICS},
  year = {2011}
 } 
@@ -283,8 +268,7 @@
   author    = {David H. K. Kim and
                Connor Imes and
                Henry Hoffmann},
-  title     = {Racing and Pacing to Idle: Theoretical and Empirical Analysis of Energy
-               Optimization Heuristics},
+  title     = {Racing and Pacing to Idle: Theoretical and Empirical Analysis of Energy Optimization Heuristics},
   booktitle = {CPSNA},
   _pages     = {78--85},
   year      = {2015},
@@ -299,8 +283,8 @@
                Marco D. Santambrogio and
                Jason E. Miller and
                Anant Agarwal},
-  title     = {Application heartbeats: a generic interface for specifying program
-               performance and goals in autonomous computing environments},
+  title     = {Application Heartbeats: A Generic Interface for Specifying Program
+               Performance and Goals in Autonomous Computing Environments},
   booktitle = {ICAC},
   _pages     = {79--88},
   year      = {2010},
@@ -314,7 +298,7 @@
                David H. K. Kim and
                Martina Maggio and
                Henry Hoffmann},
-  title     = {{POET}: A portable approach to minimizing energy under soft real-time constraints},
+  title     = {{POET}: A Portable Approach to Minimizing Energy Under Soft Real-time Constraints},
   booktitle = {RTAS},
   _pages     = {75--86},
   year      = {2015},
@@ -368,14 +352,14 @@
 }
 
 @inproceedings{sinangil2014self,
-  title={A self-aware processor SoC using energy monitors integrated into power converters for self-adaptation},
+  title={A Self-Aware Processor SoC using Energy Monitors Integrated into Power Converters for Self-Adaptation},
   author={Sinangil, Yildiz and Neuman, Sabrina M and Sinangil, Mahmut E and Ickes, Nathan and Bezerra, George and Lau, Eric and Miller, Jason E and Hoffmann, Henry C and Devadas, Srini and Chandraksan, Anantha P},
   booktitle={Symposium on VLSI},
   year={2014},
 }
 
 @inproceedings{HotPower,
-  title={Racing and pacing to idle: an evaluation of heuristics for energy-aware resource allocation},
+  title={Racing and Pacing to Idle: An Evaluation of Heuristics for Energy-aware Resource Allocation},
   author={Hoffmann, Henry},
   booktitle={HotPower},
   year={2013},
@@ -397,7 +381,7 @@
 }
 
 @INPROCEEDINGS{Bertini2007,
-author={Bertini, L. and Leite, J.C.B. and Mosse, D.},
+author={Bertini, Luciano. and Leite, J.C.B. and Mosse, Daniel},
 booktitle={ECRTS},
 title={Statistical QoS Guarantee and Energy-Efficiency in Web Server Clusters},
 year={2007},
@@ -432,29 +416,31 @@ year={2013},
 }
 
 @inproceedings{Liu2008, 
-title={{PASS}: power-aware scheduling of mixed
-applications with deadline constraints on clusters}, 
-author={Liu, Cong and Qin, Xiao and Li, Shuang}, 
-booktitle={ICCCN},
-year={2008} }
-
-@misc{ina231,
- author= {Texas Instruments},
- howpublished = {\url{http://www.ti.com/product/ina231}}
+  title={{PASS}: Power-Aware Scheduling of Mixed Applications with Deadline Constraints on Clusters},
+  author={Liu, Cong and Qin, Xiao and Li, Shuang}, 
+  booktitle={ICCCN},
+  year={2008}
 }
 
-@misc{powercap,
+@online{ina231,
+ author = {Texas Instruments},
+ year = {2015},
+ title = {INA231 28-V, Bi-Directional, Zero-Drift, Low-/High-Side, I2C Out Current/Power Monitor w/ Alert in WCSP},
+ url = {http://www.ti.com/product/ina231}
+}
+
+@online{powercap,
  author= {Linux Kernel Documentation},
  year = {2015},
  title = {Power Capping Framework},
- howpublished = {\url{https://www.kernel.org/doc/Documentation/power/powercap/powercap.txt}}
+ url = {https://www.kernel.org/doc/Documentation/power/powercap/powercap.txt}
 }
 
-@misc{KernelPstate,
+@online{KernelPstate,
   author = {Linux Kernel Documentation},
   year = {2016},
   title = {Intel P-State driver},
-  howpublished = {\url{https://www.kernel.org/doc/Documentation/cpu-freq/intel-pstate.txt}},
+  url = {https://www.kernel.org/doc/Documentation/cpu-freq/intel-pstate.txt},
 }
 
 @techreport{welch2006kalman,
@@ -465,8 +451,8 @@ year={2008} }
 }
 
 @book{LP,
- title = {Applied mathematical programming},
- author = {Bradley, S.P. and Hax, A.C. and Magnanti, T.L.},
+ title = {Applied Mathematical Programming},
+ author = {Bradley, Stephen P. and Hax, Arnoldo C. and Magnanti, Thomas L.},
  year = {1977},
  removed_publisher = {Addison-Wesley Pub. Co.}
 }
@@ -555,15 +541,15 @@ year={2008} }
  day = {28},
 }
 
-@misc{lwn602479,
+@online{lwn602479,
  author = {Pitre, Nicolas},
  year = {2014},
  title = {Teaching the scheduler about power management},
- howpublished = {\url{http://lwn.net/Articles/602479/}}
+ url = {http://lwn.net/Articles/602479/}
 }
 
 @INPROCEEDINGS{minebench,
-author={Narayanan, R. and Ozisikyilmaz, B. and Zambreno, J. and Memik, G. and Choudhary, A.},
+author={Narayanan, Ramanathan and Ozisikyilmaz, Berkin and Zambreno, Joseph and Pisharath, Jayaprakash and Memik, Gokhan and Choudhary, Alok},
 booktitle={IISWC},
 title={MineBench: A Benchmark Suite for Data Mining Workloads},
 year={2006},
@@ -604,8 +590,7 @@ year={2006},
 } 
 
 @article{Cheng2009,
-  author    = {Hui Cheng and
-               Steve Goddard},
+  author    = {Hui Cheng and Steve Goddard},
   title     = {{SYS-EDF:} a system-wide energy-efficient scheduling algorithm for hard real-time systems},
   journal   = {{IJES}},
   year      = {2009},
@@ -614,7 +599,6 @@ year={2006},
   removed_pages = {141--151},
   url       = {http://dx.doi.org/10.1504/IJES.2009.027938},
   doi       = {10.1504/IJES.2009.027938},
-  timestamp = {Fri, 17 Oct 2014 22:33:03 +0200},
 }
 
 @inproceedings{dubach2010,
@@ -658,9 +642,9 @@ year={2006},
 } 
 
 @INPROCEEDINGS{PTRADE, 
-author={Hoffmann, H. and Maggio, M. and Santambrogio, M.D. and Leva, A. and Agarwal, A.}, 
+author={Hoffmann, Henry and Maggio, Martina and Santambrogio, Marco D. and Leva, Alberto and Agarwal, Anant},
 booktitle={EMSOFT}, 
-title={A generalized software framework for accurate and efficient management of performance goals}, 
+title={A Generalized Software Framework for Accurate and Efficient Management of Performance Goals},
 year={2013}, 
 removed_month={Sept}, 
 removed_pages = {1-10}, 
@@ -676,7 +660,7 @@ doi={10.1109/EMSOFT.2013.6658597},
 }
 
 @ARTICLE{parmibench, 
-author={Iqbal, S.M.Z. and Yuchen Liang and Grahn, H.}, 
+author={Iqbal, Syed M. Z. and Yuchen Liang and Grahn, Hakan}, 
 journal={Computer Architecture Letters}, 
 title={{ParMiBench} - An Open-Source Benchmark for Embedded Multiprocessor Systems}, 
 year={2010}, 
@@ -704,9 +688,9 @@ ISSN={1556-6056},
 } 
 
 @ARTICLE{Agilos, 
-author={Baochun Li and Nahrstedt, K.}, 
+author={Baochun Li and Nahrstedt, Klara}, 
 journal={IEEE Journal on Selected Areas in Communications}, 
-title={A control-based middleware framework for quality-of-service adaptations}, 
+title={A Control-Based Middleware Framework for Quality-of-Service Adaptations}, 
 year={1999}, 
 removed_month={Sep}, 
 volume={17}, 
@@ -782,9 +766,9 @@ ISSN={0733-8716},
 
 @inproceedings {KaramanolisEtAl-2005a,
    removed_address   = {Berkeley, CA, USA},
-   author    = {C. Karamanolis and M. Karlsson and X. Zhu},
+   author    = {Christos Karamanolis and Magnus Karlsson and Xiaoyun Zhu},
    booktitle = {HotOS},
-   title     = {Designing controllable computer systems},
+   title     = {Designing Controllable Computer Systems},
    year      = {2005},
 }
 
@@ -800,17 +784,18 @@ ISSN={0733-8716},
 }
 
 @ARTICLE{TCST, 
-author={Maggio, M. and Hoffmann, H. and Santambrogio, M.D. and Agarwal, A. and Leva, A.}, 
-journal={IEEE TCST}, 
-title={Power Optimization in Embedded Systems via Feedback Control of Resource Allocation}, 
-year={2013}, 
-removed_month={Jan}, 
-volume={21}, 
-number={1}, 
-removed_pages = {239-246}, 
-keywords={computer architecture;embedded systems;feedback;optimisation;power aware computing;resource allocation;architecture design;computationally lightweight control laws;control-theoretical methodology;embedded systems;feedback control;over-provisioned resources;power consumption;power optimization;resource allocation;resource usage;Actuators;Computer architecture;Encoding;Feedback control;Hardware;Power demand;Sensors;Computing systems;control systems;embedded systems;power consumption;self-adaptive systems}, 
-doi={10.1109/TCST.2011.2177499}, 
-ISSN={1063-6536},}
+  author={Maggio, Martina and Hoffmann, Henry. and Santambrogio, Marco D. and Agarwal, Anant and Leva, Alberto}, 
+  journal={IEEE TCST}, 
+  title={Power Optimization in Embedded Systems via Feedback Control of Resource Allocation}, 
+  year={2013}, 
+  month={Jan}, 
+  volume={21}, 
+  number={1}, 
+  removed_pages = {239-246}, 
+  keywords={computer architecture;embedded systems;feedback;optimisation;power aware computing;resource allocation;architecture design;computationally lightweight control laws;control-theoretical methodology;embedded systems;feedback control;over-provisioned resources;power consumption;power optimization;resource allocation;resource usage;Actuators;Computer architecture;Encoding;Feedback control;Hardware;Power demand;Sensors;Computing systems;control systems;embedded systems;power consumption;self-adaptive systems}, 
+  doi={10.1109/TCST.2011.2177499}, 
+  ISSN={1063-6536},
+}
 
 @ARTICLE{stream,
   author = {John D. McCalpin},
@@ -876,7 +861,7 @@ ISSN={1063-6536},}
                Fabio Checconi and
                Zdenek Hanz{\'{a}}lek and
                Giuseppe Lipari},
-  title     = {Modular software architecture for flexible reservation mechanisms on heterogeneous resources},
+  title     = {Modular Software Architecture for Flexible Reservation Mechanisms on Heterogeneous Resources},
   journal   = {Journal of Systems Architecture - Embedded Systems Design},
   year      = {2011},
   volume    = {57},
@@ -884,7 +869,6 @@ ISSN={1063-6536},}
   removed_pages = {366--382},
   url       = {http://dx.doi.org/10.1016/j.sysarc.2011.02.005},
   doi       = {10.1016/j.sysarc.2011.02.005},
-  timestamp = {Fri, 17 Oct 2014 22:49:05 +0200},
 }
 
 @inproceedings{dvfs,
@@ -904,7 +888,7 @@ ISSN={1063-6536},}
 } 
 
 @inproceedings{Rajkumar,
- author = {Rajkumar, R. and Lee, C. and Lehoczky, J. and Siewiorek, D.},
+ author = {Rajkumar, Ragunathan and Lee, Chen and Lehoczky, John and Siewiorek, Dan},
  title = {A Resource Allocation Model for QoS Management},
  booktitle = {RTSS},
  year = {1997},
@@ -919,14 +903,14 @@ ISSN={1063-6536},}
 
 @inproceedings{SandyBridge,
   author    = {Efi Rotem and Alon Naveh and Doron Rajwan amd Avinash Ananthakrishnan and Eli Weissmann},
-  title     = "{Power management architecture of the 2nd generation Intel Core microarchitecture, formerly codenamed Sandy Bridge}",
+  title     = "{Power management architecture of the 2nd generation Intel\textregistered~Core\textsuperscript{TM} microarchitecture, formerly codenamed Sandy Bridge}",
   booktitle = {Hot Chips},
   removed_month = aug,
   year      = {2011},
 }
 
 @INPROCEEDINGS{skylake,
-  author={E. Fayneh and M. Yuffe and E. Knoll and M. Zelikson and M. Abozaed and Y. Talker and Z. Shmuely and S. A. Rahme},
+  author={Eyal Fayneh and Marcelo Yuffe and Ernest Knoll and Michael Zelikson and Muhammad Abozaed and Yair Talker and Ziv Shmuely and Saher A. Rahme},
   removed_booktitle={2016 IEEE International Solid-State Circuits Conference (ISSCC)},
   booktitle={ISSCC},
   title={4.1 14nm 6th-generation Core processor SoC with low power consumption and improved performance},
@@ -958,7 +942,7 @@ ISSN={1063-6536},}
 } 
 
 @inproceedings{GRAPE,
-  title={{GRAPE}: Minimizing energy for GPU applications with performance requirements},
+  title={{GRAPE}: Minimizing Energy for GPU Applications with Performance Requirements},
   author={Santriaji, Muhammad Husni and Hoffmann, Henry},
   booktitle={MICRO},
   _pages={1--13},
@@ -975,7 +959,7 @@ ISSN={1063-6536},}
                Klara Nahrstedt and
                Daniel Grobe Sachs and
                Douglas L. Jones},
-  title     = {{GRACE-2:} integrating fine-grained application adaptation with global adaptation for saving energy},
+  title     = {{GRACE-2}: Integrating Fine-Grained Application Adaptation with Global Adaptation for Saving Energy},
   journal   = {{IJES}},
   year      = {2009},
   volume    = {4},
@@ -983,7 +967,6 @@ ISSN={1063-6536},}
   removed_pages = {152--169},
   url       = {http://dx.doi.org/10.1504/IJES.2009.027939},
   doi       = {10.1504/IJES.2009.027939},
-  timestamp = {Fri, 17 Oct 2014 22:54:31 +0200},
 }
 
 @INPROCEEDINGS{Yang2007, 
@@ -998,7 +981,7 @@ doi={10.1109/ISORC.2007.55},
 }
 
 @INPROCEEDINGS{Yun2010, 
-author={Heechul Yun and Po-Liang Wu and Arya, A. and Abdelzaher, T. and Cheolgi Kim and Lui Sha}, 
+author={Heechul Yun and Po-Liang Wu and Arya, Anshu and Abdelzaher, Tarek and Cheolgi Kim and Lui Sha}, 
 booktitle={ECRTS}, 
 title={System-Wide Energy Optimization for Multiple DVS Components and Real-Time Tasks}, 
 year={2010}, 
@@ -1010,9 +993,9 @@ ISSN={1068-3070},
 }
 
 @INPROCEEDINGS{ControlWare, 
-author={Ronghua Zhang and Chenyang Lu and Abdelzaher, T.F. and Stankovic, J.A.}, 
+author={Ronghua Zhang and Chenyang Lu and Abdelzaher, Tarek F. and Stankovic, John A.}, 
 booktitle={ICDCS}, 
-title={{ControlWare}: a middleware architecture for feedback control of software performance}, 
+title={{ControlWare}: A Middleware Architecture for Feedback Control of Software Performance}, 
 year={2002}, 
 removed_month={}, 
 removed_pages = {301-310}, 
@@ -1073,7 +1056,7 @@ ISSN={1063-6927},
 }
 
 @ARTICLE{WuHPCComputer,
-author={X. Wu and V. Taylor and J. Cook and P. J. Mucci},
+author={Xingfu Wu and Valerie Taylor and Jeanine Cook and Philip J. Mucci},
 journal={Computer},
 title={Using Performance-Power Modeling to Improve Energy Efficiency of HPC Applications},
 year={2016},
@@ -1121,7 +1104,7 @@ url={http://dx.doi.org/10.1007/978-3-319-20119-1_28}
 }
 
 @INPROCEEDINGS{Jitter,
-author={N. Kappiah and V. W. Freeh and D. K. Lowenthal},
+author={Nandini Kappiah and Vincent W. Freeh and David K. Lowenthal},
 removed_booktitle={Supercomputing, 2005. Proceedings of the ACM/IEEE SC 2005 Conference},
 booktitle={SC},
 title={Just In Time Dynamic Voltage Scaling: Exploiting Inter-Node Slack to Save Energy in MPI Programs},
@@ -1135,14 +1118,14 @@ removed_month={Nov},
 @online{PCMGit,
  title = {Processor Counter Monitor (PCM)},
  author = {opcm},
- howpublished = {\url{https://github.com/opcm/pcm}},
+ url = {https://github.com/opcm/pcm},
  year = {2016},
 }
 
 @online{PCMFields,
  title = {Intel PCM Column Names Decoder Ring},
  author = {Thomas Willhalm},
- howpublished = {\url{https://software.intel.com/en-us/blogs/2014/07/18/intel-pcm-column-names-decoder-ring}},
+ url = {https://software.intel.com/en-us/blogs/2014/07/18/intel-pcm-column-names-decoder-ring},
  year = {2014},
  month = {July},
  day = {18},
@@ -1188,10 +1171,10 @@ removed_month={Nov},
 } 
 
 @INPROCEEDINGS{Alvarado,
-author={C. Alvarado and D. Tamir and A. Qasem},
+author={Claudia Alvarado and Dan Tamir and Apan Qasem},
 removed_booktitle={2015 Sixth International Green and Sustainable Computing Conference (IGSC)},
 booktitle={IGSC},
-title={Realizing energy-efficient thread affinity configurations with supervised learning},
+title={Realizing Energy-efficient Thread Affinity Configurations with Supervised Learning},
 year={2015},
 removed_pages={1-4},
 removed_keywords={feature selection;learning (artificial intelligence);multi-threading;multiprocessing systems;power aware computing;HPC system;Intel-based platform;Linux kernel;energy-efficient thread affinity configuration;execution environment;execution time;feature selection;hardware performance counter;machine learning;optimal thread-to-core mapping;parallel application;parallel workload;power consumption;runtime analysis;runtime tracking;supervised learning;thread execution;thread migration;workload behavior learning;workload characteristics;Feature extraction;Instruction sets;Message systems;Multicore processing;Optimization;Phasor measurement units;Runtime},
@@ -1244,21 +1227,25 @@ removed_month={Dec},
 }
 
 @article{scikit-learn,
- title={Scikit-learn: Machine Learning in {P}ython},
- author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
-         and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
-         and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
-         Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
- journal={Journal of Machine Learning Research},
- volume={12},
- removed_pages={2825--2830},
- year={2011}
-}
+ author = {Pedregosa, Fabian and Varoquaux, Ga\"{e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, \'{E}douard},
+ title = {Scikit-learn: Machine Learning in Python},
+ journal = {Journal of Machine Learning Research},
+ issue_date = {2/1/2011},
+ volume = {12},
+ month = nov,
+ year = {2011},
+ issn = {1532-4435},
+ removed_pages = {2825--2830},
+ removed_numpages = {6},
+ url = {http://dl.acm.org/citation.cfm?id=1953048.2078195},
+ removed_acmid = {2078195},
+ removed_publisher = {JMLR.org},
+} 
 
-@article{Exascale20MW,
-  author = {Kogge, Peter and Borkar, S and Campbell, Dan and Carlson, William and Dally, William and Denneau, Monty and Franzon, Paul and Harrod, William and Hiller, Jon and Keckler, Stephen and Klein, Dean and Lucas, Robert},
+@misc{Exascale20MW,
+  author = {Kogge, Peter and Borkar, Shekhar and Campbell, Dan and Carlson, William and Dally, William and Denneau, Monty and Franzon, Paul and Harrod, William and Hiller, Jon and Keckler, Stephen and Klein, Dean and Lucas, Robert},
   year = {2008},
-  month = jan,
+  removed_month = jan,
   title = {ExaScale Computing Study: Technology Challenges in Achieving Exascale Systems},
   removed_volume = {15},
   removed_booktitle = {Defense Advanced Research Projects Agency Information Processing Techniques Office (DARPA IPTO), Techinal Representative}
@@ -1288,7 +1275,7 @@ removed_month={Dec},
 
 @inproceedings{NPB,
  author = {Bailey, D. H. and Barszcz, E. and Barton, J. T. and Browning, D. S. and Carter, R. L. and Dagum, L. and Fatoohi, R. A. and Frederickson, P. O. and Lasinski, T. A. and Schreiber, R. S. and Simon, H. D. and Venkatakrishnan, V. and Weeratunga, S. K.},
- title = {The {NAS} Parallel Benchmarks -- Summary and Preliminary Results},
+ title = {The NAS Parallel Benchmarks--Summary and Preliminary Results},
  booktitle = {SC},
  removed_booktitle = {Proceedings of the 1991 ACM/IEEE Conference on Supercomputing},
  removed_series = {Supercomputing '91},
@@ -1333,10 +1320,11 @@ month = {August}
  removed_keywords = {algebraic multigrid, parallel computing},
 } 
 
-@inbook{Kripke,
+@inproceedings{Kripke,
  title={KRIPKE - A Massively Parallel Transport Mini-App},
  url={http://www.osti.gov/scitech/servlets/purl/1229802},
- author={Kunen, A J and Bailey, T S and Brown, P N},
+ author={Kunen, Adam J. and Bailey, Teresa S. and Brown, Peter N.},
+ booktitle={American Nuclear Society M\&C},
  year={2015},
  month={July},
  day={29}
@@ -1358,8 +1346,8 @@ month = {August}
 }
 
 @inproceedings{XSBench,
- author="Tramm, J. R. and Siegel, A. R. and Islam, T. and Schulz, M.",
- title="{XSBench} - The Development and Verification of a Performance Abstraction for Monte Carlo Reactor Analysis",
+ author="Tramm, John R. and Siegel, Andrew R. and Islam, Tanzima and Schulz, Martin",
+ title="{XSBench} -- The Development and Verification of a Performance Abstraction for Monte Carlo Reactor Analysis",
  booktitle="PHYSOR",
  year="2014"
 }
@@ -1367,14 +1355,14 @@ month = {August}
 @online{Quicksilver,
  title = {Co-design at Lawrence Livermore National Lab -- Quicksilver},
  author = {Lawrence Livermore National Laboratory},
- howpublished = {\url{https://codesign.llnl.gov/quicksilver.php}},
+ url = {https://codesign.llnl.gov/quicksilver.php},
  year = {2017},
 }
 
 @online{CoMDGit,
  title = {CoMD},
  author = {Los Alamos National Laboratory},
- howpublished = {\url{https://github.com/ECP-copa/CoMD}},
+ url = {https://github.com/ECP-copa/CoMD},
  year = {2016},
 }
 
@@ -1386,7 +1374,7 @@ month = {August}
 }
 
 @inproceedings{georganas2015hipmer,
-  title={{HipMer}: an extreme-scale de novo genome assembler},
+  title={{HipMer}: An Extreme-Scale De Novo Genome Assembler},
   author={Georganas, Evangelos and Bulu{\c{c}}, Ayd{\i}n and Chapman, Jarrod and Hofmeyr, Steven and Aluru, Chaitanya and Egan, Rob and Oliker, Leonid and Rokhsar, Daniel and Yelick, Katherine},
   removed_booktitle={SC15: International Conference for High Performance Computing, Networking, Storage and Analysis},
   booktitle={SC},
@@ -1397,7 +1385,7 @@ month = {August}
 
 @article{peng2012idba,
   title={{IDBA-UD}: a de novo assembler for single-cell and metagenomic sequencing data with highly uneven depth},
-  author={Peng, Yu and Leung, Henry CM and Yiu, Siu-Ming and Chin, Francis YL},
+  author={Peng, Yu and Leung, Henry C. M. and Yiu, Siu-Ming and Chin, Francis Y. L.},
   journal={Bioinformatics},
   volume={28},
   number={11},
@@ -1421,7 +1409,7 @@ month = {August}
   author="Geurts, Pierre
   and Ernst, Damien
   and Wehenkel, Louis",
-  title="Extremely randomized trees",
+  title="Extremely Randomized Trees",
   journal="Machine Learning",
   year="2006",
   month="Apr",
@@ -1443,7 +1431,7 @@ month = {August}
   number = "5",
   removed_pages = "1189--1232",
   removed_publisher = "The Institute of Mathematical Statistics",
-  title = "Greedy function approximation: A gradient boosting machine.",
+  title = "Greedy Function Approximation: A Gradient Boosting Machine.",
   removed_url = "https://doi.org/10.1214/aos/1013203451",
   volume = "29",
   year = "2001"
@@ -1451,7 +1439,7 @@ month = {August}
 
 @article{HintonMultiLayerPerceptron,
   author = "Geoffrey E. Hinton",
-  title = "Connectionist learning procedures",
+  title = "Connectionist Learning Procedures",
   journal = "Artificial Intelligence",
   volume = "40",
   number = "1",
@@ -1463,16 +1451,17 @@ month = {August}
 }
 
 @techreport{hpgmg,
-  author={Adams, M. and Brown, J. and Shalf, J. and Straalen, B. V. and Strohmaier, E. and Williams, S.},
-  title = "{HPGMG} 1.0: A Benchmark for Ranking High Performance Computing Systems",
-  number = {LBNL-6630E},
-  institution = LBNL,
+  author={Mark F. Adams and Jed Brown and John Shalf and Brian van Straalen and Erich Strohmaier and Sam Williams},
+  title={HPGMG 1.0: A Benchmark for Ranking High Performance Computing Systems},
+  number={LBNL-6630E},
+  institution={LBNL},
+  year={2014}
 }
 
 @online{genepool,
   title  = "GENEPOOL",
   author = "NERSC",
-  howpublished = {\url"http://www.nersc.gov/users/computational-systems/genepool/"},
+  url = {http://www.nersc.gov/users/computational-systems/genepool/},
   year   = "2017 (accessed Jan, 2018)",
 }
 
@@ -1535,19 +1524,19 @@ month = {August}
 @online{WattsUp,
   title={WattsUp .Net Meter},
   author={Electronic Education Devices},
-  howpublished={\url{http://www.wattsupmeters.com/}},
+  url = {http://www.wattsupmeters.com/},
   year={2016},
 }
 
 @online{OSP,
   title={ODROID Smart Power},
   author={AmeriDroid},
-  howPublished={\url{http://ameridroid.com/products/smart-power}},
+  url = {http://ameridroid.com/products/smart-power},
   year={2016},
 }
 
 @manual{intel-sdm,
-  title={Intel\textregistered 64 and IA-32 Architectures Software Developer's Manual},
+  title={Intel\textsuperscript{\textregistered} 64 and IA-32 Architectures Software Developer's Manual},
   organization={Intel Corporation},
   year={2016},
   month=sep,

@@ -2,8 +2,8 @@
 
 % \usepackage{subfigure,epsfig,amsfonts}
 % \usepackage{amsthm}
-\usepackage{natbib}
-\bibliographystyle{plain}
+% \usepackage{natbib}
+% \bibliographystyle{plain}
 
 % \usepackage[normalem]{ulem}
 % \usepackage{float}
@@ -41,7 +41,7 @@
 % \usepackage{leading}
 % \let\labelindent\relax
 \usepackage{enumitem}
-%\usepackage[natbib=true,backend=bibtex,firstinits=true,style=numeric-comp,sorting=nyt,defernumbers,maxnames=10,maxcitenames=2,doi=false,isbn=false,url=false]{biblatex}
+\usepackage[natbib=true,backend=bibtex,style=numeric-comp,sorting=nyt,defernumbers,maxnames=99,doi=false,isbn=false,url=false]{biblatex}
 % \usepackage{balance}
 % \usepackage{pbox}
 
@@ -175,6 +175,8 @@ tick label style={font=\footnotesize},
 \dedication{\TODO{Dedication Text}}
 \epigraph{\TODO{Epigraph Text}}
 
+\bibliography{seec}
+
 
 \begin{document}
 %% Basic setup commands
@@ -212,7 +214,7 @@ tick label style={font=\footnotesize},
 \input{urls}
 
 % Format a LaTeX bibliography
-\bibliography{seec}
+\printbibliography
 %\makebibliography
 
 \end{document}

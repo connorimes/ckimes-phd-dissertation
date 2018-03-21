@@ -1,8 +1,8 @@
-\chapter{Building Tools}
+\chapter{Tools for Self-aware Systems Research}
 \label{app:tools}
 
 Tool building is often under-appreciated by the computer science research community, yet is crucial to enabling practical systems research.
-The projects in this dissertation led to the development of a handful of portable tools that we make available to the community at large.
+The projects in this dissertation led to the development of a variety of portable tools that we make available to the community at large.
 Links to published code are available in \appref{urls}.
 
 In \secref{intro-description}, we described the \emph{observe}, \emph{decide}, and \emph{act} framework that Hoffmann proposed in his ``self-aware'' computing model \cite{HoffmannPhD}.
@@ -143,7 +143,7 @@ We therefore developed a \interface{Linux powercap bindings} library and collect
 These tools are now available in repositories for Debian-based Linux distributions, including Ubuntu 18.04 LTS ``Bionic Beaver'' and newer.
 The library usage is straightforward, for example (error checking excluded):
 \lstset{emph={%  
-    powercap_rapl_pkg, powercap_rapl_get_num_packages, powercap_rapl_init, powercap_rapl_destroy%
+    powercap_rapl_pkg, powercap_rapl_get_num_packages, powercap_rapl_init, powercap_rapl_set_power_limit_uw, powercap_rapl_destroy%
     },emphstyle={\color{black}\bfseries\underbar}%
 }%
 \begin{lstlisting}[language=C,%
@@ -160,11 +160,15 @@ npackages = powercap_rapl_get_num_packages();
 // initialize
 pkgs = malloc(npackages * sizeof(powercap_rapl_pkg));
 for (i = 0; i < npackages; i++) {
+  // last parameter is a "read-only" flag (set to false)
   powercap_rapl_init(i, &pkgs[i], 0);
 }
 
-// do a bunch of stuff with the interface here,
-// e.g., enable desired packages or power planes and get/set power caps...
+// set caps of 100 Watts for short_term, 50 Watts for long_term constraints on each package
+for (i = 0; i < npackages; i++) {
+  powercap_rapl_set_power_limit_uw(&pkgs[i], POWERCAP_RAPL_ZONE_PACKAGE, POWERCAP_RAPL_CONSTRAINT_SHORT, 100 * 1000000);
+  powercap_rapl_set_power_limit_uw(&pkgs[i], POWERCAP_RAPL_ZONE_PACKAGE, POWERCAP_RAPL_CONSTRAINT_LONG, 50 * 1000000);
+}
 
 // now cleanup
 for (i = 0; i < npackages; i++) {

@@ -69,15 +69,16 @@ Now on our server system we find that the first and third phases are just about 
 
 \begin{figure}[t]
   \centering
-  \input{img/poet/server/x264-phases-default.tex}
+  % \vskip -1.8em
+  \subfloat[Uncontrolled behavior.]%
+  {\input{img/poet/server/x264-phases-default.tex}%
+  \label{fig:poet-server-phases-default}}
+  \newline
+  \subfloat[Meeting a performance target with POET.]%
+  {\input{img/poet/server/x264-phases-poet-clover.tex}%
+  \label{fig:poet-server-phases-x264}}
   \caption{Processing \app{x264} input with distinct phases on a server system.}
-  \label{fig:poet-server-phases-default}
-\end{figure}
-\begin{figure}[t]
-  \centering
-  \input{img/poet/server/x264-phases-poet-clover.tex}    
-  \caption{POET behavior for \app{x264} input with distinct phases on a server system.}
-  \label{fig:poet-server-phases-x264}
+  \label{fig:poet-server-phases}
 \end{figure}
 
 \figref{poet-server-phases-x264} demonstrates enabling POET with a target that is about half of the system's maximum performance (twice the minimum latency).

@@ -86,7 +86,7 @@ Users typically interact with only three POET functions.
 \function{poet\_apply\_control} executes the controller, runs \algoref{poet-optimal}, and configures the platform.
 \function{poet\_destroy} cleans up the \struct{poet\_state} data structure.
 
-The \function{poet\_init} function takes as parameters: the performance goal, the window period over which the controller operates (analogous to $\omega$ in \eqnref{poet-work}), the system's configurations, and a reference to the function that applies the given system configurations.
+The \function{poet\_init} function takes as parameters: the performance goal, the window period over which the controller operates, the system's configurations, and a reference to the function that applies the given system configurations.
 It also receives an optional reference to the function that determines the system's current state and a log file name.
 The first system configuration data structure (system-agnostic) is of type \variable{poet\_control\_state\_t}, and the second (system-specific) has type \variable{void}.
 The two functions passed by reference are the only ones that need to know the format of the second data structure and are therefore passed the \struct{void} type reference given to \function{poet\_init} as parameters.

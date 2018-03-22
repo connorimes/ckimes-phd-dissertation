@@ -118,15 +118,16 @@ We present the raw data for power; energy is the integral of those curves.
 
 \begin{figure}[t]
   \centering
-  \input{img/poet/x264-phases-default.tex}
-  \caption{Processing \app{x264} input with distinct phases on a embedded systems.}
-  \label{fig:poet-embedded-phases-default}
-\end{figure}
-\begin{figure}[t]
-  \centering
-  \input{img/poet/x264-phases-poet.tex}    
-  \caption{POET behavior for \app{x264} input with distinct phases on embedded systems.}
-  \label{fig:poet-embedded-phases-x264}
+  % \vskip -1.8em
+  \subfloat[Uncontrolled behavior.]%
+  {\input{img/poet/x264-phases-default.tex}%
+  \label{fig:poet-embedded-phases-default}}
+  \newline
+  \subfloat[Meeting a performance target with POET.]%
+  {\input{img/poet/x264-phases-poet.tex}%
+  \label{fig:poet-embedded-phases-x264}}
+  \caption{Processing \app{x264} input with distinct phases on embedded systems.}
+  \label{fig:poet-embedded-phases}
 \end{figure}
 
 The phases are clearly distinguishable by the change in latency at frames 500 and 1000.

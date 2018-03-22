@@ -50,9 +50,19 @@ To actually maximize the throughput of hardware over-provisioned, power-constrai
 Naively deploying the current solution on all nodes in a cluster will not achieve this, and could result in less-than-optimal energy efficiency and violations of the global power constraint.
 First, a component to schedule jobs while respecting the cluster power constraint is needed, likely in coordination with accurate predictions of how much power individual nodes require while running their assigned jobs energy-efficiently (keeping in mind that the power consumption fluctuates as applications move through phases).
 Additionally, tighter coordination between nodes is needed to support jobs that scale across multiple nodes, so that one node does not slow down the rest, resulting in reduced total energy efficiency.
+A scaled-out approach will need to account for other components like network switches and consider the location of different compute nodes---individual racks have their own power constraints, and the distance between communicating nodes impacts application performance.
 % Our machine learning classification framework optimizes energy efficiency, but can be easily adapted to support different goals derived from performance counters.
 
-Availability of runtime feedback from which to make informed decisions is a fundamental requirement of self-aware systems.
+System resources other than CPU and DRAM should be coordinated since they also impact performance/power tradeoffs---GPUs and other accelerators are particularly interesting.
+Data storage (\eg hard disks, SSDs, future non-volatile memories) and network interfaces are also critical, particularly in low-power environments like embedded systems and high-throughput and communication-intensive environments like HPC.
+
+Unfortunately, power/energy sensors on modern computing systems are relatively rare, with the exception of Intel processors.
+Model-based approaches are too inaccurate and cannot provide runtime guarantees, and custom/ad-hoc instrumentation requires special equipment and does not scale well in production.
+To better enable energy-aware applications, more hardware needs to include power/energy instrumentation---not just on processors and SoCs, but on other hardware components as well, \eg DRAM, disks, networking components.
+Such capabilities would more easily enable both research and development of practical solutions for coordinating a wide variety of system resources in an energy-aware manner.
+Similarly, datacenters and HPC clusters can benefit from instrumenting external components like network switches and network attached storage devices.
+
+Finally, the availability of runtime feedback from which to make informed decisions is a fundamental requirement of self-aware systems.
 Applications and users want to specify contextual goals, \eg frames processed in a video encoder, not low-level metrics like instructions retired.
 Hardware performance counters are the de facto standard today, but do not provide high-level metrics like a true measure of application progress.
 Few such mechanisms are available today, and typically require modifying applications to provide appropriate instrumentation, \eg using Heartbeats.

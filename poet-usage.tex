@@ -71,7 +71,7 @@ We use a mainline Linux kernel with the default In Kernel Switcher for managing 
 On the server system, we set the DVFS frequency on all cores, like on the Vaio.
 
 \begin{table}[t]
-% \vskip -1.5em
+\small
 \centering
 \caption{System power characteristics.}
 \begin{tabular}{cccc}
@@ -125,7 +125,7 @@ Collecting power data on new platforms with different power or energy monitors i
 \end{figure}
 
 \tblref{poet-embedded-inputs} shows the inputs used for each of the applications on the embedded platforms.
-We quantify this inherent unpredictability by measuring the latency of each job and computing the coefficient of variation over all jobs in an application.
+We quantify this inherent unpredictability by measuring the latency of each job and computing the coefficient of variation (ratio of standard deviation to the mean) over all jobs in an application.
 \figref{poet-embedded-variation} demonstrates this unpredictability for each application when running without POET.
 The figure shows that our applications have a range of natural behavior from low variance (implying natural predictability, \eg \app{blackscholes}) to high variance (meaning that the application naturally has widely distributed latencies, \eg \app{x264}).
 The variability in the applications is largely the same across platforms, indicating that it is a fundamental property of the applications and not the devices.

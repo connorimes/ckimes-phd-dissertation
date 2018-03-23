@@ -63,10 +63,10 @@ Compared to the sophisticated DVFS controller, CoPPer is on average 3\% more ene
 \begin{table}[t]
 \small
 \centering
-\caption{Energy efficiency ratio of CoPPer with gain limits of 0.0 and 0.5 to the sophisticated DVFS controller.}
+\caption{Energy efficiency of CoPPer with gain limits of 0.0 and 0.5 compared to the sophisticated DVFS controller (higher is better).}
 \begin{tabular}{ccc}
-  &\multicolumn{2}{c}{\bf Energy Efficiency Ratio} \\
-  \textbf{Performance} & \textbf{CoPPer-0.0/DVFS} & {\bf CoPPer-0.5/DVFS} \\
+  &\multicolumn{2}{c}{\textbf{Energy Efficiency vs DVFS}} \\
+  \textbf{Performance} & \textbf{CoPPer-0.0} & \textbf{CoPPer-0.5} \\
   \hline
   \hline
   $\mathsf{high}$   & 1.05  & 1.08 \\
@@ -93,7 +93,7 @@ CoPPer, however, can set a power cap that allows the performance goal to be met 
   \subfloat[Power cap]%
   {\input{img/copper/tradeoffs-streamcluster-pwr.tex}%
   \label{fig:copper-tradeoffs-streamcluster-pwr}}
-  \caption{(a) DVFS and (b) power cap effects on \app{streamcluster}.}
+  \caption{DVFS / Power cap performance impact for \app{streamcluster}.}
   \label{fig:copper-tradeoffs-streamcluster}
   \vskip -1em
 \end{figure}
@@ -117,10 +117,10 @@ CoPPer achieves noticeably higher energy efficiency for these applications than 
 \begin{table}[t]
 \small
 \centering
-\caption{Energy efficiency ratio of CoPPer to the sophisticated DVFS controller for memory-bound applications.}
+\caption{Energy efficiency of CoPPer with gain limits of 0.0 and 0.5 compared to the sophisticated DVFS controller for memory-bound applications (higher is better).}
 \begin{tabular}{ccc}
-  &\multicolumn{2}{c}{\bf Energy Efficiency Ratio} \\
-  \textbf{Performance} & \textbf{CoPPer-0.0/DVFS} & {\bf CoPPer-0.5/DVFS} \\
+  &\multicolumn{2}{c}{\textbf{Energy Efficiency vs DVFS}} \\
+  \textbf{Performance} & \textbf{CoPPer-0.0} & \textbf{CoPPer-0.5} \\
   \hline
   \hline
     $\mathsf{high}$  & 1.15  & 1.18 \\

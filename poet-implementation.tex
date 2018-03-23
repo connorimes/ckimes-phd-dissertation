@@ -16,16 +16,17 @@ POET separates the system configurations into two data structures.
 The first is system-agnostic and contains a configuration identifier along with \textbf{speedup} and \textbf{powerup} values.
 The second is system-specific and can take any form a developer considers appropriate to define a system configuration.
 POET includes a default format for this second structure which contains a configuration identifier, the DVFS frequency to apply, and the number of cores to use.
-Snippets of actual configuration files representing both these data structures are presented in \figref{config-examples}.
+Snippets of actual configuration files representing both these data structures are presented in \figref{poet-config-examples}.
 \secref{poet-usage} describes how to characterize a system's timing and power behavior.
 These results can be used to create configurations if they are not already available.
 
 \begin{figure}[t]
 \centering
-\begin{minipage}{.45\columnwidth}
+\begin{minipage}[t]{.45\columnwidth}
 \lstset{
   belowskip=0pt,
   aboveskip=0pt,
+  numbers=none,
 }
 \begin{lstlisting}[frame=tlr,%
   caption={System-agnostic.},%
@@ -44,10 +45,11 @@ These results can be used to create configurations if they are not already avail
 \end{minipage}
 % \hfill
 \hspace*{0.4cm}
-\begin{minipage}{.45\columnwidth}
+\begin{minipage}[t]{.45\columnwidth}
 \lstset{
   belowskip=0pt,
   aboveskip=0pt,
+  numbers=none,
 }
 \begin{lstlisting}[frame=tlr,%
   caption={System-specific.},%
@@ -65,8 +67,8 @@ These results can be used to create configurations if they are not already avail
 \end{lstlisting}
 \end{minipage}
 % \vskip -1.5em
-\caption{Example of POET configuration files.}
-\label{fig:config-examples}
+\caption{Snippets of POET configuration files.}
+\label{fig:poet-config-examples}
 \end{figure}
 
 To measure both performance and power, we modify the Heartbeats API \cite{PTRADE} to record power data along with timing statistics (see also \appsref{profiling}{energymon}).

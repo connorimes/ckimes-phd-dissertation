@@ -146,7 +146,7 @@ The difficulty arises when performance counter values fluctuate rapidly enough t
 \begin{figure}[t]
   \centering
   \input{img/classifiers/cv.tex}
-  \caption{Runtime coefficient of variation over a 5 second sliding window (lower values indicates more stable application behavior).}
+  \caption{Runtime coefficient of variation over a 5 second sliding window (lower values indicate more stable application behavior).}
   \label{fig:cv}
   % \vskip -1.0em
 \end{figure}
@@ -164,13 +164,15 @@ In contrast, \app{Megahit} is constantly noisy, resulting in frequent changes to
 \label{tbl:classifiers-actuation}
 \small
 \centering
-\begin{tabular}{c|c|c|c}
+\begin{tabular}{cccc}
   \textbf{Application} & \textbf{Prediction} & \textbf{Taskset} & \textbf{DVFS} \\
+  \hline
   \hline
   HipMer     & 32.7\% & 25.6\% & 23.1\% \\
   IDBA       & 39.9\% & 37.4\% & 18.8\% \\
   Megahit    & 46.6\% & 37.9\% & 39.8\% \\
   metaSPAdes & 41.9\% & 32.9\% & 28.6\% \\
+  \hline
   \hline
 \end{tabular}
 % \vskip -.7em
@@ -194,12 +196,12 @@ However, any resource management system that is dependent on runtime feedback mu
 For classification to be practical, the runtime overhead must be reasonable.
 This section quantifies the overhead of different components/stages of the classification pipeline.
 
-\begin{table}[th]
+\begin{table}[t]
 \caption{Classification runtime overheads.}
 \label{tbl:classifiers-overhead}
 \small
 \centering
-\begin{tabular}{c|c}
+\begin{tabular}{cc}
   \textbf{Stage} & \textbf{Average Overhead (ms)} \\
   \hline
   \hline

@@ -147,7 +147,7 @@ The library usage is straightforward, for example (error checking excluded):
     },emphstyle={\color{black}\bfseries\underbar}%
 }%
 \begin{lstlisting}[language=C,%
-  caption={Basic lifecycle of the powercap library.},%
+  caption={Setting RAPL power caps with the powercap library.},%
   morekeywords={uint32_t},%
   label={lst:powercap-example}]%
 
@@ -216,6 +216,7 @@ for (i = 0; i < nsockets; i++) {
 // cleanup
 raplcap_destroy(&rc);
 \end{lstlisting}
+
 Using a common interface allows software to link against different library implementations, depending on the target hardware platform or operating system, without requiring changes to application code.
 Work is ongoing to implement RAPLCap on other operating systems like Apple OSX and Microsoft Windows, which expose different methods for configuring RAPL.
-RAPLCap also comes with command-line utilities, which are not described further here.
+RAPLCap also includes command-line utilities, which are not described further here.

@@ -17,6 +17,7 @@ The capability to specify power caps and simultaneously provide some optimizatio
 Recent work shows that a combination of RAPL and software resource management can achieve even better performance while guaranteeing power consumption \cite{pupil}.
 What is still needed, however, is the software component that guarantees performance without using DVFS.
 We address this need with CoPPer, which provides soft performance guarantees by manipulating hardware power caps, thus allowing the hardware to perform fine-grained optimizations.
+Because CoPPer operates at the software level, it can still benefit from additional hardware-level optimizations to further increase energy efficiency, like on-chip voltage regulators \cite{Bai2017} or adaptive management of power circuitry \cite{He2013}.
 
 
 \subsection{The Challenges of Actuating Power}

@@ -17,7 +17,7 @@ This flexibility allows the system to adapt to different circumstances or differ
 The problem is exacerbated when approaches must achieve portability across a range of different systems, which expose different resources to software and have unique performance/power tradeoff spaces.
 
 % DVFS and core allocation
-Software-based DVFS management is essential for many energy-aware scheduling algorithms \cite{Albers,YDS}.
+Software-based DVFS management is essential for many energy-aware scheduling algorithms \cite{Albers,YDS,Kumar2014}.
 At the processor level, DVFS has been used to meet performance requirements \cite{Lu2002,Wu2004} and implement power capping \cite{lefurgy2008power}.
 Allowing DVFS to be set separately on different cores provides further benefits \cite{Isci2006,Rangan2009}.
 Similarly, managing DRAM DVFS increases energy efficiency \cite{MemScale,Diniz2007}.
@@ -45,16 +45,8 @@ The METE system manages clock speed, memory bandwidth, and core usage \cite{METE
 Sinangil \etal co-design a processor architecture which exposes both monitoring and configurable resources with an operating system that dynamically manages those resources \cite{sinangil2014self}.
 All of these approaches coordinate multiple resources, but do so using system-specific implementations, \eg METE's controller would have to be redesigned to work with Bitirgen et al.'s architecture.
 
-% Complementary approaches
-We also note two approaches that are complementary to POET.
-Zhao \etal manage processor speed to meet both reliability and timing constraints with minimal energy \cite{Zhao2012}.
-This problem is complicated by the effect DVFS scaling has on hardware reliability.
-It is possible that POET's general approach to resources other than DVFS might allow additional energy savings if incorporated in Zhao et al.'s work.
-He \etal propose adaptive energy management in the power circuitry itself to meet timing constraints while adapting the delivered energy to increase battery efficiency \cite{He2013}.
-It is possible that combining POET's runtime-level resource management with this supply-level approach would further increase efficiency.
-
 % General frameworks for multiple resources
-Several frameworks have been proposed to meet real-time constraints by managing multiple resources.
+Other frameworks have been proposed to meet real-time constraints by managing multiple resources.
 These approaches are typically implemented as middleware that take a specification of available resources and a performance goal, and then meet that goal.
 Rajkumar \etal propose a general framework (with system-specific implementation) for allocating resources to achieve real-time requirements, but this approach is not energy-aware \cite{Rajkumar}.
 Sojka \etal propose a portable middleware layer for allocating resources to meet soft real-time constraints, but this system does not minimize energy \cite{Sojka}.
@@ -65,10 +57,26 @@ LEO is a machine learning system that can meet performance constraints with mini
 LEO is very accurate and provides high energy savings, even with no prior knowledge of the application currently running.
 Its approach is extremely portable, but also incurs very high overhead.
 Interestingly, LEO and POET have complementary weaknesses---POET has low runtime overhead, but requires prior knowledge in the form of a configuration model while LEO has high overhead, but requires no prior knowledge.
-Follow-up work to LEO addressed this issue with CALOREE (discussed futher in \secref{related-inspired}) \cite{CALOREE}.
+Follow-up work to LEO addressed this issue with CALOREE (discussed further in \secref{related-inspired}) \cite{CALOREE}.
 PTRADE also uses control theory to manage general collections of resources \cite{PTRADE}, and is perhaps the most similar to POET.
 PTRADE minimizes power consumption, but not necessarily energy.
 In addition, PTRADE uses heuristic optimizations, which are not portable, while POET uses a true minimal-energy scheduling algorithm.
+
+% Complementary approaches
+We also note two approaches that are complementary to POET.
+Zhao \etal manage processor speed to meet both reliability and timing constraints with minimal energy \cite{Zhao2012}.
+This problem is complicated by the effect DVFS scaling has on hardware reliability.
+It is possible that POET's general approach to resources other than DVFS might allow additional energy savings if incorporated in Zhao et al.'s work.
+He \etal propose adaptive energy management in the power circuitry itself to meet timing constraints while adapting the delivered energy to increase battery efficiency \cite{He2013}.
+It is possible that combining POET's runtime-level resource management with this supply-level approach would further increase efficiency.
+
+% Automation / generalization
+In the time since POET and CoPPer were developed, more recent works have focused on making it easier to create and use self-adaptive systems.
+Filieri \etal discuss a general approach to the controller design process \cite{Filieri2017} while Maggio \etal describe automatic methods for generating multiple-input multiple-output (MIMO) controllers \cite{Maggio2017}.
+Recent works leverage MIMO controllers to efficiently use system resources \cite{josep-isca2016,SPECTR} and could even be combined with approaches like CoPPer.
+Furthermore, software-level knobs (instead of system-level) are becoming more common.
+While the concept is not new, it still seems to be in its infancy---Shevtsov \etal perform a systematic literature review on software self-adaptation in order to outline current challenges and begin to generalize approaches \cite{Shevtsov2017}.
+One such general approach is SmartConf, which automatically adjusts software knobs to meet performance-sensitive application configurations and provide other optimizations \cite{SmartConf}.
 
 
 \section{High Performance Computing}
@@ -109,7 +117,7 @@ Research in this dissertation, and POET in particular, has been used as the foun
 
 Farrell and Hoffmann build on POET to create MEANTIME, which provides hard real-time guarantees instead of soft performance guarantees \cite{meantime}.
 They use the concept of approximate computing to tune application accuracy when their runtime determines that a performance constraint may not be met.
-The approach usually only requires small changes to application accuracy, \eg peak signal-to-noise ratio (PSNR) and the bitrate of a video encoder, while still tuning system-level knobs like in POET to save energy.
+The approach usually only requires small changes to application accuracy, \eg peak signal-to-noise ratio and the bitrate of a video encoder, while still tuning system-level knobs like in POET to save energy.
 
 Aforementioned work by Mishra \etal combines POET with machine learning in a project called CALOREE, which reduces the amount of offline work needed to generate the controller's resource specification \cite{CALOREE}.
 CALOREE uses transfer learning, taking information from both previously seen applications and the current application, to model how interacting resources affect the current application's speedup.

@@ -27,7 +27,7 @@ In modern multicore systems, allocating a subset of cores and sockets (with aggr
 % Naive approaches
 One simple heuristic for minimizing energy is \emph{race-to-idle}, which allocates all resources until a job completes and then idles the system until the next job arrives \cite{google}.
 This heuristic is portable since it does not require knowledge about the system, but empirical studies show that it is not optimal \cite{google,Cheng2009,Yang2007,Yun2010}.
-A recent study by Kim \etal demonstrates that an optimal solution requires knowledge of how the different configurable resources in a system affect the specific application under control---information which \emph{race-to-idle} does not use \cite{kim-cpsna2015}.
+Kim \etal demonstrate that an optimal solution requires knowledge of how the different configurable resources in a system affect the specific application under control---information which \emph{race-to-idle} does not use \cite{kim-cpsna2015}.
 The same study shows that \emph{race-to-idle} is dominated by a \emph{pace-to-idle} heuristic, \ie \emph{pace-to-idle} is theoretically never worse than \emph{race-to-idle} and can be much better.
 
 % Multiple knobs
@@ -86,7 +86,7 @@ For example, Adagio uses DVFS to save energy with less than 1\% increase in runt
 Other work depends on accurate prediction of a code's critical path to reduce power where it will not slow down an application \cite{Jitter,Marathe2015}.
 Patki \etal propose to better utilize available power with hardware over-provisioning to increase total system throughput \cite{PatkiRMAP}.
 Sarood \etal have shown similar results: hardware over-provisioning increases performance given a power cap \cite{Sarood2013}.
-Hardware over-provisioning acknowledges that compute resources are no longer the primary factor limiting cluster size---power is, allowing us to more aggressively trade performance and power/energy consumption.
+Hardware over-provisioning acknowledges that compute resources are no longer the primary factor limiting cluster size---power is---allowing us to more aggressively trade performance and power/energy consumption.
 
 Other works demonstrate that low-level hardware performance counters can drive solutions for modeling and improving power/energy consumption \cite{Libutti2014,Sasaki,Chetsa,WuHPCComputer}.
 Using Dynamic Concurrency Throttling and DVFS to reduce energy consumption without performance loss, Curtis-Maury \etal use hardware events to create an energy-aware logistic regression model for predicting performance and power \cite{Curtis-Maury2008}.
@@ -96,15 +96,14 @@ Paragon \cite{Paragon} and Quasar \cite{quasar} guarantee quality-of-service con
 LEO (mentioned previously) uses a Hierarchical Bayesian Model to minimize energy for different system utilization requirements \cite{LEO}.
 These approaches all estimate the performance and power of every possible system configuration, then search those estimates to find the best configuration that meets their operating constraints.
 The need to estimate every configuration's behavior is expensive, requiring half a second \cite{LEO} to several seconds \cite{Paragon} of overhead.
-In contrast, our proposed approach simply returns the best system settings without predicting their actual energy efficiency, an approach that requires orders of magnitude less overhead (see \secref{classifiers-eval-overhead}).
+In contrast, our proposed approach simply returns the best system settings without predicting their actual energy efficiency, which requires orders of magnitude less overhead.
 Ferroni \etal use classification based on hardware events to select the best power model for an application from a predetermined set, and then assign resources to that application in a multi-tenant virtualized infrastructure \cite{FerroniTACO}.
 This approach and our proposed approach are complementary, in that Ferroni \etal assign resources at the node-level, while our proposed approach can fine-tune resource usage within a node.
 
 Our approach for maximizing energy efficiency is most closely related to other node-level approaches for managing performance and energy.
 PUPiL maximizes node performance given a power cap by adjusting system settings to the particular needs of an application \cite{pupil}.
 Chasapis \etal maximize performance for power-capped NUMA nodes by recognizing the effect that manufacturing variability can have on individual core performance \cite{Chasapis2016}.
-Both of these approaches maximize performance for a given power constraint.
-Neither, however, is capable of minimizing energy, which requires changing both power and performance as in our proposed approach.
+Both of these approaches maximize performance for a given power constraint, but neither is capable of minimizing energy, which requires changing both power and performance.
 ParallelismDial is a node-level approach for managing application-level parallelism to increase energy efficiency \cite{Sridharan2013}.
 ParallelismDial has similar goals to our proposed approach, but they are complementary---it works at the application level, while our approach operates at the system level.
 In future work, it would likely be beneficial to combine the two to further reduce overhead and improve energy savings.
@@ -123,6 +122,6 @@ Aforementioned work by Mishra \etal combines POET with machine learning in a pro
 CALOREE uses transfer learning, taking information from both previously seen applications and the current application, to model how interacting resources affect the current application's speedup.
 It then makes online updates to the controller's resource specification and pole value using more accurate models.
 
-POET and Bard were also the starting point in an ongoing project called Proteus.
+POET and follow-on work called Bard were also the starting point in an ongoing project called Proteus.
 Proteus is developing a programming language called FAST, which allows programmers to provide \emph{intent specifications} instructing the runtime of desired constraints and optimizations.
 FAST satisfies these intents by tuning both application and system knobs, \eg to manage application performance, application accuracy, and system power or energy consumption.

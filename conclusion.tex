@@ -21,7 +21,7 @@ We evaluate CoPPer on a dual-socket system using Intel RAPL, demonstrate that it
 Additionally, CoPPer introduces a novel \emph{gain limit} to prevent over-allocating power when it is not beneficial, \eg for memory-bound applications or unachievable performance goals.
 
 Finally, we shift focus to the High Performance Computing (HPC) domain and propose optimizing energy efficiency to minimize the runtime cost of computation.
-Beyond the obvious energy/cost savings achieved from reducing energy, we extrapolate from our single-system results to show that optimizing energy efficiency in hardware over-provisioned, power-constrained clusters (as we expect future exascale HPC systems to be) increases the total throughput of the cluster to complete more science for the same runtime costs.
+Beyond the obvious cost savings achieved from reducing energy, we extrapolate from our single-system results to show that optimizing energy efficiency in hardware over-provisioned, power-constrained clusters (as we expect future exascale HPC systems to be) increases the total throughput of the cluster to complete more science for the same runtime costs.
 To avoid modifying applications, we map low-level hardware performance counters (features) to energy-efficient system knob settings.
 We propose using machine learning classification techniques to predict energy-efficient settings in-situ on compute nodes, since they are low-overhead compared to existing estimation approaches used in HPC resource management.
 The complexity of the feature space mappings makes simple classification approaches insufficient for solving this resource allocation problem.
@@ -41,7 +41,7 @@ Furthermore, the range of acceptable accuracies is context-dependent, \eg by app
 Our control-theoretic projects support meeting a single constraint and optimizing in another dimension.
 However, software must often manage multiple constraints, \eg meet a performance goal but also respect a power cap.
 Combining multiple controllers is a logical next step, but they must be coordinated so as not to conflict with each other.
-In simple cases, controllers tune knobs that do not effect each other, in which case little or no direct coordination is needed, \eg one controller tunes application-level knobs while another tunes system knobs.
+In simple cases, controllers tune knobs that do not affect each other, in which case little or no direct coordination is needed, \eg one controller tunes application-level knobs while another tunes system knobs.
 Otherwise the controllers must either communicate directly or be configured such that they can still adapt correctly, \eg by using different pole values and/or window periods.
 In either case, they should not be tuning the same knobs, otherwise their internal state would be inaccurate---they would fail to meet their constraints and any optimization they attempt to provide could suffer as well.
 
@@ -58,14 +58,14 @@ Data storage (\eg hard disks, SSDs, future non-volatile memories) and network in
 
 Unfortunately, power/energy sensors on modern computing systems are relatively rare, with the exception of Intel processors.
 Model-based approaches are too inaccurate and cannot provide runtime guarantees, and custom/ad-hoc instrumentation requires special equipment and does not scale well in production.
-To better enable energy-aware applications, more hardware needs to include power/energy instrumentation---not just on processors and SoCs, but on other hardware components as well, \eg DRAM, disks, networking components.
+To better enable energy-aware applications, more hardware needs to include power/energy instrumentation---not just on processors and SoCs, but on other hardware components as well, \eg DRAM, disks, and networking components.
 Such capabilities would more easily enable both research and development of practical solutions for coordinating a wide variety of system resources in an energy-aware manner.
-Similarly, datacenters and HPC clusters can benefit from instrumenting external components like network switches and network attached storage devices.
+Similarly, datacenters and HPC clusters can benefit from instrumenting external components like network switches and network-attached storage devices.
 
 Finally, the availability of runtime feedback from which to make informed decisions is a fundamental requirement of self-aware systems.
 Applications and users want to specify contextual goals, \eg frames processed in a video encoder, not low-level metrics like instructions retired.
 Hardware performance counters are the de facto standard today, but do not provide high-level metrics like a true measure of application progress.
-Few such mechanisms are available today, and typically require modifying applications to provide appropriate instrumentation, \eg using Heartbeats.
+Few such mechanisms are currently available, and typically require modifying applications to provide appropriate instrumentation, \eg using Heartbeats.
 Language constructs or operating system interfaces could provide more portable approaches for applications to report metrics.
 Some measurements could potentially be inferred from the software design, or at least only require a developer to specify a few attributes in their code without linking to additional libraries.
 A self-aware system can then rely on these portable metrics rather than requiring the developer to provide instrumentation.

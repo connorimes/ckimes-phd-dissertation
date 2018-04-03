@@ -9,7 +9,7 @@ Finally, we describe the control approaches CoPPer is evaluated against.
 \subsection{Testing Platform}
 
 We evaluate CoPPer using a server-class system with dual Xeon E5-2690 processors running Ubuntu 14.04 LTS with Linux kernel 3.13.0.
-Each processor socket has its own memory controller and supports 8 physical cores and 8 Hyperthreads, for a total of 32 virtual cores in the system.
+Each processor socket has its own memory controller and supports 8 physical cores and 8 HyperThreads, for a total of 32 virtual cores in the system.
 The processors support 15 DVFS settings, 1.2--2.9 \GHz, plus TurboBoost up to 3.3 \GHz.
 We bind applications to all 32 virtual cores and interleave with both memory controllers using \app{numactl}.
 To record runtime power behavior, we read energy from each socket's Model-Specific Register using the EnergyMon API and sum the two values \cite{energymon,SandyBridge} (see also \appref{energymon}).

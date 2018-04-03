@@ -7,7 +7,7 @@ The two platforms have: (1) different configurable resources for performance/pow
 Resource allocation strategies that save energy on one are wasteful on the other.
 
 \tblref{poet-machines} presents each system's configurable resources.
-The Vaio allows configuring the number of active cores, the use of hyperthreads, processor clock speed, and the use of TurboBoost.
+The Vaio allows configuring the number of active cores, the use of HyperThreads, processor clock speed, and the use of TurboBoost.
 The ODROID supports configuring the number of active cores, whether the application uses the ``big'' (Cortex-A15 high-performance, high-power) or ``LITTLE'' (Cortex-A7 low-performance, low-power) cores, and the independent clock speeds of the big and LITTLE clusters.
 
 \begin{table}[t]
@@ -27,7 +27,7 @@ The ODROID supports configuring the number of active cores, whether the applicat
   % \textbf{Configurations} \\
   \hline
   \hline
-  SVT11226CXB & Intel Haswell  & 2 & 1             & 0.6--1.5          & yes & yes & 46 \\
+  SVT11226CXB & Intel Haswell  & 2 & 1             & 0.6--1.5           & yes & yes & 46 \\
   ODROID-XU+E & ARM big.LITTLE & 8 & 2 (A15, A7)   & 0.8--1.6, 0.5--1.2 & no  & no  & 70 \\
   \hline 
   \hline

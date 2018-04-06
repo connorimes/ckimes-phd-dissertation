@@ -21,7 +21,8 @@ Finally, we explore using separate classifiers for taskset and DVFS, then discus
 
 We first demonstrate how effective runtime classification is at reducing energy consumption.
 \figref{compare-apps-pca4} demonstrates results for each application, normalized to the \emph{race-to-idle} setting (dashed line) for each.
-On average across all four applications, energy consumption is reduced by 19.3\%.
+On average across all four applications, energy consumption is reduced by 19.3\%---there is a 31.3\% increase in runtime and 38.5\% reduction in average power consumption.
+Extrapolating from these empirical results, a hardware over-provisioned, power-constrained cluster could increase throughput by 24\%; the \emph{Oracle} could achieve up to 30\% increase in throughput.
 The most extreme results are from the \app{IDBA} and \app{Megahit} applications.
 For \app{IDBA}, each classifier outperforms the \emph{Oracle}---the average energy savings is 28.1\%, and as much as 30.2\% when using the GB classifier.
 Conversely, for \app{Megahit}, the classifiers have the highest energy consumption over the \emph{Oracle}, though still always better than \emph{race-to-idle}.
@@ -29,11 +30,11 @@ Conversely, for \app{Megahit}, the classifiers have the highest energy consumpti
 The behavior for these applications is discussed further in \secref{eval-dynamics}.
 % We note both here and in the remainder of the evaluation that there is no consistently best classifier across applications.
 
-The \emph{Oracle} is the most energy-efficient statically-selected DVFS frequency using all sockets and HyperThreads, and it difficult to beat.
-Computing the \emph{Oracle} requires expensive offline characterization to determine the best static setting for each application and its input/configuration, making it impractical to determine for most applications.
+% The \emph{Oracle} is the most energy-efficient statically-selected DVFS frequency using all sockets and HyperThreads, and it difficult to beat.
+Computing the \emph{Oracle} requires expensive offline characterization to determine the best static setting for each application and its input/configuration, making it impractical to determine for most applications and difficult to beat.
 It also does not have any overhead except for running PCM in the background.
 The \emph{Oracle} can only be beat when an application does not require its full taskset (socket and HyperThreads) allocation to run efficiently.
-HPC applications are designed to parallelize well, meaning this is not the typical use case, but opportunities do occur, \eg during prolonged memory or I/O-intensive phases.
+HPC applications are designed to parallelize well, meaning this is not the typical use case, but opportunities do occur, \eg during prolonged memory- or I/O-intensive phases.
 
 \begin{figure}[t]
 % python ClassificationPlotUtils.py -s boggle -c boggle/characterizations/HIPMER/0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF_2101000/pcm.csv boggle/classifications/5s/HIPMER_moredata/ET/pcm.csv -i 1 5
@@ -60,7 +61,7 @@ HPC applications are designed to parallelize well, meaning this is not the typic
 
 To demonstrate how energy savings are achieved, \figref{ts-hipmer} shows the runtime, power, energy efficiency, and cumulative energy consumption for executions of the \app{HipMer} application (Y values are normalized across both time series for each metric).
 \figref{ts-hipmer-dvfs} runs \app{HipMer} in the \emph{race-to-idle} heuristic, and although the runtime is short, the high power also results in poor energy consumption.
-In contrast, \figref{ts-hipmer-all-et} demonstrates running with the ET classifier---the execution takes longer, but the significantly lower power results in nearly 20\% less energy consumption in total, despite the increase in runtime.
+In contrast, \figref{ts-hipmer-all-et} demonstrates running with the ET classifier---the execution is 29\% longer, but the 40\% average power savings results in nearly 20\% less energy consumption in total, despite the increase in runtime.
 Each figure shows clear phases in the execution, indicated by relatively long-term changes in both power and energy efficiency (per \eqnref{ee}, a function of instruction rate and power).
 Classifiers adapt to changes in feature values like instruction rate and power by changing their predictions to run the application more efficiently, thus decreasing total energy consumption.
 
@@ -121,7 +122,7 @@ The $Four$ configuration was previously broken down by application in \secref{ev
 
 \figref{compare-robustness} selectively removes available features.
 $NoPower$ drops the \pc{POWER\_DRAM}, \pc{POWER\_Proc}, and \pc{POWER\_Total} features.
-This is a particularly important scenario, as not all systems have power/energy counters available at runtime.
+This is a particularly important scenario, as not all systems have power/energy counters available at runtime (training data would have to be collected with additional power/energy instrumentation).
 When all three power-related features are ignored, \pc{L3MISS\_Rate} is used as the first feature, and \pc{EXEC} remains the second.
 (If \pc{POWER\_DRAM} is excluded exclusively, \pc{POWER\_Total} becomes the primary feature instead.)
 Offline analysis also shows that \pc{READ\_Rate} can be used as the primary feature, depending on the exact training data.
@@ -320,4 +321,5 @@ Integration with application-level parallelism can further improve energy effici
 
 On large systems such as our evaluation platform, the processor and DRAM consume the majority of system power, which we are able to measure \cite{RAPL,PCMGit}.
 There are other components like hard disks and network interfaces that are not currently accounted for.
+Similarly, extending the approach to support heterogeneous architectures like those using GPUs would also be beneficial.
 While it is not common practice to instrument these other components for power/energy monitoring, such feedback could help resource management solutions achieve better total energy efficiency.

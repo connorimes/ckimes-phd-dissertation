@@ -27,10 +27,9 @@ The process then repeats at the next time interval.
 % \TODO{Figure: Training approach as a pipeline diagram?}
 
 A classifier must be trained before it can be used.
-To collect training data, we characterize the behavior of various benchmark applications on the target platform by running them in all possible settings while collecting hardware performance counter results.
+To collect training data, we characterize the behavior of benchmark applications on the target platform by running them in all possible settings and collect hardware performance counter results.
 In other words, if there are $N$ different allowable settings, each application is executed $N$ times, or once in each setting.
-If $M$ applications are used in training, then there are a total of $N \times M$ data points in the training set.
-More precisely, each data point is a feature vector, composed of average performance counter values for an execution.
+For $M$ training applications, there are $N \times M$ feature vectors in the training set.
 
 Characterization can be time-consuming, but only needs to be done once for a platform and can be completed in a reasonable period of time by keeping application execution times short.
 Choosing applications that are representative of those that will be used on the system improves the likelihood that the classifier can accurately predict settings during runtime.
@@ -38,22 +37,27 @@ Additionally, training applications should be chosen that exercise the system ha
 % As with most statistical techniques, more data typically leads to better results.
 
 Application energy efficiency (EE) is defined as the amount of work completed per unit of energy (J) used.
-Low-level hardware performance counters do not have a metric for quantifying true application progress (work completed), but the instructions retired by the system (INST) is a suitable proxy.
-The classifier then quantifies energy efficiency as:
+In general, and in our evaluation, a \emph{complete application execution} is the measure of completed work. % since this is how we measure throughput.
+Our classifiers, like many prior works that use performance counters, need a measure to quantify application progress \emph{during} runtime.
+Low-level hardware performance counters do not have a metric for quantifying true application progress (work completed), but prior works have successfully used instructions retired by the system (INST).
+Some prior works have even attempted to measure only those instructions considered useful in measuring application progress, \eg ignoring spinlocks or parallelization/synchronization instructions \cite{Paragon}.
+Using INST is an imperfect solution for optimizing total application energy efficiency, but suffices, as the evaluation will demonstrate.
+The classifier then uses the following formulation \emph{as a proxy} to quantify energy efficiency for training:
 \begin{eqnarray}
 EE = \frac{INST}{J}
 \label{eqn:ee}
 \end{eqnarray}
-Each application has a single most energy-efficient setting, so the $N$ executions for the $M$ training set applications are labeled with that setting:
+% The $N$ executions for each of the $M$ training applications are labeled using that application's most energy-efficient setting.
+For each of $M$ applications, the $N$ feature vectors are labeled using that application's most energy-efficient setting.
+Thus the classifier learns both efficient and inefficient behavior so that it produces an efficient prediction when it observes similar runtime behavior:
 \begin{eqnarray}
-% Label = \argmax_{i \in \{1, \ldots, N\}}EE_i
-Label[m][n] = \argmax_{i \in N}EE_i \,\,\,\,\,\,\forall m \in M,\,\,\forall n \in N
+\mathbf{FeatVec}_{mn} \mapsto \argmax_{i \in N}EE_i \,\,\,\,\,\,\forall m \in M,\,\,\forall n \in N
+% Label_{mn} = \argmax_{i \in N}EE_i \,\,\,\,\,\,\forall m \in M,\,\,\forall n \in N
 \label{eqn:label}
 \end{eqnarray}
 % A label can take any form, \eg a setting index or string name, so long as the actuator knows how to interpret it.
-Ideally, total instruction count would be fixed for an application execution, then this proxy for computing energy efficiency would align with true application execution energy efficiency.
-However, instruction count typically increases with the application execution time, \eg due to background processes like PCM or kernel tasks.
-As such, it is important to note that labeling the most energy-efficient configuration using \eqnref{label} is different than using the minimum-energy execution from the training set.
+The total instruction count is not fixed for an application execution---the count typically increases with the application execution time, \eg due to background processes like PCM or kernel tasks.
+As such, it is important to note that labeling the most energy-efficient configuration using \eqnref{label} is different than using the minimum-energy execution from the characterization.
 There are two reasons for using instruction count in computing energy efficiency.
 First, energy efficiency can be quantified at any point during an execution, making it a useful metric for runtime behavior analysis.
 Second and more importantly, \eqnref{ee} is a function of events happening \emph{at the time}.
@@ -102,5 +106,3 @@ Performance counters are also translated into rates (as needed), which is necess
 Because we use PCM to collect performance counter metrics, we read more hardware counters than we process (\tblref{pcm}).
 In practice, a fielded solution would reduce overhead by only reading and processing counters that are used.
 Most prior works aggressively limit the hardware counters they access, both to reduce sampling overhead and to reduce computation in their models \cite{Alvarado,Curtis-Maury2008,Libutti2014}.
-Additionally, using INST as a measure of application progress to compute energy efficiency is an imperfect solution.
-However, prior works have used it successfully and some have even attempted to measure only those instructions considered useful in measuring application progress, \eg ignoring spinlocks or parallelization/synchronization instructions \cite{Paragon}.

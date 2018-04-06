@@ -12,13 +12,12 @@ We use Linux kernel 4.4.0 with the intel\_pstate driver disabled so that we can 
 \label{sec:setup-training}
 
 
-For classifier training, we characterize and label executions for a variety of parallel applications that exhibit a range of different behaviors.
-Each application is configured to run with 160 threads to match the number of compute cores on the
-evaluation system and to use NUMA memory interleaving.
-Training applications are selected from the NAS Parallel Benchmarks \cite{NPB}, Lawrence Livermore Lab's Co-design benchmarks (\app{AMG} \cite{BoomerAMG}, \app{Kripke} \cite{Kripke}, \app{LULESH} \cite{LULESH2}, \app{Quicksilver} \cite{Quicksilver}), and Argonne's CESAR Proxy-apps (\app{XSBench} \cite{XSBench}, \app{RSBench} \cite{RSBench}).
+% For classifier training, we characterize and label executions for a variety of parallel applications that exhibit a range of different behaviors.
+Training applications are representative of HPC workloads and are selected from the NAS Parallel Benchmarks \cite{NPB}, Lawrence Livermore Lab's Co-design benchmarks (\app{AMG} \cite{BoomerAMG}, \app{Kripke} \cite{Kripke}, \app{LULESH} \cite{LULESH2}, \app{Quicksilver} \cite{Quicksilver}), and Argonne's CESAR Proxy-apps (\app{XSBench} \cite{XSBench}, \app{RSBench} \cite{RSBench}).
 Other applications include \app{CoMD} \cite{CoMDGit}, Berkeley's \app{HPGMG-FV} \cite{hpgmg}, a partial differential equation solver (\app{jacobi}), and \app{STREAM} \cite{stream}.
 Additionally, we include a characterization of system idling behavior.
 In total, there are 21 unique applications/characterizations used for training.
+Each application is configured to run with 160 threads to match the number of compute cores on the evaluation system and to use NUMA memory interleaving.
 
 Each performance counter is used as a \emph{feature} for classification.
 Performance counter values are converted to rates, normalized, then PCA is applied.
@@ -41,28 +40,28 @@ Performance counter values are converted to rates, normalized, then PCA is appli
 
 We evaluate classifier performance on four complex bioinformatic HPC applications: \app{HipMer}~\cite{georganas2015hipmer}, \app{IDBA}~\cite{peng2012idba}, \app{Megahit}~\cite{li2015megahit} and \app{metaSPAdes}~\cite{nurk2016metaspades}.
 These four are the leading applications that perform \emph{de novo} genome assembly, which is one of the most computationally challenging bioinformatics problems.
+There are HPC systems, such as NERSC's Genepool~\cite{genepool}, that are predominantly used to concurrently execute many single-node applications, such as genome assemblers and comparative analysis~\cite{dosanjh2013extreme}.
 The datasets can be very large (for example, metagenomes can have raw sequence datasets on the order of terabytes), and the algorithms are hard to scale efficiently.
 For example, of the four applications, only \app{HipMer} scales efficiently to distributed memory systems.
-Consequently, \emph{de novo} assemblers are typically run on very large shared-memory systems, with at least 0.5TB of memory.
-There are HPC systems, such as NERSC's Genepool~\cite{genepool}, that are predominantly used to concurrently execute many single-node applications, such as genome assemblers and comparative analysis~\cite{dosanjh2013extreme}.
+Consequently, \emph{de novo} assemblers are typically run on very large shared-memory systems, with at least 0.5 TB of memory.
 Thus our experimental platform is typical of the sort of hardware that would be used for these kinds of applications.
+A single execution assembling a large genome could take days on our large evaluation system, making it prohibitive to exhaustively characterize the full range of allowable settings, motivating the need for a learning-based solution.
+% Even running a partial characterization (like DVFS-only) for a fixed input is unrealistic for most such applications in practice, motivating the need for a general solution.
 
-Furthermore, these applications implement complex pipelines, with multiple different stages, some of which are compute-intensive, some I/O-intensive, and some communication-intensive.
+These four applications can also be considered representative of a wider range of HPC applications.
+They implement complex pipelines, with multiple different stages that require different resource adaptations to run energy-efficiently---some are compute-intensive, some I/O-intensive, and some communication-intensive.
 Exactly which stages are used and how much they contribute to the performance depends to a large degree on the program configuration and the input datasets.
-A single execution assembling a large genome could take days on our large evaluation system, making it prohibitive to exhaustively characterize the full range of allowable settings.
-Even running a partial characterization (like DVFS-only) for a fixed input is unrealistic for most such applications in practice, motivating the need for a general solution.
-
-Although these four applications are solving the same problem, they are implemented in very different ways, with different programming languages, different algorithms and different data flows.
+Although they are solving the same problem, they are implemented in very different ways, with different programming languages, different algorithms and different data flows.
 For example, \app{HipMer} can have up to 20 different stages, whereas \app{Megahit} may have only a few.
 Overall, these applications provide a broad coverage of a range of different bioinformatics approaches (frequency counting, graph traversal, alignment, sorting, etc.).
+The applications are thus prime candidates for our approach of using classification to predict the appropriate settings at runtime.
 
 Like with training applications, we configure each evaluation application to run with 160 threads, except for \app{metaSPAdes} which uses 80 threads.
 We fix the application inputs and configurations for our evaluation, but of course they support a variety of configurations and inputs which affect performance and energy consumption behavior.
 % Due to the long application runtimes, it is infeasible to characterize these applications in all configurations, despite the application settings and inputs being fixed.
 Solely to use as a baseline in our evaluation, we perform a time-consuming DVFS-only characterization by running them in each DVFS setting with all 160 virtual cores allocated (for \app{metaSPAdes}, all 80 physical cores are used as the baseline instead).
-Note that this data is \emph{not} used in classifier training.
-Based on these partial characterizations, we see that \emph{each application has a different most energy-efficient static setting}.
-The applications are thus prime candidates for our approach of using classification to predict the appropriate settings at runtime.
+From these results we derive a DVFS \emph{Oracle} which knows, for each application, the most energy-efficient static DVFS frequency---\emph{each application has a different most energy-efficient static setting}.
+Note also that this data is \emph{not} used in classifier training.
 
 
 \subsection{Classification Algorithms}

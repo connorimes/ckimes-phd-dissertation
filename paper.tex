@@ -218,7 +218,14 @@ tick label style={font=\footnotesize},
 \input{urls}
 
 % Format a LaTeX bibliography
-\printbibliography
+% Bibtex overrides some UChicago formatting guidelines (ucetd template) regarding the Bibliography; it must be:
+% - single-spaced within entries
+% - line space between entries
+% - listed in ToC
+\begin{singlespace}
+\setlength\bibitemsep{\etdPtSize}
+\printbibliography[heading=bibintoc]
+\end{singlespace}
 %\makebibliography
 
 \end{document}

@@ -14,11 +14,11 @@ Finally, we quantify CoPPer's runtime overhead.
 We begin by quantifying CoPPer's ability to achieve high energy efficiency while meeting soft performance goals.
 We use \emph{gain limits} of $0.0$ (disabled) and $0.5$.
 For this analysis, we consider the steady-state behavior of the controllers.
-Each controller is therefore initialized with the same $s(t)$ value for $t=0$ (see \eqnref{copper-speedup-control} in \secref{copper-framework}).
+Therefore, each controller is initialized with the same $s(t)$ value for $t=0$ (see \eqnref{copper-speedup-control} in \secref{copper-framework}).
 
 For each application, we define and evaluate three different performance goals which specify how much to favor performance over energy consumption: $\mathsf{high}$, $\mathsf{medium}$, and $\mathsf{low}$.
 We define the $\mathsf{high}$ performance goal to mean that the application must maintain at least 90\% of top performance.
-The $\mathsf{medium}$ and $\mathsf{low}$ goals correspond to maintaining 70\% and 50\% of top performance, respectively.
+The $\mathsf{medium}$ and $\mathsf{low}$ goals correspond to maintaining 70\% and 50\% of top performance respectively.
 While it is likely that most users would want $\mathsf{high}$ performance, we include the others to demonstrate CoPPer's ability to meet a range of different goals.
 We note that actual performance values provided to CoPPer are application-specific, as described in \secref{copper-implementation} (\ie not a percentage).
 
@@ -303,7 +303,7 @@ Limiting software to coarse-grained power management at a socket level provides 
 
 These values do not even include the overhead of actually computing the correct settings to apply for each window period.
 The simple DVFS controller runs in $O(log(n))$ time, where $n$ is the number of available DVFS frequencies, and actuates once per window period.
-The sophisticated DVFS controller we compared CoPPer with computes a true optimal DVFS schedule which requires $O(n^2)$ time, plus usually requires actuating two different DVFS settings per window period.
+The sophisticated DVFS controller we compared CoPPer with computes a true optimal DVFS schedule which requires $O(n^2)$ time, and usually requires actuating two different DVFS settings per window period.
 This optimal algorithm is what allows the DVFS controller to achieve such good energy efficiency results, and remains practical due to the small number of DVFS settings.
 CoPPer runs in constant $O(1)$ time and requires only one actuation per window period.
 % Yet, CoPPer achieves better energy efficiency with similar performance error using a constant-time approach rather than requiring a polynomial-time algorithm.

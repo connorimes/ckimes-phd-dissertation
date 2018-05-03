@@ -109,7 +109,7 @@ We elect to use the 5 second interval for the remainder of our experiments, as i
 \end{figure}
 
 In \figref{pca-evr} (\secref{setup-training}) we quantified the variation contribution of different features (performance counters).
-Now we evaluate how varying the features impacts classifier behavior, since the number and types of features contribute to runtime complexity and prediction accuracy.
+Now we evaluate how varying the features impacts classifier behavior since the number and types of features contribute to runtime complexity and prediction accuracy.
 We run with 5 second sampling/prediction intervals and present the results in \figref{pca}.
 
 \figref{compare-pca} varies the number of features used.
@@ -230,7 +230,7 @@ This section quantifies the overhead of different components/stages of the class
 
 \tblref{classifiers-overhead} breaks down the runtime overhead on our evaluation system.
 First, the data transformation (Scaling/PCA) and classifier must be initialized.
-Initialization incurs the highest overhead, but of course only needs to be performed once and is trivial compared to total application runtime.
+Initialization incurs the highest overhead, but only needs to be performed once and is trivial compared to total application runtime.
 All classifiers we evaluated initialize within a few seconds, and some are much faster, initializing within a few dozen milliseconds.
 
 To estimate the overhead incurred by reading the performance counters (PCM Sampling), we configure PCM to poll counters 1000 times at an interval that is faster than achievable (so it does not wait between reads), and time the execution.

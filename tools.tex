@@ -59,7 +59,7 @@ With an energy provider that records total energy consumed since some time $\tau
 In this way, the interface easily supports applications interested in energy or power.
 
 Next, a common interface can expose energy metrics in a standard and sufficiently precise \emph{unit of measurement} at a large enough data length to avoid \emph{overflow}.
-Applications therefore do not need to track various unit types and do conversions.
+Therefore, applications do not need to track various unit types and do conversions.
 A deceptively simple but important insight is not our choice of units or data length, but rather that counter overflow is one of the diverse sensor properties that applications should not have to worry about.
 We choose microjoules as 64-bit unsigned integers which are precise enough for the use cases we anticipate and avoid the need for floating point data types.
 At $100$ W of power, it would take about 5,850 years to overflow, and in our experience, modern sensors are too imprecise and models too inaccurate to justify smaller units.
@@ -139,8 +139,8 @@ Again, we found a distinct lack of tools to aid us---most material we found used
 In recent years, the Linux kernel exposed some RAPL functionality via the \interface{powercap} file system interface \cite{powercap}.
 Perhaps the biggest advantage of the powercap interface is that a user does not have to configure the system's model-specific registers, which have very particular platform-dependent encodings.
 However, there were no software utilities available to assist in discovery of these RAPL capabilities, or in proper system actuation.
-We therefore developed a \interface{Linux powercap bindings} library and collection of applications to aid software developers with these tasks.
-These tools are now available in repositories for Debian-based Linux distributions, including Ubuntu 18.04 LTS ``Bionic Beaver'' and newer.
+Therefore, we developed a \interface{Linux powercap bindings} library and collection of applications to aid software developers with these tasks.
+These tools are now available in repositories for Debian-based Linux distributions, including Ubuntu beginning with version 18.04 LTS ``Bionic Beaver.''
 The library usage is straightforward, for example (error checking excluded):
 \lstset{emph={%  
     powercap_rapl_pkg, powercap_rapl_get_num_packages, powercap_rapl_init, powercap_rapl_set_power_limit_uw, powercap_rapl_destroy%

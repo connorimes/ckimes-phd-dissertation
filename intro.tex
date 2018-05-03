@@ -30,7 +30,7 @@ Newer technologies allow specifying power caps for hardware resources and lettin
 Another common knob setting is the allocation of compute cores on multicore systems, allowing unallocated cores to enter low-power sleep states, or even shut down altogether to save power/energy.
 
 If we consider each allowable combination of knob values to be a system \emph{setting} or \emph{configuration}, we can explore the impact of different knob combinations on performance and power consumption.
-Therefore to understand the behavior of a particular application on a system, we can perform a characterization by testing the application in each system configuration and recording the behavior.
+Therefore, to understand the behavior of a particular application on a system, we can perform a characterization by testing the application in each system configuration and recording the behavior.
 The result is a \emph{tradeoff space}, where each system configuration produces unique application performance and system power values.
 Often only a subset of the available configurations are actually desirable---it is straightforward to derive the Pareto-optimal configurations, or even those that lie on the (upper or lower) convex hull of the tradeoff space.
 
@@ -91,7 +91,7 @@ A significant amount of software is subject to performance constraints, from app
 Optimizing energy consumption increases the usable runtime of battery-powered systems like tablets, smartphones, and smaller devices we now classify as Internet of Things; for always-on devices, it reduces the runtime energy costs.
 
 Kim \etal prove that an optimal solution to this constrained optimization problem requires, at most, two system configurations from the convex hull of the tradeoff space \cite{kim-cpsna2015}.
-POET therefore uses control theory to meet the performance goal and linear optimization to select the optimal pair of system configurations that satisfy the performance constraint.
+POET uses control theory to meet the performance goal and linear optimization to select the optimal pair of system configurations that satisfy the performance constraint.
 While POET was originally designed for embedded systems \cite{POET}, we later evaluated it on a server-class system \cite{POETMCSoC}.
 
 POET's evaluation uses DVFS and core allocation as the system knobs to control performance and energy consumption.
@@ -129,7 +129,7 @@ CoPPer makes the following contributions:
 \item Demonstrates the need for a DVFS alternative that allows software to manage performance/power tradeoffs.
 \item Proposes software-defined power capping as a replacement for software-managed DVFS.
 \item Presents CoPPer, a feedback controller that meets performance goals by manipulating hardware power caps, handles non-linearity in power cap/performance tradeoffs, and introduces adaptive \emph{gain limits} to further reduce power when it does not increase performance.
-\item Design and evaluation of CoPPer using Intel RAPL on a dual-socket, 32-core server.
+\item Evaluates CoPPer using Intel RAPL on a dual-socket, 32-core server.
 We find that CoPPer achieves performance guarantees similar to software DVFS control, but with better energy efficiency.
 Specifically, CoPPer improves energy efficiency by 6\% on average with a 12\% improvement for memory-bound applications.
 At the highest performance targets, CoPPer's gain-limit saves even more energy: 8\% on average and 18\% for memory-bound applications.

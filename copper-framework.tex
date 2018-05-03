@@ -88,7 +88,7 @@ In general, the convex properties of performance/power tradeoff spaces ensure th
 % There cost reduction consists of two competing components.
 Intuitively, if the performance error value computed in \eqnref{copper-error} is low, then the system has converged to the performance target and the speedup signal should remain where it is.
 However, if error values are high but the \emph{difference} in error values between iterations is low, the controller has settled, but the performance target is not achievable.
-It therefore may be beneficial to reduce the speedup, and thus the power.
+It may then be beneficial to reduce the speedup, and thus the power.
 Speedup is reduced by setting gain to:
 \begin{eqnarray}
   gain(t) = 1 - \alpha_c \cdot e_{ns}(t) \cdot \Delta e_{ns}(t)
@@ -135,7 +135,7 @@ Normally, this would be undesirable behavior, but this is exactly the behavior w
 
 Application-level feedback provides high-level metrics that are conducive to goal-oriented software and has been shown to provide a more reliable measure of application progress than low-level metrics like performance counters or memory bandwidth \cite{PTRADE}.
 Many applications that are subject to performance constraints already measure performance and integrate with runtime DVFS controllers to meet performance targets.
-A performance target is any positive real value that make sense for the application, and can conceivably be configured from any number of sources, \eg a command line parameter, a configuration file, or dynamically via a software interface.
+A performance target is any positive real value that makes sense for the application, and can conceivably be configured from any number of sources, \eg a command line parameter, a configuration file, or dynamically via a software interface.
 At desired time or work intervals called \emph{window periods}, the application measures its performance and calls the controller.
 Developers for this class of applications already perform these tasks, so all that remains is to replace function calls to an existing DVFS controller with those for CoPPer.
 

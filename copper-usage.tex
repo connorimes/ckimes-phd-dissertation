@@ -149,7 +149,7 @@ From these characterizations, which are only required for our analysis and not i
 For each performance target used in the evaluation, the oracle produces a DVFS schedule that never misses a performance goal.
 Until a job is complete, it runs at the highest-performance frequency for the application (which is not always the highest frequency or the TurboBoost setting).
 Once a job completes, the oracle then sets the most energy-efficient frequency and aggressively places the processor cores in a low-power sleep state, with no delay or transition overhead.
-The oracle is therefore an ideal \emph{performance} DVFS governor and a good baseline for comparison---modern Linux systems provide a real performance governor, which is not as efficient as our oracle.
+The oracle is thus an ideal \emph{performance} DVFS governor and a good baseline for comparison---modern Linux systems provide a real performance governor, which is not as efficient as our oracle.
 With the exception of unachievable performance targets, we compare the energy consumption of all the executions in the evaluation against this oracle to determine their relative energy efficiency.
 
 The different analyses compare CoPPer with various \emph{gain limits} against a simple linear DVFS controller (based on modification of an existing controller for meeting power requirements \cite{lefurgy2008power}) and a sophisticated DVFS controller that meets soft performance constraints and schedules for optimal energy consumption (POET)~\cite{POET}.

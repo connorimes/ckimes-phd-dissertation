@@ -57,7 +57,7 @@ Overall, these applications provide a broad coverage of a range of different bio
 The applications are thus prime candidates for our approach of using classification to predict the appropriate settings at runtime.
 
 Like with training applications, we configure each evaluation application to run with 160 threads, except for \app{metaSPAdes} which uses 80 threads.
-We fix the application inputs and configurations for our evaluation, but of course they support a variety of configurations and inputs which affect performance and energy consumption behavior.
+We fix the application inputs and configurations for our evaluation, although they support a variety of configurations and inputs which affect performance and energy consumption behavior.
 % Due to the long application runtimes, it is infeasible to characterize these applications in all configurations, despite the application settings and inputs being fixed.
 Solely to use as a baseline in our evaluation, we perform a time-consuming DVFS-only characterization by running them in each DVFS setting with all 160 virtual cores allocated (for \app{metaSPAdes}, all 80 physical cores are used as the baseline instead).
 From these results we derive a DVFS \emph{Oracle} which knows, for each application, the most energy-efficient static DVFS frequency---\emph{each application has a different most energy-efficient static setting}.

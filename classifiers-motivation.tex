@@ -46,7 +46,7 @@ Specifically, we tune socket allocation, the use of HyperThreads, and processor 
 The learning component picks settings for the combination of these resources such that, at any point during the application execution, the system is operating in its most energy-efficient state.
 
 Our goal is for the learner to find the most energy-efficient setting without requiring any application-level changes.
-We therefore use existing hardware performance counters as \emph{features}.
+Therefore, we use existing hardware performance counters as \emph{features}.
 The learner then determines a function that maps some subset of these features into the most energy-efficient system setting.
 However, system settings in modern compute nodes have very complicated interactions, so it is essential to use learning mechanisms that can produce accurate mappings despite this complexity.
 

@@ -6,11 +6,11 @@ The third project uses machine learning classification techniques, driven by har
 Unlike static resource allocation techniques, our solutions dynamically adjust resource allocations based on runtime feedback to adapt to changing application and system behavior.
 
 Our early work demonstrates that heuristic approaches for meeting timing constraints and reducing energy consumption are not portable between applications and systems, \eg the classic \emph{race-to-idle} heuristic can be completely the wrong approach to use.
-We therefore propose POET, a portable approach to resource management that functions independent of platform timing/energy tradeoffs or particular system knobs.
+Therefore, we propose POET, a portable approach to resource management that functions independent of platform timing/energy tradeoffs or particular system knobs.
 POET uses control theory to meet soft performance (or latency) goals and mathematical optimization to minimize energy consumption.
 We demonstrate POET's ability to meet soft performance constraints and achieve near-optimal energy consumption on two very different embedded systems---a Vaio tablet with an Intel Haswell processor, and an ODROID-XU+E with a heterogeneous ARM big.LITTLE SoC.
 We then demonstrate POET's effectiveness on a dual-socket server-class system with an order of magnitude more knob settings and significantly more compute power than the embedded platforms.
-In addition, we briefly discuss Bard, a follow-on project which modifies POET to allow switching between performance or power goals while optimizing energy or performance, respectively.
+In addition, we briefly discuss Bard, a follow-on project which modifies POET to allow switching between performance or power goals while optimizing energy or performance respectively.
 % Furthermore, POET has been used as the foundation for other researchers' projects.
 
 Software management of DVFS is becoming deprecated, necessitating a replacement for the abundance of controllers that previously relied on DVFS to meet performance constraints.

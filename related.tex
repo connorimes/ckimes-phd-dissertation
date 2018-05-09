@@ -12,9 +12,9 @@ Finally, we describe research projects by other researchers that build off work 
 
 Computing systems are often underutilized, leading to significant portions of time where application performance requirements can be met using less than the full system capacity \cite{google,MeisnerISCA2011}.
 This trend has led to flourishing scheduling research that tailors resource usage to meet performance requirements, often while optimizing another dimension like power or energy consumption.
-Modern systems expose a variety of configurable resources, which energy-aware schedulers can adjust to tune performance and power behavior.
+Modern systems expose a variety of configurable resources, which energy-aware schedulers can tune to adjust performance and power behavior.
 This flexibility allows the system to adapt to different circumstances or different application needs, but also increases software complexity.
-The problem is exacerbated when approaches must achieve portability across a range of different systems, which expose different resources to software and have unique performance/power tradeoff spaces.
+The problem is exacerbated when approaches must achieve portability across a range of different systems, which expose different resources to software and exhibit diverse performance/power tradeoffs.
 
 % DVFS and core allocation
 Software-based DVFS management is essential for many energy-aware scheduling algorithms \cite{Albers,YDS,Kumar2014}.
@@ -96,9 +96,9 @@ Paragon \cite{Paragon} and Quasar \cite{quasar} guarantee quality-of-service con
 LEO (mentioned previously) uses a Hierarchical Bayesian Model to minimize energy for different system utilization requirements \cite{LEO}.
 These approaches all estimate the performance and power of every possible system configuration, then search those estimates to find the best configuration that meets their operating constraints.
 The need to estimate every configuration's behavior is expensive, requiring half a second \cite{LEO} to several seconds \cite{Paragon} of overhead.
-In contrast, our proposed approach simply returns the best system settings without predicting their actual energy efficiency, which requires orders of magnitude less overhead.
+In contrast, our proposed classification approach simply returns the best system settings without predicting their actual energy efficiency, which requires orders of magnitude less overhead.
 Ferroni \etal use classification based on hardware events to select the best power model for an application from a predetermined set, and then assign resources to that application in a multi-tenant virtualized infrastructure \cite{FerroniTACO}.
-This approach and our proposed approach are complementary, in that Ferroni \etal assign resources at the node-level, while our proposed approach can fine-tune resource usage within a node.
+This approach and our proposed approach are complementary, in that Ferroni \etal assign nodes as resources, while our proposed approach can fine-tune resource usage within a node.
 
 Our approach for maximizing energy efficiency is most closely related to other node-level approaches for managing performance and energy.
 PUPiL maximizes node performance given a power cap by adjusting system settings to the particular needs of an application \cite{pupil}.
@@ -116,12 +116,12 @@ Research in this dissertation, and POET in particular, has been used as the foun
 
 Farrell and Hoffmann build on POET to create MEANTIME, which provides hard real-time guarantees instead of soft performance guarantees \cite{meantime}.
 They use the concept of approximate computing to tune application accuracy when their runtime determines that a performance constraint may not be met.
-The approach usually only requires small changes to application accuracy, \eg peak signal-to-noise ratio and the bitrate of a video encoder, while still tuning system-level knobs like in POET to save energy.
+The approach usually only requires small changes to application accuracy, \eg peak signal-to-noise ratio and the bitrate of a video encoder, while still tuning system-level knobs, like in POET, to save energy.
 
 Aforementioned work by Mishra \etal combines POET with machine learning in a project called CALOREE, which reduces the amount of offline work needed to generate the controller's resource specification \cite{CALOREE}.
 CALOREE uses transfer learning, taking information from both previously seen applications and the current application, to model how interacting resources affect the current application's speedup.
 It then makes online updates to the controller's resource specification and pole value using more accurate models.
 
 POET and follow-on work called Bard were also the starting point in an ongoing project called Proteus.
-Proteus is developing a programming language called FAST, which allows programmers to provide \emph{intent specifications} instructing the runtime of desired constraints and optimizations.
+Proteus is developing the FAST programming language which allows programmers to provide \emph{intent specifications} that instruct the runtime about desired constraints and optimizations.
 FAST satisfies these intents by tuning both application and system knobs, \eg to manage application performance, application accuracy, and system power or energy consumption.

@@ -26,7 +26,7 @@ Using \emph{race-to-idle} makes resource scheduling on a node easy, but it is ne
 \emph{Racing} to finish a job as fast as possible minimizes execution time, but the increase in power dwarfs the time savings, resulting in high energy consumption.
 
 In addition to reducing costs, maximizing energy efficiency will also improve overall system throughput in power-constrained environments.
-In over-provisioned clusters, the hardware can draw more total power than the infrastructure can physically deliver to the system if nodes use \emph{race-to-idle} \cite{Sarood2013}.
+In hardware over-provisioned clusters, the hardware can draw more total power than the infrastructure can physically deliver to the system if nodes use \emph{race-to-idle} \cite{Sarood2013}.
 Effectively, power is now the primary factor limiting cluster size and throughput, not available compute resources.
 More aggressively trading performance and power means that optimizing energy efficiency increases total cluster throughput by: (1) allowing more applications to run in parallel due to lower per-application power consumption, while (2) still considering application runtime due to its impact on energy consumption.
 Therefore, new resource management approaches are required that focus solely on minimizing energy to reduce the cost of science (in Joules), even if application runtime is increased.

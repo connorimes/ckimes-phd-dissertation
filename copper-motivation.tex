@@ -13,7 +13,7 @@ The hardware is then free to rapidly change DVFS settings to achieve better perf
 For example, if software sets power limits requiring any 50 ms time window to average 100 W, hardware is free to use turbo mode to speed up the processing of any bursty work within that 50 ms, as long as it compensates by running in a low-power state for some of that time.
 
 Of course, even as DVFS shifts to hardware, it will still be software's responsibility to provide its own notion of either ``best'' or ``good enough'' performance, subject to hardware-imposed constraints like thermal design power and energy consumption costs.
-The capability to specify power caps and simultaneously provide some optimization is already provided by interfaces like Intel's RAPL \cite{RAPL}.
+The capability to specify power caps and simultaneously provide some optimization is already provided by interfaces like Intel's Running Average Power Limit (RAPL) \cite{RAPL}.
 Recent work shows that a combination of RAPL and software resource management can achieve even better performance while guaranteeing power consumption \cite{pupil}.
 What is still needed, however, is the software component that guarantees performance without using DVFS.
 We address this need with CoPPer, which provides soft performance guarantees by manipulating hardware power caps, thus allowing the hardware to perform fine-grained optimizations.

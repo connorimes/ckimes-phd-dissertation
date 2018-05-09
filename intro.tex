@@ -26,7 +26,7 @@ However, voltage and frequency are correlated, meaning their values in \eqnref{b
 % Thermal design constraints limit the power consumption that a computing system can sustain, in turn limiting both the maximum and average performance that can be achieved.
 Higher clock frequencies require higher voltage to maintain stable circuit operation; conversely, lower frequencies can maintain operation at lower voltages.
 Reducing the voltage and frequency can offer significant power savings due to this non-linear relationship.
-Newer technologies allow specifying power caps for hardware resources and letting the components optimize their own behavior subject to the power constraint, \eg Intel Running Average Power Limit (RAPL) tunes DVFS much faster than software \cite{RAPL}.
+Newer technologies allow specifying power caps for hardware resources and letting the components optimize their own behavior subject to the power constraint, \eg Intel's Running Average Power Limit (RAPL) tunes DVFS much faster than software \cite{RAPL}.
 Another common knob setting is the allocation of compute cores on multicore systems, allowing unallocated cores to enter low-power sleep states, or even shut down altogether to save power/energy.
 
 If we consider each allowable combination of knob values to be a system \emph{setting} or \emph{configuration}, we can explore the impact of different knob combinations on performance and power consumption.

@@ -12,7 +12,7 @@ While the core research in this dissertation focuses on the \emph{decide} phase,
 \section{Runtime Instrumentation and Profiling}
 \label{app:profiling}
 
-The control-theory based projects presented in this dissertation (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
+The control-based projects presented in this dissertation (POET, Bard, CoPPer) are designed for applications that have high-level loops for which we enforce predictable timing behavior.
 For applications to capture performance and power/energy data, they need a mechanism to capture and record metrics.
 Application developers often create their own instrumentation and profiling tools, which is mostly unnecessary and means that data is stored in a variety different formats, making it troublesome to process.
 Hoffmann \etal proposed \interface{Heartbeats} to specify and record performance goals for self-aware applications \cite{icac2010heartbeats}.
@@ -133,7 +133,7 @@ EnergyMon is also used in CoPPer's evaluation, as well other research projects n
 \section{Power Capping}
 \label{app:powercap}
 
-Evaluating Intel RAPL \cite{RAPL} ultimately led to the design and evaluation of the CoPPer project.
+Evaluating Intel's Running Average Power Limit (RAPL) \cite{RAPL} ultimately led to the design and evaluation of the CoPPer project.
 Again, we found a distinct lack of tools to aid us---most material we found used low-level approaches for interfacing with RAPL that were hardware-dependent and required detailed understanding of RAPL as defined in Intel's software developer's manuals \cite{intel-sdm}.
 
 In recent years, the Linux kernel exposed some RAPL functionality via the \interface{powercap} file system interface \cite{powercap}.

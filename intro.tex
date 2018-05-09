@@ -12,10 +12,10 @@ We treat the second as a classification problem, using machine learning classifi
 \label{sec:intro-description}
 
 Performance and energy consumption are conflicting goals in computing systems and must be appropriately balanced to satisfy user requirements.
-As power and energy become first-class concerns in systems ranging from low-power embedded platforms to large scale high-performance computing (HPC) environments, there is an increasing need for software to manage hardware resource allocations to achieve a desirable balance in performance and power/energy consumption.
+As power and energy become first-class concerns in systems ranging from low-power embedded platforms to large-scale High Performance Computing (HPC) environments, there is an increasing need for software to manage hardware resource allocations to achieve a desirable balance in performance and power/energy consumption.
 Fortunately, modern systems expose knobs to support trading performance and power.
 
-For example, dynamic voltage and frequency scaling (DVFS) trades processor clock rate and power consumption for changes in throughput, and is ubiquitous in modern systems.
+For example, Dynamic Voltage and Frequency Scaling (DVFS) trades processor clock rate and power consumption for changes in throughput, and is ubiquitous in modern systems.
 Dynamic power $P$ is proportional to the effective capacitance $C$ of a processor, the applied voltage $V$, and the clock frequency $f$ \cite{Hennessy:2003:CAQ:861856}:
 \begin{equation}
 P \propto \frac{1}{2}CV^2f
@@ -39,7 +39,7 @@ Power or energy can then be optimized under the performance constraint to increa
 Until recently, heuristic approaches were often sufficient to meet performance goals while achieving near-minimal energy consumption.
 However, heuristic approaches to balancing performance and power/energy rely on assumptions about the performance/power tradeoff space of an application and system that we have found are not portable between applications and modern systems.
 For example, the classic \emph{race-to-idle} heuristic can achieve low energy consumption on one system, but high energy consumption on another compared with a \emph{pace-to-idle} or \emph{never-idle} approach \cite{Imes2014}.
-While performance/power tradeoff spaces were mostly linear on older systems, advances in technology make them more convex on modern systems.
+While performance/power tradeoff spaces were mostly linear on older systems, advances in technology are making them more convex on modern systems.
 An important observation by Kim \etal is, ``Unless the function of a given machine is a straight line originating from the idle state, (0, $P_{idle}$), an idling heuristic is never optimal for all instances'' \cite{kim-cpsna2015}.
 In short, the more convex the tradeoff space, the further from optimal any idling approach is.
 
@@ -57,7 +57,7 @@ As with meeting performance goals, a similar problem with heuristics arises---th
   \end{centering}
 \end{figure}
 
-The lack of both portability and optimality of heuristics demand that we develop more general approaches to addressing the problems in balancing performance and power.
+The lack of both portability and optimality of heuristics demand that we develop more general approaches to addressing the problems in balancing performance and power/energy.
 In his PhD dissertation, Hoffmann proposes a ``self-aware'' computing model (SEEC) that uses a closed-loop feedback design to \emph{observe}, \emph{decide}, and \emph{act} \cite{HoffmannPhD}.
 \figref{seec} demonstrates this concept.
 The SEEC model is more portable than many heuristics because it includes an observation step that measures behavior at runtime rather than relying strictly on assumptions made offline.
@@ -69,18 +69,18 @@ Instead, they rely on runtime measurements to fine-tune their decisions.
 \section{Contributions}
 
 This dissertation addresses two common goals in managing software performance and system energy consumption.
-The first is meeting an application performance goal while minimizing energy consumption.
+The first is the constrained optimization problem of meeting an application performance goal while minimizing energy consumption.
 Software performance constraints are common in applications that run on platforms ranging from embedded to server-class.
 % , \eg cloud-based software that must meet quality-of-service guarantees.
 The second addresses the problem of running software as energy-efficiently as possible, \ie maximizing the ratio of work completed to energy consumed.
 % Maximizing energy efficiency is particularly beneficial in HPC, where systems should be kept busy while reducing the cost of scientific insight.
 We address these two problems with three distinct projects:
 \begin{itemize}
-\item POET, the \textbf{P}erformance with \textbf{O}ptimal \textbf{E}nergy \textbf{T}oolkit: a portable, control-theoretic framework for meeting soft application performance goals while optimizing energy consumption, which we demonstrate by tuning DVFS settings and core allocation.
-\item CoPPer, \textbf{Co}ntrol \textbf{P}erformance with \textbf{P}ow\textbf{er}: a model-free, control-theory based framework for meeting soft application performance constraints while optimizing energy consumption by specifying processor power caps.
-\item CEES, \textbf{C}lassification of \textbf{E}nergy-\textbf{e}fficient \textbf{S}ettings: a machine learning classification framework for predicting energy-efficient system settings based on low-level hardware performance counter metrics, demonstrated using DVFS and socket allocation.
+\item POET, the \textbf{P}erformance with \textbf{O}ptimal \textbf{E}nergy \textbf{T}oolkit: A portable, control-theoretic framework for meeting soft application performance goals while optimizing energy consumption, which we demonstrate by tuning DVFS settings and core allocations.
+\item CoPPer, \textbf{Co}ntrol \textbf{P}erformance with \textbf{P}ow\textbf{er}: A model-free, control-theoretic approach for meeting soft application performance constraints by tuning processor power caps and allowing the hardware to optimize energy consumption.
+\item CEES, \textbf{C}lassification of \textbf{E}nergy-\textbf{e}fficient \textbf{S}ettings: A machine learning classification framework for predicting energy-efficient system settings based on low-level hardware performance counter metrics, which we demonstrate by tuning DVFS, socket allocations, and the use of HyperThreads.
 \end{itemize}
-\appref{tools} details portable tools developed to support these projects that we believe are useful to other researchers and developers.
+\appref{tools} describes portable tools created to support these projects that we believe are useful to other researchers and developers.
 \appref{urls} provides open-source release information for POET, CoPPer, and supporting tools.
 
 
@@ -104,7 +104,7 @@ We find that POET achieves:
 \item \textbf{Predictable Performance}: POET meets a range of performance targets, minimizing the error between the goal and the achieved performance.
 \item \textbf{Energy Savings}: Using an offline oracle, we verify that POET achieves near-optimal energy consumption (\eg 1.3\% over optimal on an Intel-powered tablet, 2.9\% on an ARM big.LITTLE system), which includes POET's runtime overhead.
 \item \textbf{Adaptability}: POET adapts to phases in application and input behavior, achieving increased energy savings during periods of low computational demand.
-Additionally, POET adapts to noise in the system introduced by co-scheduled applications to ensure that performance goals are still met when feasible, and making a best effort otherwise.
+Additionally, POET adapts to noise in the system introduced by co-scheduled applications to ensure that performance goals are still met when feasible, and makes a best effort otherwise.
 \end{itemize}
 
 
@@ -132,7 +132,7 @@ CoPPer makes the following contributions:
 \item Evaluates CoPPer using Intel RAPL on a dual-socket, 32-core server.
 We find that CoPPer achieves performance guarantees similar to software DVFS control, but with better energy efficiency.
 Specifically, CoPPer improves energy efficiency by 6\% on average with a 12\% improvement for memory-bound applications.
-At the highest performance targets, CoPPer's gain-limit saves even more energy: 8\% on average and 18\% for memory-bound applications.
+At the highest performance targets, CoPPer's gain limit saves even more energy: 8\% on average and 18\% for memory-bound applications.
 \end{itemize}
 
 
@@ -140,7 +140,7 @@ At the highest performance targets, CoPPer's gain-limit saves even more energy: 
 \label{sec:intro-ee}
 
 In other scenarios, it is desirable to maximize energy efficiency, \ie complete a fixed-size computation using the least energy possible without a performance constraint.
-It is becoming well established that the \emph{race-to-idle} heuristic is not energy-efficient.
+It is becoming well-established that the \emph{race-to-idle} heuristic is not energy-efficient.
 % Our discussion of \emph{race-to-idle} in the context of performance constraints earlier is irrelevant, since if that heuristic cannot meet a constraint, no other approach can.
 It may then seem reasonable to simply run in the lowest-power system configuration, but this approach fails to account for elapsed time, so energy consumption may still exceed optimal even when consuming low power.
 Identifying the most energy-efficient system setting is challenging since the optimal setting varies depending on varying application resource demands.
@@ -165,5 +165,5 @@ This work makes the following contributions:
 \item Proposes optimizing \emph{energy efficiency} instead of \emph{runtime} to decrease the cost of scientific computation.
 \item Establishes the problem complexity---of 15 different machine learning classification techniques evaluated, only some are suitable for optimizing energy efficiency.
 \item Demonstrates that sufficiently powerful classifiers can dramatically reduce energy consumption by accurately predicting energy-efficient system settings at runtime.
-\item Extrapolates from empirical results to posit that optimizing energy efficiency can improve the throughput of over-provisioned, power-constrained systems by up to 24\%.
+\item Extrapolates from empirical results to posit that optimizing energy efficiency can improve the throughput of hardware over-provisioned, power-constrained systems by up to 24\%.
 \end{itemize}

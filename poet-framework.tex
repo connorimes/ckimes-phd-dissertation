@@ -132,7 +132,7 @@ Thus, linear programming theory states an optimal solution exists for this probl
     \For {$\langle u, o \rangle \in candidates$} \Comment{loop over all pairs}
     \State $\omega_u = \omega \cdot \frac{s_u \cdot (s_o - s(t))}{s(t) \cdot (s_o - s_u)}$ \Comment{compute the work units to spend in each configuration in pair}
     \State $\omega_o = \omega - \omega_u$
-    \State $newEnergy = \omega_u \cdot p_u + \omega_o \cdot p_o$ \Comment{compute energy of this pair}
+    \State $newEnergy = \frac{\omega_u}{s_u} \cdot p_u + \frac{\omega_o}{s_o} \cdot p_o$ \Comment{compute energy of this pair}
     \If {$newEnergy < energy$} \Comment{compare energy to best found so far}
     \State $energy = newEnergy$
     \State $optimal = \langle u, o \rangle$

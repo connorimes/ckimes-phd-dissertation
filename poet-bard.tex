@@ -42,6 +42,7 @@ To meet a power goal $P_{ref}$ and maximize performance, the problem becomes:
   && \sum_{c=0}^{C-1} \tau_c = 1 \label{eqn:work} \\
   && \tau_c \ge 0, \qquad \forall c \in \{0,\ldots,C-1\} \label{eqn:bard-time}
 \end{eqnarray}
+where $\tau_c$ is the proportion of time spent in configuration $c$.
 
 \begin{algorithm}[t]
   \caption{Finding an Optimal Configuration Schedule.}
@@ -61,9 +62,11 @@ To meet a power goal $P_{ref}$ and maximize performance, the problem becomes:
     \State $\omega_u = \omega \cdot \frac{x_u \cdot (x_o - x(t))}{x(t) \cdot (x_o - x_u)}$ \Comment{compute the work units to spend in each configuration in pair}
     \State $\omega_o = \omega - \omega_u$
     \If {$constraint = POWER$} \Comment{compute cost of this pair}
-    \State $newCost = \frac{\omega}{\omega_u \cdot s_u + \omega_o \cdot s_o}$ \Comment{normalized latency}
+    % This also comes out to minimizing energy per unit of work; at a fixed power constraint, minimizing energy is analogous to minimizng time
+    % \State $newCost = \left ( \frac{\omega_u}{p_u} \cdot s_u + \frac{\omega_o}{p_o} \cdot s_o \right ) ^{-1}$ \Comment{normalized latency}
+    \State $newCost = \frac{\omega_u}{s_u} + \frac{\omega_o}{s_o}$ \Comment{normalized latency}
     \Else
-    \State $newCost = \frac{\omega_u \cdot p_u + \omega_o \cdot p_o}{\omega}$ \Comment{normalized energy}
+    \State $newCost = \frac{\omega_u}{s_u} \cdot p_u + \frac{\omega_o}{s_o} \cdot p_o$ \Comment{normalized energy}
     \EndIf
     \If {$newCost < cost$} \Comment{compare cost to best found so far}
     \State $cost = newCost$

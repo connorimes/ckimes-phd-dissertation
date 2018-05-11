@@ -16,9 +16,8 @@ POET separates the system configurations into two data structures.
 The first is system-agnostic and contains a configuration identifier along with \textbf{speedup} and \textbf{powerup} values.
 The second is system-specific and can take any form a developer considers appropriate to define a system configuration.
 POET includes a default format for this second structure which contains a configuration identifier, the DVFS frequency to apply, and the number of cores to use.
-Snippets of actual configuration files representing both these data structures are presented in \figref{poet-config-examples}.
-\secref{poet-usage} describes how to characterize a system's timing and power behavior.
-These results can be used to create configurations if they are not already available.
+\figref{poet-config-examples} presents snippets of actual configuration files representing both data structures.
+Speedup and powerup values are derived from an application characterization, \ie running a representative application in all configurations and measuring the behavior.
 
 \begin{figure}[t]
 \centering
@@ -106,6 +105,7 @@ They are, however, generic enough that most Linux users do not need to write the
 
 
 \subsection{Runtime}
+\label{sec:poet-impl-runtime}
 
 After an application measures its performance and power, \eg with a heartbeat, it makes a call to \function{poet\_apply\_control}, which contains POET's core logic.
 When a window period completes, the POET runtime calculates the estimated base speed with \eqnref{kalman-filter}, then computes the performance error with \eqnref{poet-error}.

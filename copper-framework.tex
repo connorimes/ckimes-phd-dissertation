@@ -8,6 +8,7 @@ For maximum portability, CoPPer is independent of any particular system, applica
 
 
 \subsection{Adaptive Controller Formulation}
+\label{sec:copper-framework-formulation}
 
 \begin{figure}[t]
   \centering
@@ -171,4 +172,4 @@ for (i = 1; i <= NUM_LOOPS; i++) {
 }
 \end{lstlisting}
 The underlined functions simply replace the existing DVFS-related ones.
-Furthermore, the \function{apply\_powercap} function is independent of CoPPer---an example of our implementation is provided in the next section.
+% The actuation function, \function{apply\_powercap}, is implemented independently of CoPPer.

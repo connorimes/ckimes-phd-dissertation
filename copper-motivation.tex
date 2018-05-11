@@ -27,8 +27,8 @@ DVFS is being replaced with hardware power capping, but meeting performance targ
 \figref{copper-tradeoffs-vips} demonstrates how the compute-bound \app{vips} application's performance is affected by DVFS frequencies (\figref{copper-tradeoffs-vips-dvfs}) compared to processor power caps (\figref{copper-tradeoffs-vips-pwr}) on our evaluation system.
 Three challenges are immediately apparent from the figures.
 First, DVFS produces a linear response in performance, but power capping is \emph{non-linear}.
-Second, power capping has \emph{diminishing returns}: as power increases, the change in performance becomes smaller and eventually stop increasing altogether.
-Third, \emph{the range} of DVFS settings is much smaller than power settings: the ratio of the maximum to minimum DVFS setting is $11/4=2.75$, but power capping has a ratio of over 6 (as can be seen from the x-axes).
+Second, power capping has \emph{diminishing returns}: as power increases, the change in performance becomes smaller and eventually stops increasing altogether.
+Third, \emph{the range} of DVFS settings is much smaller than power settings: the ratio of the maximum to minimum DVFS setting is 2.75, but power capping has a ratio of over 6 (as can be seen from the x-axes).
 
 \begin{figure}[t]
   \centering
@@ -44,7 +44,7 @@ Third, \emph{the range} of DVFS settings is much smaller than power settings: th
   \label{fig:copper-tradeoffs-vips}
 \end{figure}
 
-The linear relationship between DVFS and performance makes it easy to apply textbook control theoretic techniques to build a performance management system based on DVFS, and many examples exist in the literature \cite{ICSE2014,SWiFT,KaramanolisEtAl-2005a,lefurgy2008power,josep-isca2016,GRAPE,ControlWare}.
+The linear relationship between DVFS and performance makes it easy to apply textbook control-theoretic techniques to build a performance management system based on DVFS, and many examples exist in the literature \cite{ICSE2014,SWiFT,KaramanolisEtAl-2005a,lefurgy2008power,josep-isca2016,GRAPE,ControlWare}.
 With DVFS, control models assume that---for compute-bound applications---a $2\times$ change in frequency produces a $2\times$ change in performance.
 Applying the same techniques to build a performance management system based on power capping is more complicated.
 The major issue is that controllers based on time-invariant linear models will have varying error dependent on the current power cap.
@@ -63,6 +63,6 @@ The downsides to this approach are: (1) a developer must know the maximum error 
 All approaches start at the maximum DVFS or power setting and must bring performance down to the required level while minimizing energy.
 \figref{copper-vips-example} shows the DVFS controller quickly reaches the desired performance, but the conservative power capping controller is much slower to react.
 The conservative approach never violates the performance requirement, but its slow reaction wastes energy.
-The aggressive approach over-reacts, oscillating around the performance target instead of settling on it.
-These results demonstrate how sensitive the power capping approaches can be to their input models.
+The aggressive approach overreacts, oscillating around the performance target instead of settling on it.
+These results demonstrate how sensitive power capping approaches can be to their input models.
 The next section describes an adaptive control design for meeting performance goals with power capping that overcomes the difficulties highlighted by this example without requiring a user-specified model.

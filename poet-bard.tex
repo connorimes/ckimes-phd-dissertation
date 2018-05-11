@@ -25,7 +25,7 @@ In summary, Bard: (1) meets either timing or power constraints, (2) optimizes th
 \subsection{Further Generalizing POET's Design}
 
 Bard's formulations are very similar to POET.
-The key to rapidly switching from a performance to a power constraint and vice versa is to continually estimates both base values.
+The key to rapidly switching from a performance to a power constraint and vice versa is to continually estimate both base values.
 The Bard controller generates its \emph{generic control signal}, $x(t)$, which is either \emph{speedup} or \emph{powerup}:
 \begin{eqnarray}
   x(t) = x(t-1) + (1-\alpha) \cdot \frac{e_x(t)}{b_x(t)}

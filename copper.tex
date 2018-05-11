@@ -7,7 +7,7 @@ CoPPer has three key features.
 First, it works on applications without prior knowledge of their specific performance/power tradeoffs; \ie it does not require a system or application-specific power cap/performance model based on pre-characterization, making it suitable for general purpose computing workloads composed of repeated jobs.
 Second, it uses a Kalman filter to adapt control to \emph{non-linearities} in the power cap/performance relationship.
 Third, it introduces adaptive \emph{gain limits} to prevent power from being over-allocated when applications cannot achieve additional speedup.
-That is, if a workload's performance does not improve with expanded power limits, CoPPer will not allocate additional power, whereas standard control-theoretical approaches take no additional power-saving action.
+That is, if a workload's performance does not improve with expanded power limits, CoPPer will not allocate additional power, whereas standard control-theoretic approaches take no additional power-saving action.
 Thus, CoPPer saves energy in many cases compared to existing DVFS-based approaches while maintaining its formal guarantees.
 
 

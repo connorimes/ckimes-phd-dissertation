@@ -1,9 +1,9 @@
 \section{A General Power Capping Design}
 \label{sec:copper-framework}
 
-CoPPer's goal is to provide soft performance guarantees, with the competing goal of keeping the power as low as possible.
+CoPPer's goal is to provide soft performance guarantees, with the competing goal of keeping power as low as possible.
 To achieve the best energy consumption, a power capping framework for meeting performance targets must not allocate more power than is actually needed by an application.
-CoPPer uses an adaptive control-theoretic approach to meet soft real-time performance constraints, and employs a \emph{gain limit} to proactively reduce power consumption when it determines that power is over-allocated.
+CoPPer uses an adaptive control-theoretic approach to meet soft real-time performance constraints and employs a \emph{gain limit} to proactively reduce power consumption when it determines that power is over-allocated.
 For maximum portability, CoPPer is independent of any particular system, application, and power capping implementation.
 
 
@@ -35,7 +35,7 @@ It then computes a \emph{speedup} value as:
 where $s(t-1)$ is the speedup signal generated in the previous iteration, $b_r(t)$ is the base speed estimate produced by a Kalman filter \cite{welch2006kalman}, and $gain(t)$ (where $0 < gain(t) \le 1$) is a time-varying value that scales the control response.
 The gain is described in more detail shortly (\secref{copper-framework-gain}).
 Other feedback controllers use similar formulations, but without the gain~\cite{Bard,POET}.
-Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $R_{ref}$ is sometimes unachievable (in control terminology, this is an \emph{anti-windup} mechanism).
+Clamping between $1$ and $\frac{U_{max}}{U_{min}}$ prevents slow controller response if $R_{ref}$ was previously unachievable (in control terminology, this is an \emph{anti-windup} mechanism).
 Finally, the new \emph{power cap} to be applied is computed as:
 
 \begin{eqnarray}
@@ -83,7 +83,8 @@ These behaviors make it difficult for controllers to efficiently meet performanc
 CoPPer uses a \emph{gain limit} to avoid over-allocating power when it is not useful, \eg for unachievable performance targets in \app{vips} or moderate targets in \app{HOP}.
 
 The gain limit is used in computing the $gain(t)$ term in \eqnref{copper-speedup-control}.
-This term is initially 1, and will remain so until the controller settles.  Based on the performance history, gain may be reduced to lower the speedup when CoPPer detects that the extra speedup is not beneficial, and therefore is wasting power.
+This term is initially 1, and will remain so until the controller settles.
+Based on the performance history, gain may be reduced to lower the speedup when CoPPer detects that the extra speedup is not beneficial (and thus wasting power).
 In general, the convex properties of performance/power tradeoff spaces ensure that reducing the speedup never increases power consumption, and in most cases reduces it.
 
 % There cost reduction consists of two competing components.
@@ -111,10 +112,10 @@ $\Delta e_n(t)$ in \eqnref{den} is the absolute change in $e_n(t)$ since the pre
 \eqnsref{ens}{dens} compute values $e_{ns}(t)$ and $\Delta e_{ns}(t)$, which determine how much impact $e_n(t)$ and $\Delta e_{n}(t)$ have on reducing the speedup.
 Both $e_{ns}(t)$ and $\Delta e_{ns}(t)$ lay in the unit circle.
 As normalized performance error $e_n(t)$ approaches 0, $e_{ns}(t)$ also approaches 0, which reduces the impact of the gain limit in \eqnref{cost-pole}.
-Conversely, if the error is high, $e_{ns}(t)$ approaches 1 and the gain limit will have a greater impact on the change speedup.
+Conversely, if the error is high, $e_{ns}(t)$ approaches 1 and the gain limit will have a greater impact on the speedup.
 As the change in normalized performance error $\Delta e_{n}(t)$ approaches 0, $\Delta e_{ns}(t)$ approaches 1, thus increasing the gain limit's impact in \eqnref{cost-pole}.
-Conversely, if the change in error is high, $\Delta e_{ns}(t)$ approaches 0 and the gain limit will have less impact on the change in speedup.
-Therefore, \eqnref{cost-pole} reduces the speedup signal by a factor of at most $\alpha_c$, with the greatest change in speedup occurring when the absolute performance error $e_n(t)$ is high and the absolute change in error $e_n(t)$ is low.
+Conversely, if the change in error is high, $\Delta e_{ns}(t)$ approaches 0 and the gain limit will have less impact on the speedup.
+Therefore, \eqnref{cost-pole} reduces the speedup signal by a factor of at most $\alpha_c$, with the greatest change in speedup occurring when the absolute performance error $e_n(t)$ is high and the absolute change in error $\Delta e_n(t)$ is low.
 Setting $\alpha_c=0$ disables the gain limit entirely, corresponding to $gain(t) =1 $ in \eqnref{copper-speedup-control}.
 
 Note that in \eqnref{copper-speedup-control}, the upper clamping is performed prior to applying the gain.
@@ -123,10 +124,10 @@ In cases of high performance error, the gain limit's effectiveness is also const
 If speedup is not clamped at a reasonable upper value, the gain limit must be quite high to overcome the inaccuracy.
 
 Recall that CoPPer holds $gain(t)$ at 1 until the controller converges.
-Until then, the controller is an adaptive deadbeat control system that retains the corresponding control theoretic guarantees \cite{ICSE2014}.
+Until then, the controller is an adaptive deadbeat control system that retains the corresponding control-theoretic guarantees \cite{ICSE2014}.
 Specifically, it can converge to the desired performance in as little as one control iteration.
 At that point, CoPPer computes \eqnrref{cost-pole}{dens}, which may change $gain(t)$.
-In control theoretic terms, a non-zero gain is equivalent to adding a zero to the characteristic equation of the closed loop system.
+In control-theoretic terms, a non-zero gain is equivalent to adding a zero to the characteristic equation of the closed loop system.
 Given the definition of $gain(t)$, it is equivalent to a zero greater than 1, which moves the controller in the opposite direction from the feedback signal.
 Normally, this would be undesirable behavior, but this is exactly the behavior we want when we are no longer seeing performance improvements by increasing the power cap.
 
